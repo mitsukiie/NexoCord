@@ -7,10 +7,10 @@ import { pathToFileURL } from 'url';
 import { ExtendedClient, App } from '@base';
 import { Command } from '@types';
 import { logger } from '@utils';
+import { isScript } from '../../utils/extensions';
 import { createSubcommand } from '../../creators';
 
 type Serialized = ReturnType<typeof serialize>;
-const Extensions = new Set(['.ts', '.js', '.mjs', '.cjs']);
 
 export async function loadCommands(
   client?: ExtendedClient,
@@ -60,7 +60,7 @@ export async function loadCommands(
           }
 
           // Caso seja um arquivo, tratamos como comando único
-          else if (entry.isFile() && Extensions.has(path.extname(entry.name))) {
+          else if (entry.isFile() && isScript(entry.name)) {
             const url = pathToFileURL(path.resolve(fullPath)).href;
             const module = await import(url);
             const command = module.default;

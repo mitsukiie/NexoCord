@@ -6,6 +6,7 @@ import { pathToFileURL } from 'url';
 import { ExtendedClient, App } from '@base';
 import { Event } from '@types';
 import { logger } from '@utils';
+import { GLOB } from '../../utils/extensions';
 
 export async function loadEvents(
   client?: ExtendedClient,
@@ -13,7 +14,7 @@ export async function loadEvents(
 ): Promise<Event[]> {
   const app = App.get();
   const baseEventsPath = path.resolve(process.cwd(), eventsPath);
-  const files = await glob('**/*.{ts,js,mjs,cjs}', {
+  const files = await glob(GLOB, {
     cwd: baseEventsPath,
     absolute: true,
   });

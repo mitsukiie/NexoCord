@@ -25,6 +25,7 @@ import {
   ResponderTypes,
 } from './types';
 import { logger } from './utils';
+import { isScript } from './utils/extensions';
 
 function Creators() {
   return {
@@ -36,7 +37,7 @@ function Creators() {
       const subcommands: Record<string, Command> = {};
       const options: APIApplicationCommandOption[] = [];
 
-      const files = readdirSync(directory).filter((f) => f.endsWith('.ts'));
+      const files = readdirSync(directory).filter((f) => isScript(f));
       if (settings.terminal.showSlashCommandsFiles) {
         logger.info(`Carregando ${files.length} subcomandos do grupo "${name}"...`);
       }

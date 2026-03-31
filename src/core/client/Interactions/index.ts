@@ -1,4 +1,4 @@
-import { isResponder } from '@utils';
+import { isResponder } from '../../utils/Responder';
 import { Command } from './command';
 import { AutoComplete } from './autocomplete';
 import { Responder } from './responder';

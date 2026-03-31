@@ -1,6 +1,6 @@
 import { Interaction } from 'discord.js';
 import { ZodType } from 'zod';
-import { getType } from '@utils';
+import { InteractionType } from '../../utils/Responder';
 import { CacheType } from '@types';
 import { session } from './session';
 import { route } from './route';
@@ -39,7 +39,7 @@ export class ResponderManager {
     if (!('customId' in interaction)) return;
     const id = interaction.customId;
 
-    const type = getType(interaction);
+    const type = InteractionType(interaction);
     if (!type) return;
 
     if (this.sessions.isExpired(id)) {

@@ -1,6 +1,6 @@
 {
-  "name": "nexocord",
-  "version": "1.0.5",
+  "name": "@mitsuk/nexo.js",
+  "version": "1.0.6",
   "description": "Framework TypeScript moderno para criar bots escaláveis ​​do Discord com discord.js v14, apresentando arquitetura modular, cli e utilitários amigáveis ​​para desenvolvedores.",
   "type": "module",
   "private": false,
@@ -18,19 +18,13 @@
     "url": "https://github.com/mitsukiie/NexoCord.git"
   },
   "keywords": [
-    "discord",
-    "discordjs",
     "discord-bot",
-    "discord-framework",
-    "discord-bot-framework",
     "discordjs-v14",
     "typescript",
     "javascript",
     "ts",
     "js",
     "framework",
-    "bot-framework",
-    "discord-template",
     "cli",
     "nexocord"
   ],
