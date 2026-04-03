@@ -1,6 +1,6 @@
 {
   "name": "nexocord",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Framework TypeScript moderno para criar bots escaláveis ​​do Discord com discord.js v14, apresentando arquitetura modular, cli e utilitários amigáveis ​​para desenvolvedores.",
   "type": "module",
   "private": false,

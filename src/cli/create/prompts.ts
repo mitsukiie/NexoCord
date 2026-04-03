@@ -33,10 +33,10 @@ export async function askRuntime(): Promise<ProjectRuntime> {
   return abortOnCancel(
     await select<ProjectRuntime>({
       message: "Runtime",
-      initialValue: "bun",
+      initialValue: "node",
       options: [
-        { value: "bun", label: "Bun" },
         { value: "node", label: "Node.js" },
+        { value: "bun", label: "Bun" },
       ],
     })
   ) as ProjectRuntime;

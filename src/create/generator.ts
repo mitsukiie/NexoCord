@@ -139,7 +139,9 @@ function createPackageJson(options: CreateAnswers, frameworkPackageName: string)
     devDependencies: isTypeScript
       ? {
           typescript: "^6.0.2",
-          ...(isBun ? { "@types/bun": "latest" } : { "@types/node": "^25.5.0" }),
+          ...(isBun
+            ? { "@types/bun": "latest" }
+            : { "@types/node": "^25.5.0", tsx: "^4.20.6" }),
         }
       : undefined,
     engines: isBun ? undefined : { node: ">=20" },
