@@ -23,6 +23,6 @@ export function resolveSelectBase(
     return { id: customIdOrOpts, ...opts };
   }
 
-  const { customId, ...selectOptions } = customIdOrOpts;
-  return { id: customId, ...selectOptions };
+  const { customId, ...select } = customIdOrOpts;
+  return { id: customId, ...select };
 }

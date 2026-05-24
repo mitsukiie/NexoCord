@@ -42,16 +42,17 @@ export function container(
 ) {
   const { options, components } = splitContainerArgs(args);
 
-  const container = new ContainerBuilder();
-  container.components.push(...components.map(toContainerChild));
+  const out = new ContainerBuilder();
+  out.components.push(...components.map(toContainerChild));
 
   if (options.color !== undefined) {
-    const accentColor = validate.color(options.color);
-    container.setAccentColor(accentColor);
+    out.setAccentColor(validate.color(options.color));
   }
 
-  const attachments = collectAttachmentsFromContainerInputs(components);
-  return attachContainerAttachments(container, attachments);
+  return attachContainerAttachments(
+    out,
+    collectAttachmentsFromContainerInputs(components),
+  );
 }
 
 /**
@@ -61,10 +62,9 @@ export function container(
  * @returns Rendered display components with attachment metadata.
  */
 export function render(...components: DisplayInput[]) {
-  const rendered = toDisplayComponents(...components);
-  validate.components(rendered);
-  const files = collectAttachmentsFromDisplayInputs(components);
-  return createRenderedComponents(rendered, files);
+  const out = toDisplayComponents(...components);
+  validate.components(out);
+  return createRenderedComponents(out, collectAttachmentsFromDisplayInputs(components));
 }
 
 /**
@@ -92,8 +92,10 @@ export function send(
     ? [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]
     : [MessageFlags.IsComponentsV2];
 
-  const autoFiles = getRenderedComponentsAttachments(payload.components);
-  const files = [...autoFiles, ...(payload.files ?? [])];
+  const files = [
+    ...getRenderedComponentsAttachments(payload.components),
+    ...(payload.files ?? []),
+  ];
 
   return interaction.reply({
     flags,

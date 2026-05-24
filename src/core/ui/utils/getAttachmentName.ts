@@ -9,16 +9,16 @@ export function getAttachmentName(attachment: unknown) {
     throw new Error('Attachment must be an object with a valid file name.');
   }
 
-  const candidate = attachment as {
+  const file = attachment as {
     name?: unknown;
     data?: { name?: unknown };
   };
 
   const name =
-    typeof candidate.name === 'string'
-      ? candidate.name
-      : typeof candidate.data?.name === 'string'
-        ? candidate.data.name
+    typeof file.name === 'string'
+      ? file.name
+      : typeof file.data?.name === 'string'
+        ? file.data.name
         : undefined;
 
   if (!name) {

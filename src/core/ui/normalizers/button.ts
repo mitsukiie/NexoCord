@@ -3,6 +3,10 @@ import { ButtonBuilder, ButtonStyle } from 'discord.js';
 import type { Button } from '../types';
 import { validateButton } from '../validators';
 
+function isLink(button: Button): button is Extract<Button, { url: string }> {
+  return 'url' in button && typeof button.url === 'string';
+}
+
 /**
  * Creates a Discord button builder from a public button descriptor.
  *
@@ -12,16 +16,19 @@ import { validateButton } from '../validators';
 export function normalizeButton(button: Button) {
   validateButton(button);
 
-  const built = new ButtonBuilder()
-    .setLabel(button.label)
-    .setCustomId(button.customId)
-    .setStyle(button.style ?? ButtonStyle.Primary);
+  const btn = new ButtonBuilder().setLabel(button.label);
 
-  if (button.emoji) {
-    built.setEmoji({ name: button.emoji });
+  if (isLink(button)) {
+    btn.setURL(button.url).setStyle(button.style ?? ButtonStyle.Link);
+  } else {
+    btn.setCustomId(button.customId).setStyle(button.style ?? ButtonStyle.Primary);
   }
 
-  return built;
+  if (button.emoji) {
+    btn.setEmoji({ name: button.emoji });
+  }
+
+  return btn;
 }
 
 /**
@@ -35,14 +42,18 @@ export function applyButtonData<
   T extends {
     setLabel(label: string): T;
     setCustomId(id: string): T;
+    setURL(url: string): T;
     setStyle(style: ButtonStyle): T;
     setEmoji(emoji: { name: string }): T;
   },
 >(button: T, data: Button): T {
-  button
-    .setLabel(data.label)
-    .setCustomId(data.customId)
-    .setStyle(data.style ?? ButtonStyle.Primary);
+  button.setLabel(data.label);
+
+  if (isLink(data)) {
+    button.setURL(data.url).setStyle(data.style ?? ButtonStyle.Link);
+  } else {
+    button.setCustomId(data.customId).setStyle(data.style ?? ButtonStyle.Primary);
+  }
 
   if (data.emoji) {
     button.setEmoji({ name: data.emoji });

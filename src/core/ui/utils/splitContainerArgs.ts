@@ -1,6 +1,6 @@
 import type { ContainerInput, ContainerOptions } from '../types';
 
-function isContainerOptions(value: unknown): value is ContainerOptions {
+function isOptions(value: unknown): value is ContainerOptions {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return false;
   }
@@ -17,15 +17,17 @@ function isContainerOptions(value: unknown): value is ContainerOptions {
 export function splitContainerArgs(
   args: [ContainerOptions, ...ContainerInput[]] | ContainerInput[],
 ) {
-  if (isContainerOptions(args[0])) {
+  const head = args[0];
+
+  if (!isOptions(head)) {
     return {
-      options: args[0],
-      components: args.slice(1) as ContainerInput[],
+      options: {} as ContainerOptions,
+      components: args as ContainerInput[],
     };
   }
 
   return {
-    options: {} as ContainerOptions,
-    components: args as ContainerInput[],
+    options: head,
+    components: args.slice(1) as ContainerInput[],
   };
 }

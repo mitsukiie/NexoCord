@@ -210,13 +210,13 @@ function buildEasyFile(
   fileOrSpoiler?: unknown | boolean,
   spoiler = false,
 ) {
-  const hasFile = typeof fileOrSpoiler !== 'boolean';
+  const hasAttachment = typeof fileOrSpoiler !== 'boolean';
 
   return {
     type: 'file' as const,
     url,
-    spoiler: hasFile ? spoiler : (fileOrSpoiler ?? false),
-    attachment: hasFile ? fileOrSpoiler : undefined,
+    spoiler: hasAttachment ? spoiler : (fileOrSpoiler ?? false),
+    attachment: hasAttachment ? fileOrSpoiler : undefined,
   };
 }
 

@@ -16,6 +16,7 @@ import type {
   DisplayInput,
   FileComponent,
   ContainerNode,
+  Button,
   Row,
   RowComponent,
   SectionComponent,
@@ -43,7 +44,7 @@ type RenderedComponentsMeta = DisplayComponent[] & {
   [RENDERED_ATTACHMENTS]?: readonly unknown[];
 };
 
-function isContainerChild(component: unknown): component is ContainerChild {
+function isChild(component: unknown): component is ContainerChild {
   return (
     component instanceof TextDisplayBuilder ||
     component instanceof SeparatorBuilder ||
@@ -54,12 +55,29 @@ function isContainerChild(component: unknown): component is ContainerChild {
   );
 }
 
-function isDisplayComponent(component: unknown): component is DisplayComponent {
-  return component instanceof ContainerBuilder || isContainerChild(component);
+function isDisplay(component: unknown): component is DisplayComponent {
+  return component instanceof ContainerBuilder || isChild(component);
 }
 
-function isContainerNode(component: ContainerInput): component is ContainerNode {
-  return !isContainerChild(component);
+function isObject(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isButton(component: unknown): component is Button {
+  if (!isObject(component)) {
+    return false;
+  }
+
+  const candidate = component;
+  return (
+    typeof candidate.label === 'string' && ('customId' in candidate || 'url' in candidate)
+  );
+}
+
+function toRow(component: Button) {
+  return new ActionRowBuilder<AnyComponentBuilder>().addComponents(
+    normalizeButton(component),
+  );
 }
 
 function normalizeRowComponent(component: RowComponent) {
@@ -85,6 +103,26 @@ function normalizeSeparator(component: SeparatorComponent) {
   return separator;
 }
 
+function setSectionButton(section: SectionBuilder, button: Button) {
+  section.setButtonAccessory((target) => applyButtonData(target, button));
+}
+
+function setSectionThumb(
+  section: SectionBuilder,
+  thumbnail: NonNullable<SectionComponent['thumbnail']>,
+) {
+  validateUrl(thumbnail.url);
+
+  section.setThumbnailAccessory((target) => {
+    target.setURL(thumbnail.url);
+
+    if (thumbnail.description) target.setDescription(thumbnail.description);
+    if (thumbnail.spoiler) target.setSpoiler(thumbnail.spoiler);
+
+    return target;
+  });
+}
+
 function normalizeSection(component: SectionComponent) {
   validateSection(component);
 
@@ -98,20 +136,11 @@ function normalizeSection(component: SectionComponent) {
   );
 
   if (component.button) {
-    section.setButtonAccessory((button) => applyButtonData(button, component.button!));
+    setSectionButton(section, component.button);
   }
 
   if (component.thumbnail) {
-    const thumbnail = component.thumbnail;
-    validateUrl(thumbnail.url);
-    section.setThumbnailAccessory((thumb) => {
-      thumb.setURL(thumbnail.url);
-
-      if (thumbnail.description) thumb.setDescription(thumbnail.description);
-      if (thumbnail.spoiler) thumb.setSpoiler(thumbnail.spoiler);
-
-      return thumb;
-    });
+    setSectionThumb(section, component.thumbnail);
   }
 
   return section;
@@ -125,7 +154,7 @@ function normalizeRow(component: Row) {
   );
 }
 
-function normalizeContainerNode(component: ContainerNode): ContainerChild {
+function normalizeNode(component: ContainerNode): ContainerChild {
   switch (component.type) {
     case 'text':
       return normalizeText(component);
@@ -157,9 +186,9 @@ function normalizeContainerNode(component: ContainerNode): ContainerChild {
  * @returns Discord container child.
  */
 export function toContainerChild(component: ContainerInput): ContainerChild {
-  if (isContainerChild(component)) return component;
-  if (isContainerNode(component)) return normalizeContainerNode(component);
-  return component;
+  if (isChild(component)) return component;
+  if (isButton(component)) return toRow(component);
+  return normalizeNode(component);
 }
 
 /**
@@ -169,8 +198,9 @@ export function toContainerChild(component: ContainerInput): ContainerChild {
  * @returns Discord display component.
  */
 export function toDisplayComponent(component: DisplayInput): DisplayComponent {
-  if (isDisplayComponent(component)) return component;
-  return normalizeContainerNode(component);
+  if (isDisplay(component)) return component;
+  if (isButton(component)) return toRow(component);
+  return normalizeNode(component);
 }
 
 /**
@@ -230,11 +260,11 @@ export function getRenderedComponentsAttachments(
 }
 
 function isEasyFileInput(component: unknown): component is FileComponent {
-  if (!component || typeof component !== 'object' || Array.isArray(component)) {
+  if (!isObject(component)) {
     return false;
   }
 
-  const candidate = component as Record<string, unknown>;
+  const candidate = component;
   return candidate.type === 'file';
 }
 

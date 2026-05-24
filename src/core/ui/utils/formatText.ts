@@ -1,24 +1,24 @@
 import type { TextInput, TextStyleOptions } from '../types';
 
-function wrap(content: string, marker: string) {
+function surround(content: string, marker: string) {
   return `${marker}${content}${marker}`;
 }
 
-function getInlineCodeDelimiter(content: string) {
-  let longestRun = 0;
-  let currentRun = 0;
+function getCodeFence(content: string) {
+  let maxRun = 0;
+  let run = 0;
 
   for (const character of content) {
     if (character === '`') {
-      currentRun += 1;
-      if (currentRun > longestRun) longestRun = currentRun;
+      run += 1;
+      if (run > maxRun) maxRun = run;
       continue;
     }
 
-    currentRun = 0;
+    run = 0;
   }
 
-  return '`'.repeat(longestRun + 1);
+  return '`'.repeat(maxRun + 1);
 }
 
 /**
@@ -55,18 +55,18 @@ export function formatLines(
  * @returns Markdown-formatted text.
  */
 export function formatText(content: TextInput, options: TextStyleOptions = {}) {
-  let formatted = toLines(content).join('\n');
+  let out = toLines(content).join('\n');
 
-  if (options.underline) formatted = wrap(formatted, '__');
-  if (options.italic) formatted = wrap(formatted, '*');
-  if (options.bold) formatted = wrap(formatted, '**');
+  if (options.underline) out = surround(out, '__');
+  if (options.italic) out = surround(out, '*');
+  if (options.bold) out = surround(out, '**');
 
   if (typeof options.size === 'number') {
     const prefix = options.size === 4 ? '-#' : '#'.repeat(options.size);
-    return `${prefix} ${formatted}`;
+    return `${prefix} ${out}`;
   }
 
-  return formatted;
+  return out;
 }
 
 /**
@@ -77,8 +77,8 @@ export function formatText(content: TextInput, options: TextStyleOptions = {}) {
  */
 export function formatInlineCode(content: TextInput) {
   const text = toLines(content).join('\n');
-  const delimiter = getInlineCodeDelimiter(text);
-  return `${delimiter}${text}${delimiter}`;
+  const fence = getCodeFence(text);
+  return `${fence}${text}${fence}`;
 }
 
 /**

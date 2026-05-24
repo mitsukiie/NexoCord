@@ -75,7 +75,7 @@ export type ContainerNode =
   | FileComponent;
 
 /** Allowed container input passed to `ui.container(...)`. */
-export type ContainerInput = ContainerChild | ContainerNode;
+export type ContainerInput = ContainerChild | ContainerNode | Button;
 
 /** Optional container configuration. */
 export type ContainerOptions = {
@@ -83,4 +83,4 @@ export type ContainerOptions = {
 };
 
 /** Any component accepted by `ui.render(...)`. */
-export type DisplayInput = DisplayComponent | ContainerNode;
+export type DisplayInput = DisplayComponent | ContainerNode | Button;

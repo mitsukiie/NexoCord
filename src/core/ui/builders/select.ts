@@ -11,34 +11,26 @@ import type {
 } from '../types';
 import { resolveSelectBase } from '../utils';
 
-type SelectBuilderOptions = Omit<SelectBase, 'id'>;
-type SelectBuilderInput = SelectBuilderOptions & { customId: SelectBase['id'] };
-type ChannelSelectBuilderInput = SelectBuilderInput & {
+type SelectOpts = Omit<SelectBase, 'id'>;
+type SelectInput = SelectOpts & { customId: SelectBase['id'] };
+type ChannelSelectInput = SelectInput & {
   channelTypes?: readonly ChannelType[];
 };
-type StringSelectBuilderInput = SelectBuilderInput & {
+type StringSelectInput = SelectInput & {
   options: readonly StringSelectOption[];
 };
 
-function createSelect<TType extends string>(
+function mkSelect<TType extends string>(
   type: TType,
-  customId: SelectBase['id'],
-  opts?: SelectBuilderOptions,
+  input: SelectBase['id'] | SelectInput,
+  opts?: SelectOpts,
 ) {
-  return {
-    type,
-    ...resolveSelectBase(customId, opts),
-  } as SimpleSelect<TType & SimpleSelectType>;
-}
+  const select =
+    typeof input === 'string' ? resolveSelectBase(input, opts) : resolveSelectBase(input);
 
-function createSelectFromObject<TType extends string>(
-  type: TType,
-  customIdOrOpts: SelectBuilderInput,
-) {
-  const { customId, ...selectOptions } = customIdOrOpts;
   return {
     type,
-    ...resolveSelectBase({ customId, ...selectOptions }),
+    ...select,
   } as SimpleSelect<TType & SimpleSelectType>;
 }
 
@@ -51,33 +43,28 @@ type SimpleSelect<TType extends SimpleSelectType> = Extract<
   { type: TType }
 >;
 type SimpleSelectBuilder<TType extends SimpleSelectType> = {
-  (customId: SelectBase['id'], opts?: SelectBuilderOptions): SimpleSelect<TType>;
-  (opts: SelectBuilderInput): SimpleSelect<TType>;
+  (customId: SelectBase['id'], opts?: SelectOpts): SimpleSelect<TType>;
+  (opts: SelectInput): SimpleSelect<TType>;
 };
 
-function createSimpleSelectBuilder<TType extends SimpleSelectType>(
+function mkSimpleBuilder<TType extends SimpleSelectType>(
   type: TType,
 ): SimpleSelectBuilder<TType> {
+  function build(customId: SelectBase['id'], opts?: SelectOpts): SimpleSelect<TType>;
+  function build(opts: SelectInput): SimpleSelect<TType>;
   function build(
-    customId: SelectBase['id'],
-    opts?: SelectBuilderOptions,
-  ): SimpleSelect<TType>;
-  function build(opts: SelectBuilderInput): SimpleSelect<TType>;
-  function build(
-    customIdOrOpts: SelectBase['id'] | SelectBuilderInput,
-    opts?: SelectBuilderOptions,
+    input: SelectBase['id'] | SelectInput,
+    opts?: SelectOpts,
   ): SimpleSelect<TType> {
-    return typeof customIdOrOpts === 'string'
-      ? createSelect(type, customIdOrOpts, opts)
-      : createSelectFromObject(type, customIdOrOpts);
+    return mkSelect(type, input, opts);
   }
 
   return build;
 }
 
-const userSelect = createSimpleSelectBuilder('select.user');
-const roleSelect = createSimpleSelectBuilder('select.role');
-const mentionableSelect = createSimpleSelectBuilder('select.mentionable');
+const userSelect = mkSimpleBuilder('select.user');
+const roleSelect = mkSimpleBuilder('select.role');
+const mentionableSelect = mkSimpleBuilder('select.mentionable');
 
 /**
  * Creates a public user-select descriptor.
@@ -86,15 +73,13 @@ const mentionableSelect = createSimpleSelectBuilder('select.mentionable');
  * @param opts Optional select configuration when a custom id is provided.
  * @returns Public user-select descriptor.
  */
-export function user(customId: SelectBase['id'], opts?: SelectBuilderOptions): UserSelect;
-export function user(opts: SelectBuilderInput): UserSelect;
+export function user(customId: SelectBase['id'], opts?: SelectOpts): UserSelect;
+export function user(opts: SelectInput): UserSelect;
 export function user(
-  customIdOrOpts: SelectBase['id'] | SelectBuilderInput,
-  opts?: SelectBuilderOptions,
+  input: SelectBase['id'] | SelectInput,
+  opts?: SelectOpts,
 ): UserSelect {
-  return typeof customIdOrOpts === 'string'
-    ? userSelect(customIdOrOpts, opts)
-    : userSelect(customIdOrOpts);
+  return userSelect(input as never, opts);
 }
 
 /**
@@ -104,15 +89,13 @@ export function user(
  * @param opts Optional select configuration when a custom id is provided.
  * @returns Public role-select descriptor.
  */
-export function role(customId: SelectBase['id'], opts?: SelectBuilderOptions): RoleSelect;
-export function role(opts: SelectBuilderInput): RoleSelect;
+export function role(customId: SelectBase['id'], opts?: SelectOpts): RoleSelect;
+export function role(opts: SelectInput): RoleSelect;
 export function role(
-  customIdOrOpts: SelectBase['id'] | SelectBuilderInput,
-  opts?: SelectBuilderOptions,
+  input: SelectBase['id'] | SelectInput,
+  opts?: SelectOpts,
 ): RoleSelect {
-  return typeof customIdOrOpts === 'string'
-    ? roleSelect(customIdOrOpts, opts)
-    : roleSelect(customIdOrOpts);
+  return roleSelect(input as never, opts);
 }
 
 /**
@@ -124,16 +107,14 @@ export function role(
  */
 export function mentionable(
   customId: SelectBase['id'],
-  opts?: SelectBuilderOptions,
+  opts?: SelectOpts,
 ): MentionableSelect;
-export function mentionable(opts: SelectBuilderInput): MentionableSelect;
+export function mentionable(opts: SelectInput): MentionableSelect;
 export function mentionable(
-  customIdOrOpts: SelectBase['id'] | SelectBuilderInput,
-  opts?: SelectBuilderOptions,
+  input: SelectBase['id'] | SelectInput,
+  opts?: SelectOpts,
 ): MentionableSelect {
-  return typeof customIdOrOpts === 'string'
-    ? mentionableSelect(customIdOrOpts, opts)
-    : mentionableSelect(customIdOrOpts);
+  return mentionableSelect(input as never, opts);
 }
 
 /**
@@ -147,30 +128,30 @@ export function mentionable(
 export function channel(
   customId: SelectBase['id'],
   channelTypes?: readonly ChannelType[],
-  opts?: SelectBuilderOptions,
+  opts?: SelectOpts,
 ): ChannelSelect;
-export function channel(opts: ChannelSelectBuilderInput): ChannelSelect;
+export function channel(opts: ChannelSelectInput): ChannelSelect;
 export function channel(
-  customIdOrOpts: SelectBase['id'] | ChannelSelectBuilderInput,
-  channelTypes?: readonly ChannelType[] | SelectBuilderOptions,
-  opts: SelectBuilderOptions = {},
+  input: SelectBase['id'] | ChannelSelectInput,
+  channelTypes?: readonly ChannelType[] | SelectOpts,
+  opts: SelectOpts = {},
 ): ChannelSelect {
-  if (typeof customIdOrOpts !== 'string') {
-    const { channelTypes: resolvedChannelTypes, ...select } = customIdOrOpts;
+  if (typeof input !== 'string') {
+    const { channelTypes: chans, ...select } = input;
+
     return {
       type: 'select.channel' as const,
       ...resolveSelectBase(select),
-      channelTypes: resolvedChannelTypes,
+      channelTypes: chans,
     };
   }
 
-  const resolvedOpts = Array.isArray(channelTypes)
-    ? opts
-    : (channelTypes as SelectBuilderOptions | undefined);
-
   return {
     type: 'select.channel' as const,
-    ...resolveSelectBase(customIdOrOpts, resolvedOpts),
+    ...resolveSelectBase(
+      input,
+      Array.isArray(channelTypes) ? opts : (channelTypes as SelectOpts | undefined),
+    ),
     channelTypes: Array.isArray(channelTypes) ? channelTypes : undefined,
   };
 }
@@ -186,26 +167,29 @@ export function channel(
 export function string(
   customId: SelectBase['id'],
   options: readonly StringSelectOption[],
-  opts?: SelectBuilderOptions,
+  opts?: SelectOpts,
 ): StringSelect;
-export function string(opts: StringSelectBuilderInput): StringSelect;
+export function string(opts: StringSelectInput): StringSelect;
 export function string(
-  customIdOrOpts: SelectBase['id'] | StringSelectBuilderInput,
-  options?: readonly StringSelectOption[] | SelectBuilderOptions,
-  opts: SelectBuilderOptions = {},
+  input: SelectBase['id'] | StringSelectInput,
+  options?: readonly StringSelectOption[] | SelectOpts,
+  opts: SelectOpts = {},
 ): StringSelect {
-  if (typeof customIdOrOpts !== 'string') {
-    const { options: stringOptions, ...select } = customIdOrOpts;
+  if (typeof input !== 'string') {
+    const { options: items, ...select } = input;
+
     return {
       type: 'select.string' as const,
       ...resolveSelectBase(select),
-      options: stringOptions,
+      options: items,
     };
   }
 
+  const base = Array.isArray(options) ? opts : {};
+
   return {
     type: 'select.string' as const,
-    ...resolveSelectBase(customIdOrOpts, Array.isArray(options) ? opts : {}),
+    ...resolveSelectBase(input, base),
     options: Array.isArray(options) ? options : [],
   };
 }

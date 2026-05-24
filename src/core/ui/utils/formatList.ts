@@ -8,15 +8,8 @@ import { formatLines } from './formatText';
  * @param options List formatting options.
  * @returns Markdown list.
  */
-export function formatList(
-  items: TextInput,
-  options: { ordered?: boolean } = {},
-) {
-  return formatLines(items, (item, index) => {
-    if (options.ordered) {
-      return `${index + 1}. ${item}`;
-    }
-
-    return `- ${item}`;
-  });
+export function formatList(items: TextInput, options: { ordered?: boolean } = {}) {
+  return formatLines(items, (item, index) =>
+    options.ordered ? `${index + 1}. ${item}` : `- ${item}`,
+  );
 }

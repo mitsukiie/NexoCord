@@ -17,8 +17,12 @@ import type {
 } from '../types';
 
 function hasLengthBetween(value: string | undefined, min: number, max: number) {
-  if (!value) return false;
+  if (typeof value !== 'string') return false;
   return value.length >= min && value.length <= max;
+}
+
+function isSelectComponent(component: RowComponent) {
+  return !('label' in component);
 }
 
 /**
@@ -75,7 +79,7 @@ export function validateRow(components: readonly RowComponent[]) {
     throw new Error('Action row must contain between 1 and 5 components.');
   }
 
-  const selectCount = components.filter((component) => !('label' in component)).length;
+  const selectCount = components.filter(isSelectComponent).length;
 
   if (selectCount > 0 && components.length > 1) {
     throw new Error(

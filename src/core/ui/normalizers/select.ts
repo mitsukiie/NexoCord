@@ -16,6 +16,36 @@ import type {
 import { applySelectBase } from '../utils';
 import { validateSelect } from '../validators';
 
+function baseSelect<
+  TBuilder extends {
+    setCustomId(id: string): TBuilder;
+    setPlaceholder(placeholder: string): TBuilder;
+    setMinValues(minValues: number): TBuilder;
+    setMaxValues(maxValues: number): TBuilder;
+    setDisabled(disabled?: boolean): TBuilder;
+  },
+>(type: SelectMenu['type'], select: SelectBase, builder: TBuilder) {
+  validateSelect({ type, ...select } as SelectMenu);
+  return applySelectBase(builder, select);
+}
+
+function withChannelTypes(
+  builder: ChannelSelectMenuBuilder,
+  channelTypes?: readonly import('discord.js').ChannelType[],
+) {
+  if (channelTypes?.length) builder.setChannelTypes(...channelTypes);
+  return builder;
+}
+
+function toStringOptions(select: StringSelect) {
+  return select.options.map((option: StringSelectOption) => ({
+    label: option.label,
+    value: option.value,
+    description: option.description,
+    default: option.default,
+  }));
+}
+
 /**
  * Creates a Discord user select builder from a public descriptor.
  *
@@ -23,8 +53,7 @@ import { validateSelect } from '../validators';
  * @returns Discord user select builder.
  */
 export function normalizeUserSelect(select: SelectBase) {
-  validateSelect({ type: 'select.user', ...select });
-  return applySelectBase(new UserSelectMenuBuilder(), select);
+  return baseSelect('select.user', select, new UserSelectMenuBuilder());
 }
 
 /**
@@ -34,8 +63,7 @@ export function normalizeUserSelect(select: SelectBase) {
  * @returns Discord role select builder.
  */
 export function normalizeRoleSelect(select: SelectBase) {
-  validateSelect({ type: 'select.role', ...select });
-  return applySelectBase(new RoleSelectMenuBuilder(), select);
+  return baseSelect('select.role', select, new RoleSelectMenuBuilder());
 }
 
 /**
@@ -45,8 +73,7 @@ export function normalizeRoleSelect(select: SelectBase) {
  * @returns Discord mentionable select builder.
  */
 export function normalizeMentionableSelect(select: SelectBase) {
-  validateSelect({ type: 'select.mentionable', ...select });
-  return applySelectBase(new MentionableSelectMenuBuilder(), select);
+  return baseSelect('select.mentionable', select, new MentionableSelectMenuBuilder());
 }
 
 /**
@@ -57,10 +84,10 @@ export function normalizeMentionableSelect(select: SelectBase) {
  */
 export function normalizeChannelSelect(select: ChannelSelect) {
   validateSelect(select);
-
-  const builder = applySelectBase(new ChannelSelectMenuBuilder(), select);
-  if (select.channelTypes?.length) builder.setChannelTypes(...select.channelTypes);
-  return builder;
+  return applySelectBase(
+    withChannelTypes(new ChannelSelectMenuBuilder(), select.channelTypes),
+    select,
+  );
 }
 
 /**
@@ -73,14 +100,7 @@ export function normalizeStringSelect(select: StringSelect) {
   validateSelect(select);
 
   const builder = applySelectBase(new StringSelectMenuBuilder(), select);
-  builder.setOptions(
-    ...select.options.map((option: StringSelectOption) => ({
-      label: option.label,
-      value: option.value,
-      description: option.description,
-      default: option.default,
-    })),
-  );
+  builder.setOptions(...toStringOptions(select));
 
   return builder;
 }
