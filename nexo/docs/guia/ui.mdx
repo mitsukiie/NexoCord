@@ -3,8 +3,8 @@ sidebar_position: 4
 title: UI
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # UI
 
@@ -32,47 +32,54 @@ A UI do Nexo facilita a criação do **Display Components V2** do Discord com ti
 <TabItem value="js" label="JavaScript">
 
 ```js
-const { createCommand, CommandType, ui } = require('nexocord');
+const { createCommand, CommandType, ui } = require("nexocord");
 
 module.exports = createCommand({
-    name: 'componente',
-    description: 'Envia um componente simples',
-    type: CommandType.ChatInput,
-    async run(interaction) {
-        // Todo envio segue dois passos:
-        
-        // 1. Montar os componentes com ui.render(...)
-        const components = ui.render(ui.text('## Título'), ui.divider());
-        
-        // 2. Enviar com ui.send
-        await ui.send(interaction, { components, ephemeral: true });
-    },
+  name: "componente",
+  description: "Envia um componente simples",
+  type: CommandType.ChatInput,
+  async run(interaction) {
+    const components = ui.render(
+      ui.container(
+        { color: "#0099ff" },
+        ui.text("## Título"),
+        ui.separator(),
+        ui.text("Esse bloco usa a API atual do UI builder."),
+      ),
+    );
+
+    await ui.send(interaction, { components, ephemeral: true });
+  },
 });
 ```
 
-	</TabItem>
-	<TabItem value="ts" label="TypeScript">
+    </TabItem>
+    <TabItem value="ts" label="TypeScript">
 
 ```ts
-import { createCommand, CommandType, ui } from 'nexocord';
+import { createCommand, CommandType, ui } from "nexocord";
 
 export default createCommand({
-    name: 'componente',
-    description: 'Envia um componente simples',
-    type: CommandType.ChatInput,
-    async run(interaction) {
-        // Todo envio segue dois passos:
-        
-        // 1. Montar os componentes com ui.render(...)
-        const components = ui.render(ui.text('## Título'), ui.divider());
-        
-        // 2. Enviar com ui.send
-        await ui.send(interaction, { components, ephemeral: true });
-    },
+  name: "componente",
+  description: "Envia um componente simples",
+  type: CommandType.ChatInput,
+  async run(interaction) {
+    const components = ui.render(
+      ui.container(
+        { color: "#0099ff" },
+        ui.text("## Título"),
+        ui.separator(),
+        ui.text("Esse bloco usa a API atual do UI builder."),
+      ),
+    );
+
+    await ui.send(interaction, { components, ephemeral: true });
+  },
 });
 ```
 
-	</TabItem>
+    </TabItem>
+
 </Tabs>
 
 ## 🧰 Componentes
@@ -80,16 +87,67 @@ export default createCommand({
 ### 📝 Texto e separador
 
 ```ts
-ui.text('Olá mundo');
-ui.divider();
+import { SeparatorSize, TextSize, ui } from "nexocord";
+
+ui.text("Olá mundo");
+ui.text(["Linha 1", "Linha 2"]);
+
+ui.text("Título principal", { size: TextSize.Title });
+ui.text("Subtítulo", { size: TextSize.Subtitle });
+ui.text("Texto pequeno", { size: TextSize.Small });
+
+ui.text("Negrito", { bold: true });
+ui.text("Itálico", { italic: true });
+ui.text("Sublinhado", { underline: true });
+ui.text("Combinado", { bold: true, italic: true, underline: true });
+
+ui.text.list(["Item A", "Item B"]);
+ui.text.ordered(["Primeiro", "Segundo"]);
+ui.text.code("bun run dev");
+ui.text.quote(["Linha citada 1", "Linha citada 2"]);
+ui.text.spoiler("conteúdo oculto");
+
+ui.separator({ spacing: SeparatorSize.Small, divider: true });
+ui.separator();
 ```
+
+`ui.divider()` ainda existe como alias deprecated de `ui.separator()`. Prefira `ui.separator()` nos exemplos novos.
+
+`ui.text(...)` aceita `string` e `string[]`.
+
+Helpers disponíveis no builder:
+
+- `ui.text.list(...)`: lista com `- item`
+- `ui.text.ordered(...)`: lista numerada (`1. item`)
+- `ui.text.code(...)`: inline code com crases automáticas
+- `ui.text.quote(...)`: citação (`> texto`)
+- `ui.text.spoiler(...)`: spoiler (`||texto||`)
+
+Opções de estilo:
+
+- `size`: use `TextSize.Title | TextSize.Subtitle | TextSize.Section | TextSize.Small`
+- `bold`, `italic`, `underline`: aplicam formatação markdown no conteúdo
+
+:::tip Recomendado no TypeScript
+Prefira `TextSize` e `SeparatorSize` em vez de valores numéricos para deixar o código mais legível e com autocomplete melhor.
+:::
 
 ### 🔘 Botão / Row
 
 ```ts
+import { ButtonStyle } from "discord.js";
+
 ui.row(
-  ui.button({ label: 'Confirmar', customId: 'confirm:id' }),
-  ui.button({ label: 'Cancelar', customId: 'cancel:id', style: ButtonStyle.Danger }),
+  ui.button({
+    label: "Confirmar",
+    customId: "confirm:id",
+    style: ButtonStyle.Primary,
+  }),
+  ui.button({
+    label: "Cancelar",
+    customId: "cancel:id",
+    style: ButtonStyle.Danger,
+  }),
 );
 ```
 
@@ -101,47 +159,53 @@ ui.row(
 
 Os builders aceitam dois estilos de chamada:
 
-- `ui.select.user('select:user', { placeholder: 'Selecione usuário' })`
-- `ui.select.user({ customId: 'select:user', placeholder: 'Selecione usuário' })`
+- `ui.select.user("select:user", { placeholder: "Selecione usuário" })`
+- `ui.select.user({ customId: "select:user", placeholder: "Selecione usuário" })`
 
 ```ts
+import { ChannelType } from "discord.js";
+
 ui.row(
   ui.select.string(
-    'select:id',
+    "select:id",
     [
-      { label: 'Opção A', value: 'a' },
-      { label: 'Opção B', value: 'b' },
+      { label: "Opção A", value: "a" },
+      { label: "Opção B", value: "b" },
     ],
-    { placeholder: 'Escolha...' },
+    { placeholder: "Escolha..." },
   ),
 );
 
-ui.row(ui.select.user('select:user', { placeholder: 'Selecione usuário' }));
-ui.row(ui.select.user({ customId: 'select:user', placeholder: 'Selecione usuário' }));
+ui.row(ui.select.user("select:user", { placeholder: "Selecione usuário" }));
+ui.row(
+  ui.select.user({ customId: "select:user", placeholder: "Selecione usuário" }),
+);
 
-ui.row(ui.select.role('select:role', { placeholder: 'Selecione cargo' }));
-ui.row(ui.select.role({ customId: 'select:role', placeholder: 'Selecione cargo' }));
+ui.row(ui.select.role("select:role", { placeholder: "Selecione cargo" }));
+ui.row(
+  ui.select.role({ customId: "select:role", placeholder: "Selecione cargo" }),
+);
 
-ui.row(ui.select.channel('select:channel', [ChannelType.GuildText]));
+ui.row(ui.select.channel("select:channel", [ChannelType.GuildText]));
 ui.row(
   ui.select.channel({
-    customId: 'select:channel',
+    customId: "select:channel",
     channelTypes: [ChannelType.GuildText],
-    placeholder: 'Selecione canal',
+    placeholder: "Selecione canal",
   }),
 );
 
-ui.row(ui.select.mentionable('select:mentionable'));
-ui.row(ui.select.mentionable({ customId: 'select:mentionable' }));
+ui.row(ui.select.mentionable("select:mentionable"));
+ui.row(ui.select.mentionable({ customId: "select:mentionable" }));
 
 ui.row(
   ui.select.string({
-    customId: 'select:string',
+    customId: "select:string",
     options: [
-      { label: 'Opção A', value: 'a' },
-      { label: 'Opção B', value: 'b' },
+      { label: "Opção A", value: "a" },
+      { label: "Opção B", value: "b" },
     ],
-    placeholder: 'Escolha...',
+    placeholder: "Escolha...",
   }),
 );
 ```
@@ -149,14 +213,14 @@ ui.row(
 ### 🧱 Section e thumbnail
 
 ```ts
-ui.section(['Linha 1', 'Linha 2'], {
-  button: ui.button({ label: 'Abrir', customId: 'open:id' }),
+ui.section(["Linha 1", "Linha 2"], {
+  button: ui.button({ label: "Abrir", customId: "open:id" }),
 });
 
-ui.section(['Linha 1'], {
+ui.section(["Linha 1"], {
   thumbnail: ui.thumbnail({
-    url: 'https://picsum.photos/id/1003/300/300',
-    description: 'Miniatura',
+    url: "https://picsum.photos/id/1003/300/300",
+    description: "Miniatura",
   }),
 });
 ```
@@ -169,53 +233,61 @@ Agrupa 1 a 3 textos com um botão **ou** miniatura acessória (não os dois).
 
 ```ts
 ui.gallery(
-	{ url: 'https://cdn.example.com/a.png' },
-	{ url: 'https://cdn.example.com/b.png', description: 'Imagem B' },
+  { url: "https://cdn.example.com/a.png" },
+  { url: "https://cdn.example.com/b.png", description: "Imagem B" },
 );
 
 ui.image({
-	url: 'https://cdn.example.com/banner.png',
-	description: 'Banner principal',
+  url: "https://cdn.example.com/banner.png",
+  description: "Banner principal",
 });
 ```
 
 ### 📎 Arquivos
 
 ```ts
-const file = new AttachmentBuilder(Buffer.from('conteudo'), { name: 'exemplo.txt' });
+import { AttachmentBuilder } from "discord.js";
+
+const file = new AttachmentBuilder(Buffer.from("conteudo"), {
+  name: "exemplo.txt",
+});
 ui.file.fromAttachment(file); // gera attachment://exemplo.txt automaticamente
 ```
 
 ### 📦 Container
 
 ```ts
+import { ui } from "nexocord";
+
 ui.container(
-    { color: '#0099ff' }, // opcional
-    ui.text('## Título'),
-    ui.divider(),
-    ui.row(ui.button({ label: 'OK', customId: 'ok' })),
+  { color: "#0099ff" },
+  ui.text("## Título"),
+  ui.separator(),
+  ui.row(ui.button({ label: "OK", customId: "ok" })),
 );
 ```
 
 :::tip Dica
-Aceita `color` opcional nos formatos: `'#0099ff'`, `'0x0099ff'` ou `0x0099ff`.
+Aceita `color` opcional nos formatos: `"#0099ff"`, `"0x0099ff"` ou `0x0099ff`.
 :::
-
 
 ## 📋 Limites e validações
 
 **Limites de tamanho:**
+
 - 📏 Máximo **40 componentes** por mensagem
 - 🔤 Texto: até **4.000 caracteres** por bloco
 - 🔘 Rótulo de botão: **1-80 caracteres**
 - 📚 Placeholder de select: até **150 caracteres**
 
 **Estrutura de componentes:**
+
 - 🔘 `customId` de botão/select: **1-100 caracteres**
 - 📐 `ui.row(...)`: **1-5 componentes** por linha
 - 🚫 Select não pode ficar junto de outros componentes na mesma row
 - 📚 String select: **1-25 opções** no máximo
 
 **URLs e arquivos:**
+
 - 🖼️ Gallery: **1-10 itens**
 - 🌐 URLs de mídia: devem começar com `http://` ou `https://`
