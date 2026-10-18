@@ -1,0 +1,86 @@
+---
+sidebar_position: 2
+title: Solução de problemas
+slug: /troubleshooting
+---
+
+# 🛠️ Solução de problemas
+
+Encontre soluções para os problemas mais comuns ao configurar, executar e desenvolver bots com o Nexocord.
+
+## 🚫 O bot não inicia
+
+Execute o diagnóstico do Nexocord:
+
+```bash
+nexo doctor
+```
+
+Verifique se:
+
+- Você está utilizando Node.js 20 ou superior.
+- A variável de ambiente `TOKEN` está configurada corretamente.
+- Os intents necessários foram habilitados no Discord Developer Portal.
+- O token é válido e o bot tem as permissões necessárias.
+
+O `Bootstrap.init()` também aceita o token diretamente pela opção `token`.
+
+## 🔎 O comando não aparece
+
+Confira se:
+
+- O arquivo está dentro do diretório configurado em `paths.commands`.
+- O arquivo exporta o comando como `default`.
+- O comando contém as propriedades obrigatórias `name`, `description`, `type` e `run`.
+- O comando foi registrado corretamente no Discord.
+
+Para obter mais informações nos logs, habilite as opções correspondentes em `settings.terminal`:
+
+```ts
+showSlashCommandsFiles: true,
+showSlashCommandsRegistred: true,
+```
+
+Essas opções ajudam a verificar o carregamento dos arquivos e o registro dos comandos.
+
+## 🟦 TypeScript não executa com Node.js
+
+Se o projeto utiliza Node.js com arquivos TypeScript, instale o `tsx`:
+
+```bash
+npm install -D tsx
+```
+
+O comando `dev` exige o `tsx` quando o runtime é Node.js e o entry point utiliza a extensão `.ts`.
+
+Como alternativa, você pode utilizar Bun, desde que a configuração do projeto seja compatível com esse runtime.
+
+## 🧩 Erro ao enviar Components V2
+
+Ao utilizar `ctx.reply()`, não combine `components` com `content` ou `embeds`.
+
+```ts
+const components = [
+  ui.text("## Meu painel"),
+];
+
+await ctx.reply({ components });
+```
+
+O contexto adiciona automaticamente a flag necessária para Components V2.
+
+Se o erro persistir, verifique os limites dos componentes, a estrutura das linhas de ação, as opções dos menus de seleção, as galerias e os valores de `customId`.
+
+Consulte a página [Components V2](/docs/components-v2) para conhecer os componentes disponíveis e os limites validados pelo Nexocord.
+
+## 🔐 Token exposto
+
+Se o token do bot foi exposto, considere-o comprometido.
+
+1. Acesse o Discord Developer Portal.
+2. Gere um novo token para o bot.
+3. Atualize o segredo nas variáveis de ambiente do projeto.
+4. Remova o token exposto do código e do histórico do repositório, quando aplicável.
+5. Verifique se o arquivo `.env` está incluído no `.gitignore`.
+
+Nunca publique tokens em repositórios, mensagens de erro ou capturas de tela.

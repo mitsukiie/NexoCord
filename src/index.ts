@@ -1,8 +1,29 @@
-export * from './core/client/bootstrap';
-export { Settings } from './core/types/Settings';
+export * from "./core/client/bootstrap";
+export { Settings } from "./core/types/Settings";
 
-export { logger } from './core/utils/Logger';
+export { logger } from "./core/utils/logger";
 
-export * from './core/types';
-export { createCommand, createEvent, createResponder } from './core/creators';
-export * from './core/ui'
+export * from "./core/types";
+export {
+  createCommand,
+  createEvent,
+  createResponder,
+  option,
+} from "./core/creators";
+export { ui } from "./core/ui";
+
+export {
+  MessageFlags,
+  GatewayIntentBits,
+  PermissionFlagsBits,
+  EmbedBuilder,
+  Events,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} from "discord.js";

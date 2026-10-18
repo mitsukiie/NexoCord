@@ -1,0 +1,198 @@
+---
+sidebar_position: 2
+title: Init
+slug: /cli/init
+---
+
+# init
+
+O comando `nexo init` configura o Nexocord em um projeto existente. Ele detecta as configurações atuais do projeto, permite escolher a linguagem e o runtime e prepara os arquivos e as dependências necessárias.
+
+## Uso
+
+```bash
+nexo init [opções]
+```
+
+## Opções
+
+| Opção | Descrição |
+| --- | --- |
+| `--language <language>` | Define a linguagem do projeto: `js` ou `ts`. |
+| `--runtime <runtime>` | Define o runtime do projeto: `node` ou `bun`. |
+| `-h, --help` | Exibe a ajuda do comando. |
+
+Se as opções `--language` e `--runtime` não forem informadas, o assistente solicitará essas escolhas interativamente.
+
+## Primeiros passos
+
+### 1. Prepare o projeto
+
+Crie uma pasta para o projeto e inicialize o `package.json`:
+
+```bash
+mkdir meu-bot
+cd meu-bot
+npm init -y
+```
+
+Instale o Nexocord:
+
+```bash
+npm install nexocord
+```
+
+### 2. Execute o assistente
+
+```bash
+nexo init
+```
+
+O Nexocord verificará as configurações existentes e apresentará as opções de linguagem e runtime.
+
+### 3. Escolha a configuração
+
+Você pode utilizar uma das seguintes combinações:
+
+| Linguagem | Runtime | Descrição |
+| --- | --- | --- |
+| JavaScript (`js`) | Node.js (`node`) | Projeto JavaScript executado com Node.js. |
+| TypeScript (`ts`) | Node.js (`node`) | Projeto TypeScript executado com Node.js. |
+| JavaScript (`js`) | Bun (`bun`) | Projeto JavaScript executado com Bun. |
+| TypeScript (`ts`) | Bun (`bun`) | Projeto TypeScript executado com Bun. |
+
+## Configuração automática
+
+Durante a inicialização, o Nexocord analisa o projeto para sugerir valores iniciais.
+
+### Detecção do runtime
+
+O runtime é detectado por meio de arquivos de lock e do campo `packageManager` no `package.json`.
+
+- **Bun:** identificado por `bun.lock`, `bun.lockb` ou um campo `packageManager` iniciado por `bun@`.
+- **Node.js:** utilizado como padrão quando não há indícios de Bun.
+
+### Detecção da linguagem
+
+O Nexocord procura sinais de que o projeto utiliza TypeScript:
+
+- Presença de `tsconfig.json`.
+- Presença de `src/index.ts`.
+- Dependência de desenvolvimento `typescript`.
+
+Se nenhum desses sinais for encontrado, JavaScript será utilizado como padrão.
+
+Os valores detectados servem como sugestões iniciais. Você pode escolher outras opções durante o assistente ou informar os valores desejados pelas opções do comando.
+
+## Definir as opções diretamente
+
+Para inicializar um projeto TypeScript com Node.js sem precisar escolher essas opções pelo assistente:
+
+```bash
+nexo init --language ts --runtime node
+```
+
+Para um projeto JavaScript com Bun:
+
+```bash
+nexo init --language js --runtime bun
+```
+
+Os valores aceitos são:
+
+- `--language`: `js` ou `ts`.
+- `--runtime`: `node` ou `bun`.
+
+Valores inválidos serão rejeitados.
+
+## O que o comando configura?
+
+O `nexo init` realiza as seguintes tarefas:
+
+- Verifica se o diretório contém um `package.json`.
+- Detecta as configurações existentes e solicita as escolhas necessárias.
+- Adiciona as dependências necessárias, incluindo `nexocord` e `discord.js`, quando ausentes.
+- Adiciona ferramentas de desenvolvimento conforme a linguagem e o runtime escolhidos.
+- Ajusta o campo `type` do `package.json` quando necessário e após confirmação.
+- Adiciona scripts de desenvolvimento, compilação e execução em produção, caso ainda não existam.
+- Gera os arquivos iniciais do projeto.
+- Instala as dependências.
+
+### Scripts gerados
+
+Os scripts são adicionados somente quando ainda não existem no `package.json`.
+
+| Script | Finalidade |
+| --- | --- |
+| `dev` | Executa o projeto em desenvolvimento. |
+| `build` | Compila o projeto TypeScript. |
+| `start` | Executa o projeto em produção. |
+
+Os comandos e arquivos utilizados pelos scripts variam conforme a linguagem escolhida.
+
+## Projetos já configurados
+
+Se o Nexocord detectar indícios de que o projeto já foi configurado anteriormente, poderá solicitar confirmação antes de continuar.
+
+Isso ajuda a evitar alterações acidentais em projetos existentes.
+
+Se você cancelar a confirmação, o processo será interrompido sem prosseguir com as alterações.
+
+## Exemplos
+
+Inicializar um projeto com as escolhas interativas:
+
+```bash
+nexo init
+```
+
+Inicializar com TypeScript e Node.js:
+
+```bash
+nexo init --language ts --runtime node
+```
+
+Inicializar com JavaScript e Bun:
+
+```bash
+nexo init --language js --runtime bun
+```
+
+Consultar a ajuda:
+
+```bash
+nexo init --help
+```
+
+## Problemas comuns
+
+### `package.json` não encontrado
+
+O comando deve ser executado em um diretório que já contenha um `package.json`.
+
+Se necessário, crie-o com:
+
+```bash
+npm init -y
+```
+
+### Runtime não instalado
+
+Verifique se o runtime escolhido está instalado e disponível no terminal.
+
+Para Node.js:
+
+```bash
+node --version
+npm --version
+```
+
+Para Bun:
+
+```bash
+bun --version
+```
+
+### Instalação de dependências falhou
+
+Confira se o runtime e o gerenciador de pacotes estão instalados, se há conexão com a internet e se o terminal apresenta mensagens adicionais de erro.

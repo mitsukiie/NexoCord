@@ -1,6 +1,5 @@
 import {
   ActionRowBuilder,
-  AnyComponentBuilder,
   ButtonBuilder,
   ButtonStyle,
   ChannelSelectMenuBuilder,
@@ -15,41 +14,33 @@ import {
   StringSelectMenuBuilder,
   UserSelectMenuBuilder,
   TextDisplayBuilder,
-} from 'discord.js';
+} from "discord.js";
 
-import {
+import type { MessageActionRowComponentBuilder } from "discord.js";
+
+import type {
+  AttachmentInput,
   Button,
-  ContainerNode,
   ContainerChild,
   ContainerInput,
+  ContainerNode,
   DisplayComponent,
+  DisplayInput,
   FileComponent,
   MediaItem,
   RowComponent,
   SelectMenu,
-  DisplayInput,
-} from '@types';
+} from "@types";
 
-import { validate } from './validate';
+import { validate } from "./validate";
 
-const ATTACHMENTS = Symbol('ui.display.attachments');
-const RENDERED = Symbol('ui.display.rendered');
-const RENDERED_ATTACHMENTS = Symbol('ui.display.rendered.attachments');
+const ATTACHMENTS = Symbol("ui.display.attachments");
 
 type ContainerWithAttachments = ContainerBuilder & {
-  [ATTACHMENTS]?: readonly unknown[];
+  [ATTACHMENTS]?: readonly AttachmentInput[];
 };
 
-type RenderedComponentsMeta = DisplayComponent[] & {
-  [RENDERED]?: true;
-  [RENDERED_ATTACHMENTS]?: readonly unknown[];
-};
-
-export type RenderedComponents = readonly DisplayComponent[] & {
-  readonly [RENDERED]: true;
-};
-
-function isContainerChild(component: unknown): component is ContainerChild {
+function is_container_child(component: unknown): component is ContainerChild {
   return (
     component instanceof TextDisplayBuilder ||
     component instanceof SeparatorBuilder ||
@@ -60,92 +51,113 @@ function isContainerChild(component: unknown): component is ContainerChild {
   );
 }
 
-function isDisplayComponent(component: unknown): component is DisplayComponent {
-  return component instanceof ContainerBuilder || isContainerChild(component);
+function is_display_component(
+  component: unknown,
+): component is DisplayComponent {
+  return component instanceof ContainerBuilder || is_container_child(component);
 }
 
-function buildButton(button: Button) {
+function build_button(button: Button) {
   validate.button(button);
 
-  const built = new ButtonBuilder()
+  const builder = new ButtonBuilder()
     .setLabel(button.label)
     .setCustomId(button.customId)
     .setStyle(button.style ?? ButtonStyle.Primary);
 
   if (button.emoji) {
-    built.setEmoji({ name: button.emoji });
+    builder.setEmoji({ name: button.emoji });
   }
 
-  return built;
+  return builder;
 }
 
-function applyButtonData<
+function apply_button_data<
   T extends {
     setLabel(label: string): T;
     setCustomId(id: string): T;
     setStyle(style: ButtonStyle): T;
     setEmoji(emoji: { name: string }): T;
   },
->(button: T, data: Button): T {
-  button
-    .setLabel(data.label)
-    .setCustomId(data.customId)
-    .setStyle(data.style ?? ButtonStyle.Primary);
+>(builder: T, button: Button): T {
+  builder
+    .setLabel(button.label)
+    .setCustomId(button.customId)
+    .setStyle(button.style ?? ButtonStyle.Primary);
 
-  if (data.emoji) {
-    button.setEmoji({ name: data.emoji });
+  if (button.emoji) {
+    builder.setEmoji({ name: button.emoji });
   }
-
-  return button;
-}
-
-function applySelectBase<
-  T extends {
-    setCustomId(id: string): T;
-    setPlaceholder(placeholder: string): T;
-    setMinValues(minValues: number): T;
-    setMaxValues(maxValues: number): T;
-    setDisabled(disabled?: boolean): T;
-  },
->(builder: T, select: SelectMenu) {
-  builder.setCustomId(select.id);
-
-  if (select.placeholder) builder.setPlaceholder(select.placeholder);
-  if (typeof select.minValues === 'number') builder.setMinValues(select.minValues);
-  if (typeof select.maxValues === 'number') builder.setMaxValues(select.maxValues);
-  if (typeof select.disabled === 'boolean') builder.setDisabled(select.disabled);
 
   return builder;
 }
 
-function buildSelect(select: SelectMenu) {
+function apply_select_base<
+  T extends {
+    setCustomId(id: string): T;
+    setPlaceholder(placeholder: string): T;
+    setMinValues(min_values: number): T;
+    setMaxValues(max_values: number): T;
+    setDisabled(disabled?: boolean): T;
+  },
+>(builder: T, select: SelectMenu): T {
+  builder.setCustomId(select.id);
+
+  if (select.placeholder !== undefined) {
+    builder.setPlaceholder(select.placeholder);
+  }
+
+  if (select.minValues !== undefined) {
+    builder.setMinValues(select.minValues);
+  }
+
+  if (select.maxValues !== undefined) {
+    builder.setMaxValues(select.maxValues);
+  }
+
+  if (select.disabled !== undefined) {
+    builder.setDisabled(select.disabled);
+  }
+
+  return builder;
+}
+
+function build_select(select: SelectMenu) {
   validate.select(select);
 
   switch (select.type) {
-    case 'select.user':
-      return applySelectBase(new UserSelectMenuBuilder(), select);
+    case "select.user":
+      return apply_select_base(new UserSelectMenuBuilder(), select);
 
-    case 'select.role':
-      return applySelectBase(new RoleSelectMenuBuilder(), select);
+    case "select.role":
+      return apply_select_base(new RoleSelectMenuBuilder(), select);
 
-    case 'select.mentionable':
-      return applySelectBase(new MentionableSelectMenuBuilder(), select);
+    case "select.mentionable":
+      return apply_select_base(new MentionableSelectMenuBuilder(), select);
 
-    case 'select.channel': {
-      const builder = applySelectBase(new ChannelSelectMenuBuilder(), select);
-      if (select.channelTypes?.length) builder.setChannelTypes(...select.channelTypes);
+    case "select.channel": {
+      const builder = apply_select_base(new ChannelSelectMenuBuilder(), select);
+
+      if (select.channelTypes?.length) {
+        builder.setChannelTypes(...select.channelTypes);
+      }
+
       return builder;
     }
 
-    case 'select.string': {
-      const builder = applySelectBase(new StringSelectMenuBuilder(), select);
+    case "select.string": {
+      const builder = apply_select_base(new StringSelectMenuBuilder(), select);
 
       builder.setOptions(
         ...select.options.map((option) => ({
           label: option.label,
           value: option.value,
-          description: option.description,
-          default: option.default,
+          ...(option.description !== undefined && {
+            description: option.description,
+          }),
+          ...(option.default !== undefined && {
+            default: option.default,
+          }),
         })),
       );
 
@@ -154,11 +166,13 @@ function buildSelect(select: SelectMenu) {
   }
 }
 
-function buildRowComponent(component: RowComponent) {
-  return 'label' in component ? buildButton(component) : buildSelect(component);
+function build_row_component(component: RowComponent) {
+  return "label" in component
+    ? build_button(component)
+    : build_select(component);
 }
 
-function buildGallery(items: readonly MediaItem[]) {
+function build_gallery(items: readonly MediaItem[]) {
   validate.gallery(items);
 
   const gallery = new MediaGalleryBuilder();
@@ -166,10 +180,16 @@ function buildGallery(items: readonly MediaItem[]) {
   gallery.addItems(
     ...items.map((item) => (media: MediaGalleryItemBuilder) => {
       validate.url(item.url);
+
       media.setURL(item.url);
 
-      if (item.description) media.setDescription(item.description);
-      if (item.spoiler) media.setSpoiler(item.spoiler);
+      if (item.description !== undefined) {
+        media.setDescription(item.description);
+      }
+
+      if (item.spoiler !== undefined) {
+        media.setSpoiler(item.spoiler);
+      }
 
       return media;
     }),
@@ -178,27 +198,31 @@ function buildGallery(items: readonly MediaItem[]) {
   return gallery;
 }
 
-function buildFile(fileInput: FileComponent) {
-  validate.attachmentUrl(fileInput.url);
+function build_file(file_input: FileComponent) {
+  validate.attachment_url(file_input.url);
 
-  const file = new FileBuilder().setURL(fileInput.url);
-  if (fileInput.spoiler) file.setSpoiler(fileInput.spoiler);
+  const file = new FileBuilder().setURL(file_input.url);
+
+  if (file_input.spoiler !== undefined) {
+    file.setSpoiler(file_input.spoiler);
+  }
 
   return file;
 }
 
-function buildEasyChild(component: ContainerNode): ContainerChild {
+function build_easy_child(component: ContainerNode): ContainerChild {
   switch (component.type) {
-    case 'text': {
+    case "text": {
       validate.text(component.content);
+
       return new TextDisplayBuilder().setContent(component.content);
     }
 
-    case 'separator': {
+    case "separator": {
       return new SeparatorBuilder();
     }
 
-    case 'section': {
+    case "section": {
       validate.section(component);
 
       const section = new SectionBuilder();
@@ -206,25 +230,32 @@ function buildEasyChild(component: ContainerNode): ContainerChild {
       section.addTextDisplayComponents(
         ...component.texts.map((content) => {
           validate.text(content);
+
           return (text: TextDisplayBuilder) => text.setContent(content);
         }),
       );
 
       if (component.button) {
         section.setButtonAccessory((button) =>
-          applyButtonData(button, component.button!),
+          apply_button_data(button, component.button!),
         );
       }
 
       if (component.thumbnail) {
         const thumbnail = component.thumbnail;
+
         validate.url(thumbnail.url);
 
         section.setThumbnailAccessory((thumb) => {
           thumb.setURL(thumbnail.url);
 
-          if (thumbnail.description) thumb.setDescription(thumbnail.description);
-          if (thumbnail.spoiler) thumb.setSpoiler(thumbnail.spoiler);
+          if (thumbnail.description !== undefined) {
+            thumb.setDescription(thumbnail.description);
+          }
+
+          if (thumbnail.spoiler !== undefined) {
+            thumb.setSpoiler(thumbnail.spoiler);
+          }
 
           return thumb;
         });
@@ -233,114 +264,119 @@ function buildEasyChild(component: ContainerNode): ContainerChild {
       return section;
     }
 
-    case 'row': {
+    case "row": {
       validate.row(component.components);
 
-      return new ActionRowBuilder<AnyComponentBuilder>().addComponents(
-        ...component.components.map(buildRowComponent),
+      return new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        ...component.components.map(build_row_component),
       );
     }
 
-    case 'gallery': {
-      return buildGallery(component.items);
+    case "gallery": {
+      return build_gallery(component.items);
     }
 
-    case 'file': {
-      return buildFile(component);
+    case "file": {
+      return build_file(component);
     }
 
     default: {
-      throw new Error('Unknown container component');
+      throw new Error("Unknown container component.");
     }
   }
 }
 
-export function toContainerChild(component: ContainerInput): ContainerChild {
-  if (isContainerChild(component)) return component;
-  return buildEasyChild(component);
-}
-
-export function toDisplayComponent(component: DisplayInput): DisplayComponent {
-  if (isDisplayComponent(component)) return component;
-  return buildEasyChild(component);
-}
-
-export function toDisplayComponents(...components: DisplayInput[]) {
-  return components.map(toDisplayComponent);
-}
-
-export function createRenderedComponents(
-  components: DisplayComponent[],
-  attachments: readonly unknown[],
-): RenderedComponents {
-  const rendered = components as RenderedComponentsMeta;
-
-  rendered[RENDERED] = true;
-
-  if (attachments.length > 0) {
-    rendered[RENDERED_ATTACHMENTS] = attachments;
+export function to_container_child(component: ContainerInput): ContainerChild {
+  if (is_container_child(component)) {
+    return component;
   }
 
-  return rendered as RenderedComponents;
+  return build_easy_child(component);
 }
 
-export function isRenderedComponents(value: unknown): value is RenderedComponents {
-  return Array.isArray(value) && (value as RenderedComponentsMeta)[RENDERED] === true;
+export function to_display_component(
+  component: DisplayInput,
+): DisplayComponent {
+  if (is_display_component(component)) {
+    return component;
+  }
+
+  return build_easy_child(component);
 }
 
-export function getRenderedComponentsAttachments(
-  components: RenderedComponents,
-): readonly unknown[] {
-  return (components as RenderedComponentsMeta)[RENDERED_ATTACHMENTS] ?? [];
+export function to_display_components(
+  ...components: DisplayInput[]
+): DisplayComponent[] {
+  return components.map(to_display_component);
 }
 
-function isEasyFileInput(component: unknown): component is FileComponent {
-  if (!component || typeof component !== 'object' || Array.isArray(component)) {
+function is_easy_file_input(component: unknown): component is FileComponent {
+  if (!component || typeof component !== "object" || Array.isArray(component)) {
     return false;
   }
 
-  const candidate = component as Record<string, unknown>;
-  return candidate.type === 'file';
+  return "type" in component && component.type === "file";
 }
 
-function getContainerAttachments(container: ContainerBuilder): readonly unknown[] {
+function get_container_attachments(
+  container: ContainerBuilder,
+): readonly AttachmentInput[] {
   return (container as ContainerWithAttachments)[ATTACHMENTS] ?? [];
 }
 
-export function collectAttachmentsFromContainerInputs(
+export function collect_attachments_from_container_inputs(
   components: readonly ContainerInput[],
-): readonly unknown[] {
-  return components
-    .filter((component): component is FileComponent => isEasyFileInput(component))
-    .map((fileInput) => fileInput.attachment)
-    .filter((attachment): attachment is unknown => attachment !== undefined);
-}
-
-export function attachContainerAttachments(
-  container: ContainerBuilder,
-  attachments: readonly unknown[],
-): ContainerBuilder {
-  if (attachments.length === 0) return container;
-
-  (container as ContainerWithAttachments)[ATTACHMENTS] = attachments;
-  return container;
-}
-
-export function collectAttachmentsFromDisplayInputs(
-  components: readonly DisplayInput[],
-): readonly unknown[] {
-  const attachments: unknown[] = [];
+): AttachmentInput[] {
+  const attachments: AttachmentInput[] = [];
 
   for (const component of components) {
-    if (component instanceof ContainerBuilder) {
-      attachments.push(...getContainerAttachments(component));
-      continue;
-    }
-
-    if (isEasyFileInput(component) && component.attachment !== undefined) {
+    if (is_easy_file_input(component) && component.attachment !== undefined) {
       attachments.push(component.attachment);
     }
   }
 
   return attachments;
+}
+
+export function attach_container_attachments(
+  container: ContainerBuilder,
+  attachments: readonly AttachmentInput[],
+): ContainerBuilder {
+  if (attachments.length === 0) {
+    return container;
+  }
+
+  (container as ContainerWithAttachments)[ATTACHMENTS] = attachments;
+
+  return container;
+}
+
+export function collect_attachments_from_display_inputs(
+  components: readonly DisplayInput[],
+): AttachmentInput[] {
+  const attachments: AttachmentInput[] = [];
+
+  for (const component of components) {
+    if (component instanceof ContainerBuilder) {
+      attachments.push(...get_container_attachments(component));
+      continue;
+    }
+
+    if (is_easy_file_input(component) && component.attachment !== undefined) {
+      attachments.push(component.attachment);
+    }
+  }
+
+  return attachments;
+}
+
+export function prepare_components(components: DisplayInput[]) {
+  const display_components = to_display_components(...components);
+
+  validate.components(display_components);
+
+  return {
+    components: display_components,
+    files: collect_attachments_from_display_inputs(components),
+  };
 }

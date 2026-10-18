@@ -1,43 +1,36 @@
-import { ChannelType, ContainerBuilder, MessageFlags } from 'discord.js';
+import { ChannelType, ContainerBuilder } from "discord.js";
 
-import {
+import type {
+  AttachmentInput,
   AttachmentUrlString,
   Button,
   ChannelSelect,
+  ContainerInput,
+  ContainerOptions,
   MediaItem,
   MentionableSelect,
   RowComponent,
   RoleSelect,
+  SectionOptions,
+  SectionTexts,
   SelectBase,
   StringSelect,
   StringSelectOption,
   Thumbnail,
-  ContainerInput,
-  ContainerOptions,
-  SectionOptions,
-  SectionTexts,
   UserSelect,
-  DisplayInput,
-} from '@types';
+} from "@types";
 
 import {
-  attachContainerAttachments,
-  collectAttachmentsFromContainerInputs,
-  collectAttachmentsFromDisplayInputs,
-  createRenderedComponents,
-  getRenderedComponentsAttachments,
-  isRenderedComponents,
-  RenderedComponents,
-  toContainerChild,
-  toDisplayComponents,
-} from './normalize';
-import { validate } from './validate';
+  attach_container_attachments,
+  collect_attachments_from_container_inputs,
+  to_container_child,
+} from "./normalize";
 
-export { toDisplayComponents } from './normalize';
+import { validate } from "./validate";
 
-function getAttachmentName(attachment: unknown) {
-  if (!attachment || typeof attachment !== 'object') {
-    throw new Error('Attachment must be an object with a valid file name.');
+function get_attachment_name(attachment: AttachmentInput): string {
+  if (!attachment || typeof attachment !== "object") {
+    throw new Error("Attachment must be an object with a valid file name.");
   }
 
   const candidate = attachment as {
@@ -46,55 +39,86 @@ function getAttachmentName(attachment: unknown) {
   };
 
   const name =
-    typeof candidate.name === 'string'
+    typeof candidate.name === "string"
       ? candidate.name
-      : typeof candidate.data?.name === 'string'
+      : typeof candidate.data?.name === "string"
         ? candidate.data.name
         : undefined;
 
   if (!name) {
     throw new Error(
-      'Attachment name was not found. Define a name in AttachmentBuilder options.',
+      "Attachment name was not found. Define a name in AttachmentBuilder options.",
     );
   }
 
   return name;
 }
 
-function buildEasyFile(
+function build_easy_file(
   url: AttachmentUrlString,
-  fileOrSpoiler?: unknown | boolean,
+  spoiler?: boolean,
+): ReturnType<typeof create_file_component>;
+
+function build_easy_file(
+  url: AttachmentUrlString,
+  attachment: AttachmentInput,
+  spoiler?: boolean,
+): ReturnType<typeof create_file_component>;
+
+function build_easy_file(
+  url: AttachmentUrlString,
+  attachment_or_spoiler?: AttachmentInput | boolean,
   spoiler = false,
 ) {
-  const hasFile = typeof fileOrSpoiler !== 'boolean';
+  const has_attachment =
+    attachment_or_spoiler !== undefined &&
+    typeof attachment_or_spoiler !== "boolean";
 
-  return {
-    type: 'file' as const,
+  return create_file_component(
     url,
-    spoiler: hasFile ? spoiler : (fileOrSpoiler ?? false),
-    attachment: hasFile ? fileOrSpoiler : undefined,
+    has_attachment ? spoiler : (attachment_or_spoiler ?? false),
+    has_attachment ? attachment_or_spoiler : undefined,
+  );
+}
+
+function create_file_component(
+  url: AttachmentUrlString,
+  spoiler: boolean,
+  attachment?: AttachmentInput,
+) {
+  return {
+    type: "file" as const,
+    url,
+    spoiler,
+    ...(attachment !== undefined && { attachment }),
   };
 }
 
-const file = Object.assign(buildEasyFile, {
-  fromAttachment(attachment: unknown, spoiler = false) {
-    const name = getAttachmentName(attachment);
-    return buildEasyFile(`attachment://${name}`, attachment, spoiler);
+const file = Object.assign(build_easy_file, {
+  fromAttachment(attachment: AttachmentInput, spoiler = false) {
+    const name = get_attachment_name(attachment);
+
+    return build_easy_file(`attachment://${name}`, attachment, spoiler);
   },
 });
 
-function isContainerOptions(value: unknown): value is ContainerOptions {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+function is_container_options(value: unknown): value is ContainerOptions {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
     return false;
   }
 
-  return 'color' in (value as Record<string, unknown>);
+  return "color" in value;
 }
 
-function splitContainerArgs(
-  args: [ContainerOptions, ...ContainerInput[]] | ContainerInput[],
-) {
-  if (isContainerOptions(args[0])) {
+type SplitContainerResult = {
+  options: ContainerOptions;
+  components: ContainerInput[];
+};
+
+function split_container_args(
+  args: (ContainerOptions | ContainerInput)[],
+): SplitContainerResult {
+  if (is_container_options(args[0])) {
     return {
       options: args[0],
       components: args.slice(1) as ContainerInput[],
@@ -102,174 +126,205 @@ function splitContainerArgs(
   }
 
   return {
-    options: {} as ContainerOptions,
+    options: {},
     components: args as ContainerInput[],
   };
 }
 
-type SelectBuilderOptions = Omit<SelectBase, 'id'>;
-type SelectBuilderInput = SelectBuilderOptions & { customId: SelectBase['id'] };
+type SelectBuilderOptions = Omit<SelectBase, "id">;
+
+type SelectBuilderInput = SelectBuilderOptions & {
+  customId: SelectBase["id"];
+};
+
 type ChannelSelectBuilderInput = SelectBuilderInput & {
   channelTypes?: readonly ChannelType[];
 };
+
 type StringSelectBuilderInput = SelectBuilderInput & {
   options: readonly StringSelectOption[];
 };
 
-export type MessageSendOptions = {
-  ephemeral?: boolean;
-  files?: readonly unknown[];
-};
-
-export type MessageSendPayload = MessageSendOptions & {
-  components: RenderedComponents;
-};
-
-export type ReplyableInteraction = {
-  reply(options: unknown): Promise<unknown>;
-};
-
 type SimpleSelectType =
-  | UserSelect['type']
-  | RoleSelect['type']
-  | MentionableSelect['type'];
+  | UserSelect["type"]
+  | RoleSelect["type"]
+  | MentionableSelect["type"];
+
 type SimpleSelect<TType extends SimpleSelectType> = Extract<
   RowComponent,
   { type: TType }
 >;
+
 type SimpleSelectBuilder<TType extends SimpleSelectType> = {
-  (customId: SelectBase['id'], opts?: SelectBuilderOptions): SimpleSelect<TType>;
+  (
+    custom_id: SelectBase["id"],
+    opts?: SelectBuilderOptions,
+  ): SimpleSelect<TType>;
+
   (opts: SelectBuilderInput): SimpleSelect<TType>;
 };
 
-function resolveSelectBase(
-  customId: SelectBase['id'],
+function resolve_select_base(
+  custom_id: SelectBase["id"],
   opts?: SelectBuilderOptions,
 ): SelectBase;
-function resolveSelectBase(opts: SelectBuilderInput): SelectBase;
-function resolveSelectBase(
-  customIdOrOpts: SelectBase['id'] | SelectBuilderInput,
+
+function resolve_select_base(opts: SelectBuilderInput): SelectBase;
+
+function resolve_select_base(
+  custom_id_or_opts: SelectBase["id"] | SelectBuilderInput,
   opts: SelectBuilderOptions = {},
 ): SelectBase {
-  if (typeof customIdOrOpts === 'string') {
-    return { id: customIdOrOpts, ...opts };
+  if (typeof custom_id_or_opts === "string") {
+    return {
+      id: custom_id_or_opts,
+      ...opts,
+    };
   }
 
-  const { customId, ...selectOptions } = customIdOrOpts;
-  return { id: customId, ...selectOptions };
+  const { customId, ...select_options } = custom_id_or_opts;
+
+  return {
+    id: customId,
+    ...select_options,
+  };
 }
 
-function createSelect<TType extends SimpleSelectType>(
+function create_select<TType extends SimpleSelectType>(
   type: TType,
-  customId: SelectBase['id'],
+  custom_id: SelectBase["id"],
   opts?: SelectBuilderOptions,
 ): SimpleSelect<TType>;
-function createSelect<TType extends SimpleSelectType>(
+
+function create_select<TType extends SimpleSelectType>(
   type: TType,
   opts: SelectBuilderInput,
 ): SimpleSelect<TType>;
-function createSelect<TType extends SimpleSelectType>(
+
+function create_select<TType extends SimpleSelectType>(
   type: TType,
-  customIdOrOpts: SelectBase['id'] | SelectBuilderInput,
+  custom_id_or_opts: SelectBase["id"] | SelectBuilderInput,
   opts?: SelectBuilderOptions,
 ) {
   return {
     type,
-    ...(typeof customIdOrOpts === 'string'
-      ? resolveSelectBase(customIdOrOpts, opts)
-      : resolveSelectBase(customIdOrOpts)),
+    ...(typeof custom_id_or_opts === "string"
+      ? resolve_select_base(custom_id_or_opts, opts)
+      : resolve_select_base(custom_id_or_opts)),
   };
 }
 
-function createSimpleSelectBuilder<TType extends SimpleSelectType>(
+function create_simple_select_builder<TType extends SimpleSelectType>(
   type: TType,
 ): SimpleSelectBuilder<TType> {
   function build(
-    customId: SelectBase['id'],
+    custom_id: SelectBase["id"],
     opts?: SelectBuilderOptions,
   ): SimpleSelect<TType>;
+
   function build(opts: SelectBuilderInput): SimpleSelect<TType>;
+
   function build(
-    customIdOrOpts: SelectBase['id'] | SelectBuilderInput,
+    custom_id_or_opts: SelectBase["id"] | SelectBuilderInput,
     opts?: SelectBuilderOptions,
   ): SimpleSelect<TType> {
-    return typeof customIdOrOpts === 'string'
-      ? createSelect(type, customIdOrOpts, opts)
-      : createSelect(type, customIdOrOpts);
+    return typeof custom_id_or_opts === "string"
+      ? create_select(type, custom_id_or_opts, opts)
+      : create_select(type, custom_id_or_opts);
   }
 
   return build;
 }
 
-const userSelect = createSimpleSelectBuilder('select.user');
-const roleSelect = createSimpleSelectBuilder('select.role');
-const mentionableSelect = createSimpleSelectBuilder('select.mentionable');
+const user_select = create_simple_select_builder("select.user");
+const role_select = create_simple_select_builder("select.role");
+const mentionable_select = create_simple_select_builder("select.mentionable");
 
-function channelSelect(
-  customId: SelectBase['id'],
-  channelTypes?: readonly ChannelType[],
+function channel_select(
+  custom_id: SelectBase["id"],
+  channel_types?: readonly ChannelType[],
   opts?: SelectBuilderOptions,
 ): ChannelSelect;
-function channelSelect(opts: ChannelSelectBuilderInput): ChannelSelect;
-function channelSelect(
-  customIdOrOpts: SelectBase['id'] | ChannelSelectBuilderInput,
-  channelTypes?: readonly ChannelType[] | SelectBuilderOptions,
+
+function channel_select(opts: ChannelSelectBuilderInput): ChannelSelect;
+
+function channel_select(
+  custom_id_or_opts: SelectBase["id"] | ChannelSelectBuilderInput,
+  channel_types?: readonly ChannelType[] | SelectBuilderOptions,
   opts: SelectBuilderOptions = {},
 ): ChannelSelect {
-  if (typeof customIdOrOpts !== 'string') {
-    const { channelTypes: resolvedChannelTypes, ...select } = customIdOrOpts;
+  if (typeof custom_id_or_opts !== "string") {
+    const { channelTypes, ...select_options } = custom_id_or_opts;
+
     return {
-      type: 'select.channel' as const,
-      ...resolveSelectBase(select),
-      channelTypes: resolvedChannelTypes,
+      type: "select.channel",
+      ...resolve_select_base(select_options),
+      ...(channelTypes !== undefined && { channelTypes }),
     };
   }
 
-  const resolvedOpts = Array.isArray(channelTypes)
+  const has_channel_types = Array.isArray(channel_types);
+
+  const resolved_opts = has_channel_types
     ? opts
-    : (channelTypes as SelectBuilderOptions | undefined);
+    : (channel_types as SelectBuilderOptions | undefined);
 
   return {
-    type: 'select.channel' as const,
-    ...resolveSelectBase(customIdOrOpts, resolvedOpts),
-    channelTypes: Array.isArray(channelTypes) ? channelTypes : undefined,
+    type: "select.channel",
+    ...resolve_select_base(custom_id_or_opts, resolved_opts),
+    ...(has_channel_types && {
+      channelTypes: channel_types as readonly ChannelType[],
+    }),
   };
 }
 
-function stringSelect(
-  customId: SelectBase['id'],
+function string_select(
+  custom_id: SelectBase["id"],
   options: readonly StringSelectOption[],
   opts?: SelectBuilderOptions,
 ): StringSelect;
-function stringSelect(opts: StringSelectBuilderInput): StringSelect;
-function stringSelect(
-  customIdOrOpts: SelectBase['id'] | StringSelectBuilderInput,
+
+function string_select(opts: StringSelectBuilderInput): StringSelect;
+
+function string_select(
+  custom_id_or_opts: SelectBase["id"] | StringSelectBuilderInput,
   options?: readonly StringSelectOption[] | SelectBuilderOptions,
   opts: SelectBuilderOptions = {},
 ): StringSelect {
-  if (typeof customIdOrOpts !== 'string') {
-    const { options: stringOptions, ...select } = customIdOrOpts;
+  if (typeof custom_id_or_opts !== "string") {
+    const { options: string_options, ...select_options } = custom_id_or_opts;
+
     return {
-      type: 'select.string' as const,
-      ...resolveSelectBase(select),
-      options: stringOptions,
+      type: "select.string",
+      ...resolve_select_base(select_options),
+      options: string_options,
     };
   }
 
+  const has_options = Array.isArray(options);
+
   return {
-    type: 'select.string' as const,
-    ...resolveSelectBase(customIdOrOpts, Array.isArray(options) ? opts : {}),
-    options: Array.isArray(options) ? options : [],
+    type: "select.string",
+    ...resolve_select_base(
+      custom_id_or_opts,
+      has_options ? opts : (options as SelectBuilderOptions | undefined),
+    ),
+    options: has_options ? (options as readonly StringSelectOption[]) : [],
   };
 }
 
 export const ui = {
   text(content: string) {
-    return { type: 'text' as const, content };
+    return {
+      type: "text" as const,
+      content,
+    };
   },
 
   divider() {
-    return { type: 'separator' as const };
+    return {
+      type: "separator" as const,
+    };
   },
 
   button(options: Button): Button {
@@ -277,15 +332,19 @@ export const ui = {
   },
 
   select: {
-    user: userSelect,
-    string: stringSelect,
-    role: roleSelect,
-    channel: channelSelect,
-    mentionable: mentionableSelect,
+    user: user_select,
+    string: string_select,
+    role: role_select,
+    channel: channel_select,
+    mentionable: mentionable_select,
   },
 
   section(texts: SectionTexts, opts: SectionOptions = {}) {
-    return { type: 'section' as const, texts, ...opts };
+    return {
+      type: "section" as const,
+      texts,
+      ...opts,
+    };
   },
 
   thumbnail(options: Thumbnail): Thumbnail {
@@ -293,7 +352,10 @@ export const ui = {
   },
 
   gallery(...items: MediaItem[]) {
-    return { type: 'gallery' as const, items };
+    return {
+      type: "gallery" as const,
+      items,
+    };
   },
 
   image(options: MediaItem): MediaItem {
@@ -303,49 +365,27 @@ export const ui = {
   file,
 
   row(...components: RowComponent[]) {
-    return { type: 'row' as const, components };
+    return {
+      type: "row" as const,
+      components,
+    };
   },
 
-  container(...args: [ContainerOptions, ...ContainerInput[]] | ContainerInput[]) {
-    const { options, components } = splitContainerArgs(args);
+  container(
+    ...args: [ContainerOptions, ...ContainerInput[]] | ContainerInput[]
+  ) {
+    const { options, components } = split_container_args(args);
 
     const container = new ContainerBuilder();
-    container.components.push(...components.map(toContainerChild));
+
+    container.components.push(...components.map(to_container_child));
 
     if (options.color !== undefined) {
-      const accentColor = validate.color(options.color);
-      container.setAccentColor(accentColor);
+      container.setAccentColor(validate.color(options.color));
     }
 
-    const attachments = collectAttachmentsFromContainerInputs(components);
-    return attachContainerAttachments(container, attachments);
-  },
+    const attachments = collect_attachments_from_container_inputs(components);
 
-  render(...components: DisplayInput[]): RenderedComponents {
-    const rendered = toDisplayComponents(...components);
-    validate.components(rendered);
-    const files = collectAttachmentsFromDisplayInputs(components);
-    return createRenderedComponents(rendered, files);
-  },
-
-  send(interaction: ReplyableInteraction, payload: MessageSendPayload) {
-    if (!isRenderedComponents(payload.components)) {
-      throw new Error('Components must be created with ui.render(...).');
-    }
-
-    validate.components(payload.components);
-
-    const flags = payload.ephemeral
-      ? [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral]
-      : [MessageFlags.IsComponentsV2];
-
-    const autoFiles = getRenderedComponentsAttachments(payload.components);
-    const files = [...autoFiles, ...(payload.files ?? [])];
-
-    return interaction.reply({
-      flags,
-      components: payload.components,
-      ...(files.length ? { files } : {}),
-    });
+    return attach_container_attachments(container, attachments);
   },
 };

@@ -1,0 +1,103 @@
+---
+sidebar_position: 3
+title: Create
+slug: /cli/create
+---
+
+# create
+
+O comando `nexo create` cria um novo projeto Nexocord. Ele solicita as configurações iniciais, gera os arquivos do projeto e instala as dependências automaticamente.
+
+Use esse comando quando quiser começar um bot do zero, sem precisar configurar manualmente o `package.json` ou preparar a estrutura inicial.
+
+## Uso
+
+```bash
+nexo create [name]
+```
+
+## Argumentos
+
+| Argumento | Descrição |
+| --- | --- |
+| `name` | Nome da pasta do projeto. Opcional; se omitido, o assistente solicitará o nome. |
+
+## Criar um projeto
+
+Para criar um projeto chamado `meu-bot`, execute:
+
+```bash
+nexo create meu-bot
+```
+
+O Nexocord iniciará o assistente de criação e solicitará as configurações necessárias.
+
+Quando o processo terminar, entre na pasta do projeto:
+
+```bash
+cd meu-bot
+```
+
+Em seguida, inicie o ambiente de desenvolvimento:
+
+```bash
+nexo dev
+```
+
+## Escolher a linguagem e o runtime
+
+Durante a criação, você poderá escolher a linguagem de programação e o runtime.
+
+### Linguagem
+
+- **JavaScript:** para desenvolver o bot em JavaScript.
+- **TypeScript:** para desenvolver o bot em TypeScript.
+
+### Runtime
+
+- **Node.js:** executa o projeto utilizando Node.js.
+- **Bun:** executa o projeto utilizando Bun.
+
+As escolhas determinam as ferramentas e as dependências instaladas no projeto.
+
+## O que o comando faz?
+
+O `nexo create` automatiza as etapas iniciais da configuração:
+
+1. Solicita o nome do projeto, caso não tenha sido informado.
+2. Apresenta as opções de linguagem e runtime.
+3. Prepara o diretório de destino.
+4. Gera os arquivos iniciais do projeto.
+5. Instala as dependências necessárias.
+6. Exibe as instruções para entrar na pasta e executar o projeto.
+
+A instalação das dependências utiliza `bun install` quando o runtime escolhido é Bun e `npm install` quando o runtime escolhido é Node.js.
+
+## Criar sem informar o nome
+
+Você também pode executar o comando sem argumentos:
+
+```bash
+nexo create
+```
+
+Nesse caso, o assistente solicitará o nome do projeto antes de continuar.
+
+## Ver ajuda
+
+Para consultar a ajuda do comando:
+
+```bash
+nexo create --help
+```
+
+## `create` ou `init`?
+
+Os dois comandos têm finalidades diferentes:
+
+| Comando | Quando utilizar |
+| --- | --- |
+| `nexo create` | Quando você quer criar um projeto novo e deixar o Nexocord preparar sua estrutura inicial. |
+| `nexo init` | Quando você já possui um projeto com `package.json` e quer configurá-lo para utilizar o Nexocord. |
+
+Se você já iniciou o projeto e instalou o Nexocord, utilize `nexo init`. Se ainda vai começar do zero, utilize `nexo create`.

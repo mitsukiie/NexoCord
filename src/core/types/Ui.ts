@@ -1,19 +1,24 @@
-import {
+import type {
   ActionRowBuilder,
-  AnyComponentBuilder,
   ButtonStyle,
   ChannelType,
   ContainerBuilder,
   FileBuilder,
+  InteractionReplyOptions,
   MediaGalleryBuilder,
+  MessageActionRowComponentBuilder,
   SectionBuilder,
   SeparatorBuilder,
   TextDisplayBuilder,
-} from 'discord.js';
+} from "discord.js";
 
 export type UrlString = `http://${string}` | `https://${string}`;
 export type AttachmentUrlString = `attachment://${string}`;
 export type ButtonID = string & {};
+
+export type AttachmentInput = NonNullable<
+  InteractionReplyOptions["files"]
+>[number];
 
 export type DisplayComponent =
   | ContainerBuilder
@@ -22,7 +27,7 @@ export type DisplayComponent =
   | SectionBuilder
   | MediaGalleryBuilder
   | FileBuilder
-  | ActionRowBuilder<AnyComponentBuilder>;
+  | ActionRowBuilder<MessageActionRowComponentBuilder>;
 
 export type ContainerChild = Exclude<DisplayComponent, ContainerBuilder>;
 
@@ -49,24 +54,24 @@ export type StringSelectOption = {
 };
 
 export type StringSelect = SelectBase & {
-  type: 'select.string';
+  type: "select.string";
   options: readonly StringSelectOption[];
 };
 
 export type UserSelect = SelectBase & {
-  type: 'select.user';
+  type: "select.user";
 };
 
 export type RoleSelect = SelectBase & {
-  type: 'select.role';
+  type: "select.role";
 };
 
 export type MentionableSelect = SelectBase & {
-  type: 'select.mentionable';
+  type: "select.mentionable";
 };
 
 export type ChannelSelect = SelectBase & {
-  type: 'select.channel';
+  type: "select.channel";
   channelTypes?: readonly ChannelType[];
 };
 
@@ -79,15 +84,20 @@ export type SelectMenu =
 
 export type RowComponent = Button | SelectMenu;
 
-export type TextComponent = { type: 'text'; content: string };
+export type TextComponent = {
+  type: "text";
+  content: string;
+};
 
-export type SeparatorComponent = { type: 'separator' };
+export type SeparatorComponent = {
+  type: "separator";
+};
 
 export type FileComponent = {
-  type: 'file';
+  type: "file";
   url: AttachmentUrlString;
   spoiler?: boolean;
-  attachment?: unknown;
+  attachment?: AttachmentInput;
 };
 
 export type MediaItem = {
@@ -97,7 +107,7 @@ export type MediaItem = {
 };
 
 export type MediaGallery = {
-  type: 'gallery';
+  type: "gallery";
   items: readonly MediaItem[];
 };
 
@@ -107,7 +117,10 @@ export type Thumbnail = {
   spoiler?: boolean;
 };
 
-export type SectionTexts = [string] | [string, string] | [string, string, string];
+export type SectionTexts =
+  | [string]
+  | [string, string]
+  | [string, string, string];
 
 export type SectionOptions = {
   button?: Button;
@@ -115,14 +128,12 @@ export type SectionOptions = {
 };
 
 export type SectionComponent = {
-  type: 'section';
+  type: "section";
   texts: SectionTexts;
-  button?: Button;
-  thumbnail?: Thumbnail;
-};
+} & SectionOptions;
 
 export type Row = {
-  type: 'row';
+  type: "row";
   components: readonly RowComponent[];
 };
 

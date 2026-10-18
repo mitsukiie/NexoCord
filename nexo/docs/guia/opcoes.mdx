@@ -1,0 +1,172 @@
+---
+sidebar_position: 2
+title: Opções
+slug: /options
+---
+
+# Opções de comandos
+
+As opções permitem que um comando receba dados fornecidos pelo usuário, como textos, números, usuários, canais e anexos.
+
+O Nexocord disponibiliza builders por meio de `option`, que ajudam a criar objetos compatíveis com as opções de comandos do Discord.
+
+## 🧪 Exemplo de uso
+
+Neste exemplo, o comando `/buscar` recebe um termo obrigatório e um limite opcional para os resultados.
+
+```ts title="src/commands/buscar.ts"
+import { CommandType, createCommand, option } from "nexocord";
+
+export default createCommand({
+  name: "buscar",
+  description: "Busca uma palavra.",
+  type: CommandType.ChatInput,
+  options: [
+    option.string({
+      name: "termo",
+      description: "Texto procurado",
+      required: true,
+      minLength: 2,
+      maxLength: 80,
+    }),
+    option.integer({
+      name: "limite",
+      description: "Quantidade de resultados",
+      minValue: 1,
+      maxValue: 20,
+    }),
+  ],
+  async run(ctx) {
+    const termo = ctx.interaction.options.getString("termo", true);
+    const limite = ctx.interaction.options.getInteger("limite");
+
+    await ctx.reply({
+      content: `Buscando por: ${termo}. Limite: ${limite ?? 10}.`,
+    });
+  },
+});
+```
+
+A opção `termo` é obrigatória. Já `limite` é opcional e utiliza `10` como valor alternativo quando o usuário não informa um número.
+
+## 🧰 Builders disponíveis
+
+| Builder | Tipo da opção | Campos específicos |
+| --- | --- | --- |
+| `option.string()` | Texto | `choices`, `autocomplete`, `minLength`, `maxLength` |
+| `option.integer()` | Número inteiro | `choices`, `autocomplete`, `minValue`, `maxValue` |
+| `option.number()` | Número decimal | `choices`, `autocomplete`, `minValue`, `maxValue` |
+| `option.boolean()` | Verdadeiro ou falso | Nenhum além dos campos base |
+| `option.user()` | Usuário | Nenhum além dos campos base |
+| `option.channel()` | Canal | `channelTypes` |
+| `option.role()` | Cargo | Nenhum além dos campos base |
+| `option.mentionable()` | Usuário ou cargo mencionável | Nenhum além dos campos base |
+| `option.attachment()` | Anexo | Nenhum além dos campos base |
+
+Os campos base são:
+
+| Campo | Tipo | Descrição |
+| --- | --- | --- |
+| `name` | `string` | Nome da opção. |
+| `description` | `string` | Descrição exibida pelo Discord. |
+| `required` | `boolean` | Indica se a opção é obrigatória. |
+
+Todas as opções exigem `name` e `description`. O campo `required` é opcional e segue o padrão definido pela API quando não informado.
+
+## 🔢 Limites e escolhas
+
+Os builders de texto e números aceitam campos adicionais para controlar os valores permitidos.
+
+### Texto
+
+```ts
+option.string({
+  name: "mensagem",
+  description: "Texto da mensagem",
+  minLength: 1,
+  maxLength: 100,
+});
+```
+
+### Número inteiro
+
+```ts
+option.integer({
+  name: "quantidade",
+  description: "Quantidade desejada",
+  minValue: 1,
+  maxValue: 10,
+});
+```
+
+### Escolhas predefinidas
+
+Utilize `choices` para oferecer valores predefinidos ao usuário:
+
+```ts
+option.string({
+  name: "cor",
+  description: "Escolha uma cor",
+  choices: [
+    { name: "Azul", value: "azul" },
+    { name: "Verde", value: "verde" },
+  ],
+});
+```
+
+Os valores de `choices` devem corresponder ao tipo da opção. Por exemplo, uma opção de texto utiliza valores `string`, enquanto opções numéricas utilizam valores numéricos.
+
+## 💡 Autocomplete
+
+O autocomplete permite apresentar sugestões enquanto o usuário preenche uma opção. Para ativá-lo, configure `autocomplete: true` na opção compatível e implemente a função `autocomplete` no comando.
+
+```ts
+import { CommandType, createCommand, option } from "nexocord";
+
+export default createCommand({
+  name: "buscar",
+  description: "Busca um item.",
+  type: CommandType.ChatInput,
+  options: [
+    option.string({
+      name: "termo",
+      description: "Nome do item",
+      autocomplete: true,
+    }),
+  ],
+  autocomplete(interaction, focused) {
+    const choices = ["maçã", "banana", "laranja"];
+    const filtered = choices.filter((item) =>
+      item.startsWith(focused),
+    );
+
+    return interaction.respond(
+      filtered.map((item) => ({
+        name: item,
+        value: item,
+      })),
+    );
+  },
+  async run(ctx) {
+    const termo = ctx.interaction.options.getString("termo", true);
+
+    await ctx.reply({ content: `Você pesquisou: ${termo}` });
+  },
+});
+```
+
+A função de autocomplete deve responder à interação com as sugestões disponíveis. O valor selecionado ainda precisa ser lido e validado na execução do comando.
+
+## 📥 Lendo os valores
+
+Dentro de `run`, acesse os valores por meio de `ctx.interaction.options`:
+
+```ts
+const texto = ctx.interaction.options.getString("termo", true);
+const quantidade = ctx.interaction.options.getInteger("limite");
+const usuario = ctx.interaction.options.getUser("usuario");
+```
+
+O segundo argumento `true` dos getters indica que o valor é obrigatório. Para opções opcionais, considere que o resultado pode ser `null`.
+
+Consulte a documentação do Discord.js para conhecer os getters disponíveis para cada tipo de opção.

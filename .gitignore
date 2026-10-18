@@ -1,6 +1,5 @@
 node_modules
 dist
-bun.lock
 
 # nexo
 nexo/build

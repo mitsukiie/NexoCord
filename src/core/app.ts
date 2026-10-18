@@ -1,10 +1,6 @@
 import { ExtendedClient } from "@base";
-import { 
-  CommandManager,
-  EventManager,
-  ResponderManager,
-} from "@modules";
-import { CooldownManager } from "./utils/Cooldown";
+import { CommandManager, EventManager, ResponderManager } from "@modules";
+import { CooldownManager } from "./utils/cooldown";
 
 export class App {
   private static instance: App;
@@ -32,7 +28,7 @@ export class App {
 
   public static get() {
     if (!this.instance) {
-      throw new Error('App não inicializado');
+      throw new Error("App não inicializado");
     }
     return this.instance;
   }

@@ -1,0 +1,142 @@
+---
+sidebar_position: 4
+title: Dev
+slug: /cli/dev
+---
+
+# dev
+
+O comando `nexo dev` executa o projeto em ambiente de desenvolvimento.
+
+Ele localiza o arquivo de entrada, carrega as variáveis de ambiente de um arquivo `.env`, quando disponível, e inicia a aplicação usando o runtime apropriado.
+
+## Uso
+
+```bash
+nexo dev [file] [opções]
+```
+
+## Argumentos
+
+| Argumento | Descrição |
+| --- | --- |
+| `file` | Caminho do arquivo de entrada. Opcional; quando omitido, o Nexocord resolve o arquivo de entrada do projeto. |
+
+## Opções
+
+| Opção | Descrição |
+| --- | --- |
+| `-w, --watch` | Ativa o modo de observação para reiniciar a execução quando houver alterações, quando suportado. |
+| `-h, --help` | Exibe a ajuda do comando. |
+
+## Executar o projeto
+
+Depois de configurar o projeto com `nexo init`, execute:
+
+```bash
+nexo dev
+```
+
+O Nexocord localizará o arquivo de entrada e iniciará a aplicação.
+
+Você também pode informar o arquivo explicitamente:
+
+```bash
+nexo dev src/index.ts
+```
+
+Para projetos JavaScript:
+
+```bash
+nexo dev src/index.js
+```
+
+## Modo watch
+
+A opção `--watch` habilita o modo de observação:
+
+```bash
+nexo dev --watch
+```
+
+Você também pode informar o arquivo de entrada:
+
+```bash
+nexo dev src/index.ts --watch
+```
+
+O suporte ao modo de observação depende do runtime e da linguagem utilizada. No comportamento atual, o Bun e a execução de TypeScript com Node.js possuem suporte a esse modo. Para JavaScript com Node.js, o comando informa que o modo não é suportado nativamente pela implementação atual.
+
+## Variáveis de ambiente
+
+Se existir um arquivo `.env` no projeto, o comando o utiliza para carregar as variáveis de ambiente durante a execução.
+
+Exemplo de arquivo `.env`:
+
+```dotenv
+DISCORD_TOKEN=seu_token
+```
+
+No código, a variável pode ser acessada por meio de `process.env`:
+
+```ts
+const token = process.env.DISCORD_TOKEN;
+```
+
+Mantenha tokens e outras informações sensíveis no arquivo `.env` e evite enviá-los para repositórios públicos.
+
+## Escolha do runtime
+
+O Nexocord executa o projeto usando o runtime configurado para ele. Dependendo do runtime, a execução pode utilizar ferramentas diferentes para lidar com TypeScript e arquivos de ambiente.
+
+Não é necessário adicionar manualmente comandos de execução ao terminal para cada runtime.
+
+## Exemplos
+
+Executar usando a entrada detectada:
+
+```bash
+nexo dev
+```
+
+Executar um arquivo específico:
+
+```bash
+nexo dev src/index.ts
+```
+
+Executar com observação de alterações:
+
+```bash
+nexo dev --watch
+```
+
+Consultar a ajuda:
+
+```bash
+nexo dev --help
+```
+
+## Problemas comuns
+
+### Arquivo de entrada não encontrado
+
+Verifique se o arquivo existe e se você está executando o comando no diretório correto.
+
+Se necessário, informe o caminho explicitamente:
+
+```bash
+nexo dev src/index.ts
+```
+
+### Runtime não encontrado
+
+Confirme que o Node.js ou o Bun escolhido está instalado e disponível no terminal.
+
+### Variáveis de ambiente não carregadas
+
+Verifique se o arquivo `.env` está na raiz do projeto e se os nomes das variáveis correspondem aos utilizados no código.
+
+### Erros durante a execução
+
+Confira a mensagem de erro exibida no terminal. Problemas de sintaxe, dependências ausentes ou configurações incorretas precisam ser corrigidos antes que a aplicação possa iniciar.

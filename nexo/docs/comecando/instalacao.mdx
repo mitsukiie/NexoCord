@@ -1,26 +1,126 @@
 ---
 sidebar_position: 2
 title: Instalação
+slug: /installation
 ---
 
 # Instalação
 
-## 📥 Instalar
+Esta página explica como instalar o Nexocord em um projeto existente ou criar um projeto novo utilizando a CLI.
+
+## Projeto existente
+
+Se você ainda não possui um projeto, crie o `package.json` com o gerenciador de pacotes escolhido.
+
+**npm**
 
 ```bash
-npm install nexocord discord.js
+npm init -y
+npm install nexocord
 ```
 
-## ⚙️ CLI do Nexo
-
-O Nexo inclui uma CLI para criar e executar projetos com a estrutura padrão do framework. Ela prepara o projeto inicial para você começar sem montar a base manualmente.
-
-## 🚀 Criar projeto
+**Bun**
 
 ```bash
-npx nexo create meu-bot
+bun init -y
+bun add nexocord
 ```
 
-:::info Importante
-O comando `create` gera a base do projeto com os arquivos e pastas iniciais já prontos para o próximo passo.
-:::
+Se o projeto já possui um `package.json`, instale apenas o Nexocord.
+
+**npm**
+
+```bash
+npm install nexocord
+```
+
+**Bun**
+
+```bash
+bun add nexocord
+```
+
+Em seguida, configure o projeto:
+
+```bash
+nexo init
+```
+
+O assistente permite escolher o runtime (`node` ou `bun`) e a linguagem (`js` ou `ts`). Com base nessas escolhas, o Nexocord configura o `package.json`, adiciona as dependências necessárias, instala-as e gera os arquivos iniciais do projeto.
+
+Você também pode informar as opções diretamente:
+
+```bash
+nexo init --language ts --runtime node
+```
+
+O executável `nexo` fica disponível localmente no projeto. Para utilizá-lo, execute os comandos no contexto do projeto.
+
+Se quiser usar `nexo` diretamente em qualquer diretório, instale o pacote globalmente.
+
+**npm**
+
+```bash
+npm install --global nexocord
+```
+
+**Bun**
+
+```bash
+bun add --global nexocord
+```
+
+## Criar um projeto novo
+
+Para criar um projeto do zero, utilize:
+
+```bash
+nexo create meu-bot
+```
+
+O assistente solicitará o runtime (`node` ou `bun`) e a linguagem (`js` ou `ts`). Em seguida, gerará a estrutura inicial e instalará as dependências usando o gerenciador correspondente ao runtime escolhido.
+
+Após a criação, entre na pasta do projeto:
+
+```bash
+cd meu-bot
+```
+
+Inicie o ambiente de desenvolvimento:
+
+```bash
+nexo dev
+```
+
+Para consultar os comandos disponíveis, acesse a [referência da CLI](/docs/cli).
+
+## Configurar o token do Discord
+
+Para conectar seu bot ao Discord, crie um aplicativo e um bot no [Discord Developer Portal](https://discord.com/developers/applications).
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+TOKEN=seu-token-do-discord
+```
+
+O Nexocord utiliza `options.token` quando um token é fornecido explicitamente ao `Bootstrap.init`. Caso contrário, utiliza `process.env.TOKEN`.
+
+Os comandos `nexo dev` e `nexo start` carregam automaticamente as variáveis do arquivo `.env`, quando ele existe.
+
+Adicione `.env` ao `.gitignore` para evitar o envio do token ao repositório:
+
+```gitignore
+.env
+```
+
+Nunca compartilhe seu token nem o envie para um repositório público. Se ele for exposto, gere outro pelo Discord Developer Portal.
+
+## Requisitos
+
+Antes de começar, verifique se você possui:
+
+- Node.js 20 ou superior, ou Bun compatível com as dependências do projeto.
+- Um projeto com `package.json`, caso utilize `nexo init`.
+- Um aplicativo e bot configurados no Discord Developer Portal.
+- Um token armazenado em uma variável de ambiente.
