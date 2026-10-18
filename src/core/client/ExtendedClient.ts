@@ -3,31 +3,29 @@ import {
   type ClientOptions,
   GatewayIntentBits,
   Partials,
-} from 'discord.js';
+} from "discord.js";
 
 interface ExtendedClientOptions {
-  intents?: ClientOptions['intents'];
-  partials?: ClientOptions['partials'];
+  intents?: ClientOptions["intents"];
+  partials?: ClientOptions["partials"];
 }
 
-const intents: NonNullable<ClientOptions['intents']> = [
+const intents: NonNullable<ClientOptions["intents"]> = [
   GatewayIntentBits.Guilds,
   GatewayIntentBits.GuildMessages,
   GatewayIntentBits.MessageContent,
 ];
 
-const partials: NonNullable<ClientOptions['partials']> = [
+const partials: NonNullable<ClientOptions["partials"]> = [
   Partials.Channel,
   Partials.Message,
 ];
 
 export class ExtendedClient extends Client {
-
   constructor(options: ExtendedClientOptions = {}) {
     super({
       intents: options.intents ?? intents,
       partials: options.partials ?? partials,
     });
   }
-  
 }

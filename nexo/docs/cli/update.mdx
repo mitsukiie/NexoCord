@@ -1,0 +1,80 @@
+---
+sidebar_position: 9
+title: Update
+slug: /cli/update
+---
+
+# update
+
+O comando `nexo update` atualiza o pacote Nexocord no projeto atual, utilizando o gerenciador de pacotes detectado.
+
+Ele deve ser executado no diretório do projeto que possui o `package.json`.
+
+## Uso
+
+```bash
+nexo update
+```
+
+O comando não recebe argumentos ou opções adicionais.
+
+## Como funciona?
+
+Ao executar `nexo update`, o Nexocord:
+
+1. Verifica se existe um `package.json` no diretório atual.
+2. Detecta o gerenciador de pacotes do projeto.
+3. Executa o comando de atualização correspondente para o pacote `nexocord`.
+
+O gerenciador utilizado depende da configuração detectada no projeto.
+
+## Exemplos
+
+Entre no diretório do projeto:
+
+```bash
+cd meu-bot
+```
+
+Execute a atualização:
+
+```bash
+nexo update
+```
+
+Aguarde o gerenciador de pacotes concluir a operação e verifique se houve algum erro durante o processo.
+
+## Gerenciadores de pacotes
+
+O comportamento depende do gerenciador detectado:
+
+| Gerenciador | Operação utilizada |
+| --- | --- |
+| Yarn | `yarn upgrade nexocord` |
+| Outros gerenciadores detectados | `update nexocord` por meio do comando correspondente. |
+
+A versão instalada após a atualização depende das regras de resolução de versões do gerenciador e da faixa de versão declarada no projeto. Portanto, o comando não garante necessariamente a instalação da versão mais recente publicada.
+
+## Problemas comuns
+
+### `package.json` não encontrado
+
+Execute o comando na raiz de um projeto Node.js ou Bun que contenha um `package.json`.
+
+### Falha ao atualizar
+
+Verifique a conexão com a internet, o gerenciador de pacotes utilizado e as mensagens de erro exibidas no terminal.
+
+### A versão não mudou
+
+Confira a versão instalada e a faixa de versão declarada no `package.json`. O gerenciador pode manter a versão atual caso ela satisfaça as regras de resolução do projeto.
+
+## Verificar a instalação
+
+Após a atualização, execute:
+
+```bash
+nexo info
+```
+
+Esse comando exibe informações sobre o Nexocord e o ambiente atual.

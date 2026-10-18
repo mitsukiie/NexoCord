@@ -1,5 +1,5 @@
-import { Collection } from 'discord.js';
-import type { Event } from '@types';
+import { Collection } from "discord.js";
+import type { Event } from "@types";
 
 export class EventManager {
   private readonly events = new Collection<string, Event>();

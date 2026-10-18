@@ -1,77 +1,63 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Eventos
+slug: /events
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# 🎧 Eventos
 
-# Eventos
+Os eventos permitem executar código quando algo acontece no Discord, como quando o bot fica online, um usuário entra em um servidor ou uma mensagem é enviada.
 
-Eventos permitem reagir ao que acontece no bot e no Discord, como inicialização, entrada de membros e criação de mensagens.
+Use `createEvent()` para definir um evento. Os arquivos são carregados recursivamente a partir do diretório configurado em `paths.events` e devem exportar o evento como `default`.
 
----
-
-## 🚀 Como funciona
-
-- 📄 O diretório de eventos é definido por você em `paths.events` no `Bootstrap.init`.
-- 📁 O carregamento é recursivo (subpastas são suportadas).
-- 🧩 Não há obrigatoriedade de categorias.
-- 📦 Cada arquivo deve exportar um `default`.
-
----
-
-## 🧪 Exemplo básico
-
-<Tabs groupId="lang-event-first">
-	<TabItem value="js" label="JavaScript">
-
-```js
-const { createEvent, EventType } = require('nexocord');
-
-module.exports = createEvent({
-  name: 'ready',
-  once: true,
-  run(client) {
-    console.log(`✅ Bot ${client.user?.username} está online!`);
-  },
-});
-```
-
-	</TabItem>
-  <TabItem value="ts" label="TypeScript">
+## 🚀 Exemplo
 
 ```ts
-import { createEvent, EventType } from 'nexocord';
+import { createEvent, Events } from "nexocord";
 
 export default createEvent({
-  name: 'ready',
-  once: true, // Executar apenas uma vez
+  name: Events.ClientReady,
+  once: true,
+
   run(client) {
-    console.log(`✅ Bot ${client.user?.username} está online!`);
+    console.log(`${client.user.displayName} online.`);
   },
 });
 ```
 
-	</TabItem>
-</Tabs>
+Neste exemplo, o evento é executado quando o cliente fica pronto. Como `once` está definido como `true`, o listener é executado apenas uma vez.
 
-## 📋 Estrutura do evento
+## 📋 Campos do evento
 
 | Campo | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `name` | `keyof ClientEvents` | Sim | Nome do evento |
-| `once` | `boolean` | Não | Executa apenas uma vez |
-| `run` | `function` | Sim | Função executada |
+| --- | --- | --- | --- |
+| `name` | `keyof ClientEvents` | Sim | Nome do evento do Discord.js. |
+| `once` | `boolean` | Não | Define se o listener será executado apenas uma vez. O padrão depende da implementação do Nexocord. |
+| `run` | `function` | Sim | Função executada quando o evento acontece. |
 
-## 🧠 Assinatura do `run`
+## ⚙️ Argumentos de `run`
 
-O `run` recebe:
+A função `run` recebe os argumentos originais do evento do Discord.js, na mesma ordem, e o cliente como último argumento.
 
-1. Argumentos originais do evento do Discord.js
-2. `client` como último argumento
+Os argumentos variam conforme o evento. Por exemplo, `ClientReady` recebe o cliente, enquanto eventos de mensagens recebem os dados relacionados à mensagem.
 
-## 🔁 once vs on
+## 📚 Eventos disponíveis
 
-- `once: true` → executa apenas uma vez.
-- Sem `once` → executa em todos os disparos.
+O Nexocord exporta `Events` como uma reexportação de `discord.js`. Você pode utilizá-lo para referenciar os eventos sem precisar escrever seus nomes manualmente.
+
+```ts
+import { Events } from "nexocord";
+
+Events.ClientReady;
+Events.MessageCreate;
+Events.InteractionCreate;
+```
+
+Consulte a [documentação do Discord.js](https://discord.js.org/docs/packages/discord.js/main/Events:Enum) para ver os eventos disponíveis.
+
+## 💡 Dicas
+
+- 🎯 Utilize `Events` para evitar erros ao escrever nomes de eventos manualmente.
+- 🧩 Mantenha cada evento em seu próprio arquivo para facilitar a organização.
+- 🔁 Use `once: true` quando o evento precisar ser executado apenas uma vez.
+- 📂 Confira se o caminho configurado em `paths.events` corresponde à localização dos seus arquivos.

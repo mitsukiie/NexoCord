@@ -1,21 +1,21 @@
-import { REST, Routes } from 'discord.js';
-import { existsSync, readdirSync } from 'fs';
-import path from 'path';
-import { pathToFileURL } from 'url';
+import { REST, Routes } from "discord.js";
+import { existsSync, readdirSync } from "fs";
+import path from "path";
+import { pathToFileURL } from "url";
 
 // Importações internas do projeto
-import { ExtendedClient, App } from '@base';
-import { Command } from '@types';
-import { logger } from '@utils';
-import { isScript } from '../../utils/extensions';
-import { createSubcommand } from '../../creators';
+import { ExtendedClient, App } from "@base";
+import { Command } from "@types";
+import { logger } from "@utils";
+import { is_script } from "../../utils/extensions";
+import { createSubcommand } from "../../creators";
 
 type Serialized = ReturnType<typeof serialize>;
 
-export async function loadCommands(
+export async function load_commands(
   client?: ExtendedClient,
   token?: string,
-  commandsPath = 'src/commands',
+  commandsPath = "src/commands",
 ): Promise<Serialized[]> {
   const app = App.get();
   const commands: Serialized[] = [];
@@ -33,22 +33,24 @@ export async function loadCommands(
   app.commands.clear();
 
   if (settings.terminal.showSlashCommandsFiles) {
-    logger.info('🔄 Iniciando o carregamento de comandos...');
+    logger.info("🔄 Iniciando o carregamento de comandos...");
     logger.success(`📂 Total de categorias: ${categories.length}`);
   }
 
   await Promise.all(
     categories.map(async (categorie) => {
-      const categoryPath = path.join(folders, categorie);
-      const entries = readdirSync(categoryPath, { withFileTypes: true });
+      const category_path = path.join(folders, categorie);
+      const entries = readdirSync(category_path, { withFileTypes: true });
 
       if (settings.terminal.showSlashCommandsFiles) {
-        logger.success(`📂 Categoria: ${categorie} - ${entries.length} comandos`);
+        logger.success(
+          `📂 Categoria: ${categorie} - ${entries.length} comandos`,
+        );
       }
 
       await Promise.all(
         entries.map(async (entry) => {
-          const fullPath = path.join(categoryPath, entry.name);
+          const fullPath = path.join(category_path, entry.name);
 
           // Caso seja uma pasta, tratamos como grupo de subcomandos
           if (entry.isDirectory()) {
@@ -60,13 +62,15 @@ export async function loadCommands(
           }
 
           // Caso seja um arquivo, tratamos como comando único
-          else if (entry.isFile() && isScript(entry.name)) {
+          else if (entry.isFile() && is_script(entry.name)) {
             const url = pathToFileURL(path.resolve(fullPath)).href;
             const module = await import(url);
             const command = module.default;
 
             if (!command) {
-              logger.warn(`⚠️ Arquivo ignorado (sem export default): ${entry.name}`);
+              logger.warn(
+                `⚠️ Arquivo ignorado (sem export default): ${entry.name}`,
+              );
               return;
             }
 
@@ -87,13 +91,13 @@ export async function loadCommands(
   );
 
   if (client) {
-    await registerCommands(client, commands, token);
+    await register_commands(client, commands, token);
   }
 
   return commands;
 }
 
-export async function registerCommands(
+export async function register_commands(
   client: ExtendedClient,
   commands: Serialized[],
   token?: string,
@@ -101,11 +105,11 @@ export async function registerCommands(
   const Token = token ?? process.env.TOKEN;
 
   if (!Token) {
-    logger.error('Token não definido para registrar comandos.');
+    logger.error("Token não definido para registrar comandos.");
     process.exit(1);
   }
 
-  const rest = new REST({ version: '10' }).setToken(Token);
+  const rest = new REST({ version: "10" }).setToken(Token);
 
   try {
     if (settings.bot.guildID && settings.bot.guildID?.length > 0) {
@@ -116,13 +120,16 @@ export async function registerCommands(
           try {
             const guild = await client.guilds.fetch(ID).catch(() => null);
 
-            await rest.put(Routes.applicationGuildCommands(client.user!.id, ID), {
-              body: commands,
-            });
+            await rest.put(
+              Routes.applicationGuildCommands(client.user!.id, ID),
+              {
+                body: commands,
+              },
+            );
 
             return {
               ID,
-              name: guild?.name ?? 'Servidor não encontrado',
+              name: guild?.name ?? "Servidor não encontrado",
               commands: commands.length,
               success: true,
             };
@@ -130,7 +137,7 @@ export async function registerCommands(
             const guild = await client.guilds.fetch(ID).catch(() => null);
             return {
               ID,
-              name: guild?.name ?? 'Servidor não encontrado',
+              name: guild?.name ?? "Servidor não encontrado",
               success: false,
             };
           }
@@ -146,28 +153,33 @@ export async function registerCommands(
       });
 
       if (settings.terminal.showSlashCommandsRegistred) {
-        logger.success(`✅ Comandos atualizados: ${commands.length}`);
+        if (commands.length === 1) {
+          logger.success(`${commands.length} comando registrado.`);
+        } else {
+          logger.success(`${commands.length} comandos registrados.`);
+        }
       }
     }
   } catch (err) {
-    console.error('❌ Erro ao registrar comandos:', err);
+    console.error("Erro ao registrar comandos:", err);
   }
 }
 
 export async function Commands(client: ExtendedClient) {
-  const commands = await loadCommands();
-  await registerCommands(client, commands);
+  const commands = await load_commands();
+  await register_commands(client, commands);
 }
 
 function serialize(command: Command) {
   return {
     name: command.name,
-    description: command.description || 'Sem descrição',
+    description: command.description || "Sem descrição",
     type: command.type ?? 1,
     options: command.options || [],
     defaultMemberPermission: command.defaultMemberPermission || null,
     botpermission: command.botpermission || null,
-    dmPermission: command.dmPermission !== undefined ? command.dmPermission : true,
+    dmPermission:
+      command.dmPermission !== undefined ? command.dmPermission : true,
     nsfw: command.nsfw || false,
     allowIds: command.allowIds || null,
   };

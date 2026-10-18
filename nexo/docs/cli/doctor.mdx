@@ -1,0 +1,95 @@
+---
+sidebar_position: 7
+title: Doctor
+slug: /cli/doctor
+---
+
+# doctor
+
+O comando `nexo doctor` verifica o ambiente de desenvolvimento e a configuração do projeto, ajudando a identificar problemas que podem impedir a execução do Nexocord.
+
+Ele verifica ferramentas instaladas, arquivos importantes e algumas configurações do projeto, exibindo o resultado de cada verificação no terminal.
+
+## Uso
+
+```bash
+nexo doctor
+```
+
+O comando não recebe argumentos ou opções adicionais.
+
+## O que é verificado?
+
+O `nexo doctor` realiza as seguintes verificações:
+
+| Verificação | Descrição |
+| --- | --- |
+| Node.js | Verifica se o Node.js está instalado e disponível. |
+| npm | Verifica se o npm está disponível. |
+| Bun | Verifica se o Bun está instalado. |
+| `package.json` | Verifica a presença do arquivo e identifica informações do projeto e do gerenciador de pacotes. |
+| Arquivo de entrada | Procura o arquivo de entrada do projeto. |
+| `.env` | Verifica se existe um arquivo de variáveis de ambiente. |
+| `tsconfig.json` | Verifica se existe uma configuração do TypeScript. |
+
+## Executar o diagnóstico
+
+Na raiz do projeto, execute:
+
+```bash
+nexo doctor
+```
+
+O comando apresentará os resultados das verificações e indicará possíveis problemas.
+
+## Entendendo os resultados
+
+As verificações são apresentadas com diferentes níveis de importância:
+
+- **Crítico:** indica um problema que pode impedir a execução ou o diagnóstico correto do projeto.
+- **Aviso:** indica uma configuração ausente ou uma situação que merece atenção.
+- **Informativo:** apresenta informações sobre ferramentas ou configurações detectadas.
+
+A ausência do Bun, por exemplo, não significa necessariamente que há um problema se você utiliza Node.js.
+
+## Problemas comuns
+
+### Node.js não encontrado
+
+Se o Node.js não estiver instalado ou não estiver disponível no `PATH`, o diagnóstico indicará um erro crítico.
+
+Instale o Node.js e confirme sua disponibilidade:
+
+```bash
+node --version
+```
+
+### npm não encontrado
+
+O comando verificará se o npm está disponível. Se não estiver, poderá apresentar um aviso.
+
+Confirme a instalação com:
+
+```bash
+npm --version
+```
+
+### Arquivo de entrada não encontrado
+
+Verifique se o projeto possui o arquivo de entrada esperado e se você está executando o comando no diretório correto.
+
+Se necessário, revise a estrutura do projeto e as configurações utilizadas pelo Nexocord.
+
+### Arquivo `.env` ausente
+
+A ausência de `.env` será indicada no diagnóstico. Se o bot precisar de variáveis de ambiente, crie o arquivo e configure os valores necessários.
+
+### `tsconfig.json` ausente
+
+Se o projeto utiliza TypeScript, confirme se o arquivo `tsconfig.json` existe na raiz do projeto. Para projetos JavaScript, sua ausência pode ser normal.
+
+## Código de saída
+
+O comando termina com código de saída `1` quando detecta erros críticos, como a ausência do Node.js ou de um arquivo de entrada válido.
+
+Isso permite utilizar o diagnóstico em scripts e fluxos automatizados para detectar problemas de configuração.

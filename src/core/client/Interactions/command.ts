@@ -1,12 +1,14 @@
-import { MessageFlags } from 'discord.js';
-import { App } from '@base';
+import { MessageFlags, ChatInputCommandInteraction } from "discord.js";
+import { App } from "@base";
+import { create_context } from "../../creators";
 
-export async function Command(i: any) {
+export async function Command(i: ChatInputCommandInteraction) {
   const app = App.get();
 
   const name = i.commandName;
   const id = i.user.id;
   const command = app.commands.get(name);
+
   if (!command) return;
 
   if (app.cooldowns.isOnCooldown(id, name)) {
@@ -18,14 +20,17 @@ export async function Command(i: any) {
   }
 
   try {
-    await command.run(i, app.client);
+    const ctx = create_context(i, app.client);
+
+    await command.run(ctx);
+
     app.cooldowns.set(id, name, command.cooldown ?? undefined);
   } catch (err) {
     console.error(err);
-    const msg = "😓 Desculpa, eu acabei tropeçando aqui...\nTente de novo depois!";
+    const msg =
+      "Ocorreu um erro ao executar este comando. Por favor, tente novamente mais tarde.";
     if (i.replied || i.deferred)
       await i.followUp({ content: msg, flags: [MessageFlags.Ephemeral] });
-    else
-      await i.reply({ content: msg, flags: [MessageFlags.Ephemeral] });
+    else await i.reply({ content: msg, flags: [MessageFlags.Ephemeral] });
   }
 }

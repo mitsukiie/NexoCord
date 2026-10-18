@@ -1,0 +1,369 @@
+---
+sidebar_position: 6
+title: Components V2
+slug: /components-v2
+---
+
+# 🧩 Components V2
+
+O Nexocord oferece uma API para criar mensagens interativas no Discord usando **Components V2**. Com ela, você pode organizar textos, botões, menus de seleção, imagens, arquivos e outros elementos sem precisar construir manualmente cada componente do Discord.js.
+
+A API é acessada pelo objeto `ui`, enquanto o envio é feito pelo contexto do comando com `ctx.reply()`.
+
+## 🚀 Primeiro exemplo
+
+```ts
+import { createCommand, ui } from "nexocord";
+
+export default createCommand({
+  name: "painel",
+  description: "Exibe um painel interativo.",
+
+  async run(ctx) {
+    const components = [
+      ui.text("## Meu painel"),
+      ui.text("Bem-vindo! Escolha uma opção abaixo."),
+      ui.divider(),
+    ];
+
+    await ctx.reply({ components });
+  },
+});
+```
+
+O Nexocord prepara os componentes e adiciona automaticamente a flag `MessageFlags.IsComponentsV2` à resposta.
+
+## 📝 Textos
+
+Use `ui.text()` para adicionar texto à mensagem. O conteúdo aceita formatação Markdown suportada pelo Discord.
+
+```ts
+const components = [
+  ui.text("## Perfil do usuário"),
+  ui.text("**Nome:** Caio\n**Nível:** 10"),
+];
+
+await ctx.reply({ components });
+```
+
+## ➖ Separadores
+
+Use `ui.divider()` para separar visualmente as seções da mensagem.
+
+```ts
+const components = [
+  ui.text("## Configurações"),
+  ui.divider(),
+  ui.text("Personalize suas preferências."),
+];
+
+await ctx.reply({ components });
+```
+
+## 🔘 Botões
+
+Use `ui.button()` para criar botões interativos.
+
+```ts
+const components = [
+  ui.button({
+    label: "Clique aqui",
+    customId: "painel:abrir",
+    style: "Primary",
+  }),
+];
+
+await ctx.reply({ components });
+```
+
+O `customId` identifica a interação e pode ser utilizado para registrar um responder correspondente.
+
+## 📦 Linhas de ação
+
+Use `ui.row()` para agrupar componentes compatíveis em uma linha de ação.
+
+```ts
+const components = [
+  ui.row([
+    ui.button({
+      label: "Confirmar",
+      customId: "acao:confirmar",
+      style: "Success",
+    }),
+    ui.button({
+      label: "Cancelar",
+      customId: "acao:cancelar",
+      style: "Danger",
+    }),
+  ]),
+];
+
+await ctx.reply({ components });
+```
+
+Uma linha de ação pode conter de 1 a 5 botões, conforme as validações do Nexocord.
+
+## 📋 Menus de seleção
+
+Os menus permitem que o usuário selecione opções ou entidades do Discord.
+
+### 🔤 Seleção de texto
+
+Use `ui.select.string()` para apresentar opções de texto.
+
+```ts
+const components = [
+  ui.select.string({
+    customId: "preferencia:idioma",
+    placeholder: "Selecione um idioma",
+    options: [
+      { label: "Português", value: "pt" },
+      { label: "Inglês", value: "en" },
+      { label: "Espanhol", value: "es" },
+    ],
+  }),
+];
+
+await ctx.reply({ components });
+```
+
+### 👤 Seleção de usuários
+
+Use `ui.select.user()` para permitir a seleção de usuários.
+
+```ts
+const components = [
+  ui.select.user({
+    customId: "membro:selecionar",
+    placeholder: "Selecione um usuário",
+  }),
+];
+
+await ctx.reply({ components });
+```
+
+### 🛡️ Seleção de cargos
+
+Use `ui.select.role()` para permitir a seleção de cargos do servidor.
+
+```ts
+const components = [
+  ui.select.role({
+    customId: "cargo:selecionar",
+    placeholder: "Selecione um cargo",
+  }),
+];
+
+await ctx.reply({ components });
+```
+
+### 🏠 Seleção de canais
+
+Use `ui.select.channel()` para permitir a seleção de canais.
+
+```ts
+const components = [
+  ui.select.channel({
+    customId: "canal:selecionar",
+    placeholder: "Selecione um canal",
+  }),
+];
+
+await ctx.reply({ components });
+```
+
+### 🔗 Seleção de usuários ou cargos
+
+Use `ui.select.mentionable()` para permitir a seleção de usuários ou cargos.
+
+```ts
+const components = [
+  ui.select.mentionable({
+    customId: "mencao:selecionar",
+    placeholder: "Selecione um usuário ou cargo",
+  }),
+];
+
+await ctx.reply({ components });
+```
+
+O `customId` identifica a interação. Para processá-la, registre um responder compatível com o tipo do menu.
+
+## 🗂️ Seções
+
+Use `ui.section()` para organizar textos em uma seção com um acessório opcional, como um botão ou uma miniatura.
+
+```ts
+const components = [
+  ui.section(
+    [
+      "## Informações do servidor",
+      "Veja os dados e as configurações do servidor.",
+    ],
+    {
+      button: ui.button({
+        label: "Ver detalhes",
+        customId: "servidor:detalhes",
+        style: "Primary",
+      }),
+    },
+  ),
+];
+
+await ctx.reply({ components });
+```
+
+Uma seção aceita de 1 a 3 textos, conforme as validações do Nexocord.
+
+## 🖼️ Imagens
+
+Use os componentes de imagem para exibir conteúdo visual.
+
+### 🏞️ Imagem individual
+
+```ts
+const components = [
+  ui.image("https://example.com/imagem.png"),
+];
+
+await ctx.reply({ components });
+```
+
+### 🖼️ Galeria
+
+Use `ui.gallery()` para agrupar várias imagens.
+
+```ts
+const components = [
+  ui.gallery([
+    "https://example.com/imagem-1.png",
+    "https://example.com/imagem-2.png",
+  ]),
+];
+
+await ctx.reply({ components });
+```
+
+Uma galeria aceita de 1 a 10 itens, conforme as validações do Nexocord.
+
+## 📎 Arquivos
+
+Use `ui.file()` para incluir arquivos como componentes. Quando você já possui um anexo do Discord.js, pode utilizar `ui.file.fromAttachment()`.
+
+```ts
+import { AttachmentBuilder } from "discord.js";
+import { ui } from "nexocord";
+
+const attachment = new AttachmentBuilder(
+  Buffer.from("Conteúdo do arquivo"),
+  { name: "relatorio.txt" },
+);
+
+const components = [
+  ui.file.fromAttachment(attachment),
+];
+
+await ctx.reply({ components });
+```
+
+Os arquivos associados aos componentes são coletados durante a preparação da mensagem. Você também pode fornecer anexos adicionais pela propriedade `files` de `ctx.reply()`.
+
+## 🧱 Containers
+
+Use `ui.container()` para agrupar componentes em um container.
+
+```ts
+const components = [
+  ui.container([
+    ui.text("## Meu painel"),
+    ui.text("Informações organizadas em um container."),
+  ]),
+];
+
+await ctx.reply({ components });
+```
+
+Containers ajudam a organizar o conteúdo em blocos. Você também pode combinar outros componentes compatíveis dentro deles.
+
+## 🔒 Respostas efêmeras
+
+Para enviar uma resposta visível somente ao usuário que executou o comando, utilize `MessageFlags.Ephemeral`.
+
+```ts
+import { MessageFlags } from "discord.js";
+import { ui } from "nexocord";
+
+const components = [
+  ui.text("Esta resposta é privada."),
+];
+
+await ctx.reply({
+  components,
+  flags: MessageFlags.Ephemeral,
+});
+```
+
+O contexto adiciona automaticamente `MessageFlags.IsComponentsV2` e preserva as flags informadas.
+
+## ⚙️ Como funciona `ctx.reply()`
+
+O método `ctx.reply()` aceita tanto respostas tradicionais quanto mensagens com Components V2.
+
+### Mensagens tradicionais
+
+Quando `components` não é informado ou é uma lista vazia, a resposta segue o fluxo normal do Discord.js. Nesse caso, você pode utilizar propriedades como `content` e `embeds`.
+
+```ts
+await ctx.reply({
+  content: "Olá, mundo!",
+});
+```
+
+### Mensagens com Components V2
+
+Quando você informa componentes, o Nexocord:
+
+1. Prepara e normaliza os componentes.
+2. Reúne os arquivos associados a eles.
+3. Combina esses arquivos com os anexos informados em `files`.
+4. Adiciona automaticamente a flag `MessageFlags.IsComponentsV2`.
+5. Envia a resposta pela interação.
+
+### ⚠️ Restrições
+
+Mensagens com Components V2 não podem combinar componentes com `content` ou `embeds`. Se essas propriedades forem informadas junto de componentes, o contexto lança um erro.
+
+```ts
+const components = [
+  ui.text("Olá!"),
+];
+
+await ctx.reply({
+  components,
+  // Não combine com content ou embeds.
+});
+```
+
+## 📏 Limites validados pelo Nexocord
+
+Os limites abaixo correspondem às validações da implementação do Nexocord.
+
+| Elemento | Limite |
+| --- | --- |
+| Componentes por mensagem | Até 40 |
+| Texto | Até 4.000 caracteres |
+| Rótulo do botão | De 1 a 80 caracteres |
+| `customId` do botão | De 1 a 100 caracteres |
+| `customId` do menu de seleção | De 1 a 100 caracteres |
+| Componentes em uma linha de ação | De 1 a 5 |
+| Opções de um menu de texto | De 1 a 25 |
+| Placeholder de menu | Até 150 caracteres |
+| Descrição de uma opção | Até 100 caracteres |
+| Textos em uma seção | De 1 a 3 |
+| Itens de uma galeria | De 1 a 10 |
+
+Esses são os limites verificados pelo Nexocord, não necessariamente todos os limites impostos pela API do Discord.
+
+## 📚 Referência
+
+Consulte a [documentação oficial do Discord.js](https://discord.js.org/docs/packages/discord.js/main) para conhecer os tipos e recursos subjacentes à API de componentes do Discord.

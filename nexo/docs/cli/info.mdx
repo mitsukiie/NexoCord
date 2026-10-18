@@ -1,0 +1,84 @@
+---
+sidebar_position: 8
+title: Info
+slug: /cli/info
+---
+
+# info
+
+O comando `nexo info` exibe informações sobre a instalação do Nexocord, o ambiente de execução e o projeto atual.
+
+É útil para verificar versões das ferramentas instaladas e obter informações que podem ajudar na investigação de problemas.
+
+## Uso
+
+```bash
+nexo info
+```
+
+O comando não recebe argumentos ou opções adicionais.
+
+## Informações exibidas
+
+O `nexo info` apresenta informações como:
+
+| Informação | Descrição |
+| --- | --- |
+| Versão do Nexocord | Versão da CLI em execução. |
+| Node.js | Versão do Node.js disponível no ambiente. |
+| npm | Versão do npm, quando disponível. |
+| Bun | Versão do Bun, quando disponível. |
+| Sistema operacional | Plataforma detectada pelo Node.js. |
+| Arquitetura | Arquitetura do ambiente de execução. |
+| Diretório atual | Caminho do diretório em que o comando foi executado. |
+
+Quando um `package.json` é encontrado, o comando também exibe informações sobre o projeto.
+
+### Informações do projeto
+
+Se o diretório atual contém um `package.json`, o Nexocord apresenta informações como:
+
+- Nome do projeto.
+- Gerenciador de pacotes detectado.
+- Arquivo de entrada localizado.
+- Linguagem identificada pela extensão do arquivo de entrada.
+
+Se o projeto não possui um `package.json`, o comando exibe um aviso e encerra a verificação das informações específicas do projeto.
+
+## Exemplos
+
+Execute na raiz do projeto:
+
+```bash
+nexo info
+```
+
+Você também pode executar o comando fora de um projeto para consultar as informações gerais do ambiente:
+
+```bash
+cd ..
+nexo info
+```
+
+Nesse caso, as informações específicas do projeto podem não estar disponíveis.
+
+## Quando utilizar?
+
+Use `nexo info` quando precisar:
+
+- Conferir a versão do Nexocord.
+- Verificar quais runtimes e ferramentas estão disponíveis.
+- Identificar o diretório atual.
+- Conferir as informações básicas de um projeto.
+- Compartilhar informações do ambiente ao solicitar ajuda para resolver um problema.
+
+## Diferença entre `info` e `doctor`
+
+Os dois comandos ajudam a entender o ambiente, mas possuem objetivos diferentes:
+
+| Comando | Finalidade |
+| --- | --- |
+| `nexo info` | Exibe informações sobre as versões, o ambiente e o projeto. |
+| `nexo doctor` | Executa verificações para identificar problemas de configuração. |
+
+Para obter um resumo do ambiente, utilize `nexo info`. Para diagnosticar problemas, utilize `nexo doctor`.

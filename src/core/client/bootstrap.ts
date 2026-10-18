@@ -2,7 +2,7 @@ import type { ClientOptions } from "discord.js";
 
 import { ExtendedClient, App } from "@base";
 import { logger } from "@utils";
-import { loadCommands, loadEvents } from "@modules";
+import { load_commands, load_events } from "@modules";
 
 import type { PartialSettings } from "@types";
 import { setGlobalSettings } from "../settings";
@@ -52,11 +52,9 @@ const Bootstrap = {
         process.exit(1);
       }
 
-      await loadEvents(client, paths.events);
+      await load_events(client, paths.events);
       await client.login(Token);
-      await loadCommands(client, Token, paths.commands);
-
-
+      await load_commands(client, Token, paths.commands);
     } catch (error) {
       console.error(error);
     }

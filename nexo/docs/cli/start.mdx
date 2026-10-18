@@ -1,0 +1,117 @@
+---
+sidebar_position: 6
+title: Start
+slug: /cli/start
+---
+
+# start
+
+O comando `nexo start` executa o projeto em modo de produção.
+
+Diferentemente de `nexo dev`, que é destinado ao desenvolvimento, `nexo start` executa um arquivo JavaScript já preparado para execução. Em projetos TypeScript, compile o código antes de iniciar a aplicação.
+
+## Uso
+
+```bash
+nexo start [file]
+```
+
+## Argumentos
+
+| Argumento | Descrição |
+| --- | --- |
+| `file` | Caminho do arquivo JavaScript que será executado. Opcional; quando omitido, o Nexocord tenta localizar o arquivo de entrada de produção. |
+| `-h, --help` | Exibe a ajuda do comando. |
+
+## Executar o projeto
+
+Para iniciar o projeto utilizando o arquivo de entrada detectado automaticamente:
+
+```bash
+nexo start
+```
+
+Você também pode informar o arquivo explicitamente:
+
+```bash
+nexo start dist/index.js
+```
+
+O caminho depende da estrutura do projeto e da configuração de compilação.
+
+## Projetos TypeScript
+
+O comando `nexo start` não compila arquivos TypeScript automaticamente. Primeiro, compile o projeto:
+
+```bash
+nexo build
+```
+
+Depois, execute o arquivo JavaScript gerado:
+
+```bash
+nexo start dist/index.js
+```
+
+Se o diretório de saída ou o nome do arquivo forem diferentes, ajuste o caminho conforme o `tsconfig.json`.
+
+## Projetos JavaScript
+
+Projetos JavaScript não precisam de compilação. Execute o arquivo de entrada diretamente:
+
+```bash
+nexo start src/index.js
+```
+
+Se o arquivo de entrada já estiver configurado no projeto, você também pode executar:
+
+```bash
+nexo start
+```
+
+## Variáveis de ambiente
+
+Se existir um arquivo `.env` no projeto, o Nexocord o utiliza durante a execução.
+
+Por exemplo, seu arquivo `.env` pode conter:
+
+```dotenv
+DISCORD_TOKEN=seu_token
+```
+
+No código, você pode acessar essa variável com:
+
+```js
+const token = process.env.DISCORD_TOKEN;
+```
+
+Não compartilhe seu token do Discord nem o envie para repositórios públicos.
+
+## Fluxo recomendado para produção
+
+Para um projeto TypeScript, compile e depois inicie:
+
+```bash
+nexo build
+nexo start dist/index.js
+```
+
+Para um projeto JavaScript:
+
+```bash
+nexo start src/index.js
+```
+
+## Problemas comuns
+
+### Arquivo TypeScript não pode ser executado
+
+O `nexo start` espera um arquivo JavaScript. Execute `nexo build` e informe o caminho do arquivo compilado.
+
+### Arquivo de entrada não encontrado
+
+Confira se o arquivo existe e se o caminho informado está correto.
+
+### Erro ao iniciar o bot
+
+Verifique as variáveis de ambiente, as dependências instaladas e as mensagens de erro exibidas no terminal.

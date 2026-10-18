@@ -1,7 +1,8 @@
-import { AutocompleteInteraction, ClientEvents } from 'discord.js';
-import type { ExtendedClient } from '../client/ExtendedClient';
-import type { CommandInteraction, CommandType } from './Command';
-import type { ResponderParse } from './Responder';
+import { AutocompleteInteraction, ClientEvents } from "discord.js";
+import type { ExtendedClient } from "../client/ExtendedClient";
+import type { CommandContext } from "../creators";
+import type { CommandType } from "./Command";
+import type { ResponderParse } from "./Responder";
 
 // Run event
 export type RunEvent<K extends keyof ClientEvents = keyof ClientEvents> = (
@@ -10,9 +11,8 @@ export type RunEvent<K extends keyof ClientEvents = keyof ClientEvents> = (
 
 // Run slash command
 export type RunCommand<T extends CommandType> = (
-  interaction: CommandInteraction<T>,
-  client?: ExtendedClient,
-) => any;
+  ctx: CommandContext<T>,
+) => Promise<unknown> | unknown;
 
 // Run responder
 export type RunResponder<I, Path extends string, P = undefined> = (
@@ -20,4 +20,7 @@ export type RunResponder<I, Path extends string, P = undefined> = (
   params: ResponderParse<P, Path>,
 ) => unknown | Promise<unknown>;
 
-export type RunAutoComplete = (i: AutocompleteInteraction, focused: string) => any;
+export type RunAutoComplete = (
+  i: AutocompleteInteraction,
+  focused: string,
+) => any;

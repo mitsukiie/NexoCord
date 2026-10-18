@@ -1,0 +1,116 @@
+---
+sidebar_position: 5
+title: Build
+slug: /cli/build
+---
+
+# build
+
+O comando `nexo build` compila projetos TypeScript para que possam ser executados em produção.
+
+A compilação utiliza o TypeScript Compiler (`tsc`) e respeita as configurações definidas no `tsconfig.json`.
+
+Para projetos JavaScript, nenhuma compilação é necessária.
+
+## Uso
+
+```bash
+nexo build
+```
+
+## Como funciona
+
+Ao executar o comando, o Nexocord verifica se o projeto possui um arquivo `tsconfig.json`.
+
+- **TypeScript:** executa o compilador TypeScript usando a configuração do projeto.
+- **JavaScript:** informa que a compilação não é necessária e encerra o processo.
+
+## Compilar um projeto TypeScript
+
+Se o projeto foi configurado com TypeScript por meio de `nexo init`, execute:
+
+```bash
+nexo build
+```
+
+O Nexocord utilizará o `tsconfig.json` para determinar as opções de compilação, incluindo o diretório de saída.
+
+Por exemplo, se o arquivo de configuração definir `dist` como diretório de saída, os arquivos compilados serão gerados nessa pasta.
+
+## Configuração do TypeScript
+
+Um `tsconfig.json` pode definir o diretório de saída e outras opções do compilador.
+
+Exemplo simplificado:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true
+  },
+  "include": ["src"]
+}
+```
+
+Nesse exemplo, o código-fonte localizado em `src` será compilado para `dist`.
+
+A saída real depende das opções configuradas no seu projeto.
+
+## Node.js e Bun
+
+O Nexocord utiliza o runtime configurado para o projeto para executar o compilador. A compilação depende de o TypeScript estar instalado nas dependências do projeto e de as configurações serem válidas.
+
+## Metadados de módulos
+
+Em determinadas configurações de compilação para módulos ES, o Nexocord pode gerar um `package.json` no diretório de saída com `"type": "module"`.
+
+Isso ajuda o Node.js a interpretar os arquivos JavaScript gerados como módulos ES quando o projeto utiliza essa configuração.
+
+## Projetos JavaScript
+
+Se o projeto não possui `tsconfig.json`, o comando informa que nenhuma compilação é necessária:
+
+```bash
+nexo build
+```
+
+Você pode executar o projeto JavaScript diretamente em desenvolvimento:
+
+```bash
+nexo dev
+```
+
+## Exemplos
+
+Compilar o projeto TypeScript:
+
+```bash
+nexo build
+```
+
+Depois da compilação, iniciar o arquivo gerado em produção:
+
+```bash
+nexo start dist/index.js
+```
+
+O caminho do arquivo compilado depende da configuração do `tsconfig.json`.
+
+## Problemas comuns
+
+### `tsconfig.json` não encontrado
+
+O Nexocord considera que não há compilação necessária quando o arquivo não existe. Se você pretende utilizar TypeScript, confira se o projeto foi inicializado com essa linguagem e se o arquivo está presente.
+
+### Erros de compilação
+
+Verifique os erros apresentados pelo TypeScript Compiler. Problemas de tipagem, imports inválidos e opções incompatíveis no `tsconfig.json` precisam ser corrigidos.
+
+### Arquivo de saída não encontrado
+
+Confira a opção `outDir` no `tsconfig.json` e confirme se a compilação terminou sem erros. Utilize o caminho real do arquivo gerado ao executar `nexo start`.

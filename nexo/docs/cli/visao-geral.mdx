@@ -1,0 +1,104 @@
+---
+sidebar_position: 1
+title: Visão geral
+slug: /cli
+---
+
+# CLI
+
+A CLI do Nexocord (`nexo`) oferece ferramentas para criar e configurar projetos, executar bots do Discord, compilar código TypeScript e diagnosticar o ambiente de desenvolvimento.
+
+O pacote é distribuído pelo npm como `nexocord`, enquanto o comando utilizado no terminal é `nexo`.
+
+## Instalação
+
+Para utilizar o Nexocord em um projeto novo, crie o `package.json` e instale o pacote:
+
+```bash
+npm init -y
+npm install nexocord
+```
+
+Se o projeto já possui um `package.json`, basta instalar o Nexocord:
+
+```bash
+npm install nexocord
+```
+
+## Primeiros passos
+
+### Configurar um projeto existente
+
+Após instalar o Nexocord, execute:
+
+```bash
+nexo init
+```
+
+O assistente permitirá escolher o runtime e a linguagem do projeto. Com base nessas escolhas, o Nexocord configurará o `package.json`, instalará as dependências necessárias e gerará os arquivos iniciais.
+
+Você também pode informar as opções diretamente:
+
+```bash
+nexo init --language ts --runtime node
+```
+
+As opções disponíveis são:
+
+- **Linguagem:** `js` (JavaScript) ou `ts` (TypeScript).
+- **Runtime:** `node` (Node.js) ou `bun` (Bun).
+
+### Criar um projeto do zero
+
+Se você ainda não possui um projeto, utilize `nexo create` para automatizar a criação:
+
+```bash
+nexo create meu-bot
+```
+
+Depois, entre na pasta criada e inicie o ambiente de desenvolvimento:
+
+```bash
+cd meu-bot
+nexo dev
+```
+
+O assistente solicitará as configurações do projeto, gerará os arquivos iniciais e instalará as dependências automaticamente.
+
+## Comandos disponíveis
+
+| Comando | Descrição |
+| --- | --- |
+| [`nexo init`](/docs/cli/init) | Configura o Nexocord em um projeto existente. |
+| [`nexo create`](/docs/cli/create) | Cria um novo projeto com o Nexocord. |
+| [`nexo dev`](/docs/cli/dev) | Executa o projeto em desenvolvimento. |
+| [`nexo build`](/docs/cli/build) | Compila projetos TypeScript. |
+| [`nexo start`](/docs/cli/start) | Executa o projeto em produção. |
+| [`nexo doctor`](/docs/cli/doctor) | Verifica o ambiente e a configuração do projeto. |
+| [`nexo info`](/docs/cli/info) | Exibe informações sobre o ambiente e o projeto. |
+| [`nexo update`](/docs/cli/update) | Atualiza o Nexocord usando o gerenciador de pacotes detectado. |
+
+## Ajuda
+
+Para consultar todos os comandos disponíveis:
+
+```bash
+nexo --help
+```
+
+Para consultar as opções de um comando específico:
+
+```bash
+nexo init --help
+nexo create --help
+nexo dev --help
+```
+
+## Requisitos
+
+Antes de utilizar a CLI, instale o runtime escolhido para o projeto:
+
+- **Node.js:** para executar projetos com Node.js.
+- **Bun:** para executar projetos com Bun.
+
+O comando `nexo doctor` ajuda a identificar problemas no ambiente e na configuração do projeto.

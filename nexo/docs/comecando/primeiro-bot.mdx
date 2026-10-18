@@ -1,312 +1,129 @@
 ---
 sidebar_position: 3
-title: Primeiro Bot
+title: Primeiro bot
+slug: /first-bot
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# Primeiro bot
 
-# 🤖 Primeiro Bot
+Nesta página, você vai criar um bot simples com Nexocord, configurar o token do Discord e entender como funcionam os comandos e eventos.
 
-Neste guia você vai criar seu primeiro bot com o fluxo novo do Nexo.
+## Criar o projeto
 
----
-
-## 🚀 Fluxo recomendado
-
-1. Crie o projeto:
+Use a CLI para gerar a estrutura inicial:
 
 ```bash
-npx nexo create meu-bot
-```
-
-2. Entre na pasta:
-
-```bash
+nexo create meu-bot
 cd meu-bot
+nexo dev
 ```
 
-3. Inicie o bot em desenvolvimento:
+O assistente solicitará o runtime (**Node.js ou Bun**) e a linguagem (**TypeScript ou JavaScript**).
 
-```bash
-npm run dev
+
+## Configurar o token
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+TOKEN=seu-token-do-discord
 ```
 
----
+Nunca compartilhe seu token nem o envie para um repositório público. Adicione `.env` ao `.gitignore`.
 
-## 📁 Estrutura criada
+## Estrutura do projeto
 
-O template já vem com uma base pronta para começar:
+O template TypeScript inclui uma estrutura semelhante a esta:
 
-```
-📂 meu-bot/
-┣ 📂 src/
-┃ ┣ 📂 commands/
-┃ ┃ ┗ 📂 utils/
-┃ ┃   ┗ 📜 ping.ts
-┃ ┣ 📂 events/
-┃ ┃ ┗ 📜 ready.ts
-┃ ┗ 📜 index.ts
-┗ 📜 package.json
+```text
+src/
+├── commands/
+│   └── utils/
+│       └── ping.ts
+├── events/
+│   └── ready.ts
+└── index.ts
 ```
 
-:::info Estrutura esperada
-O template cria uma estrutura inicial com o ponto de entrada em `src/index.ts`, um comando de exemplo em `src/commands/utils/ping.ts` e um evento de inicialização em `src/events/ready.ts`.
-:::
+Em JavaScript, os arquivos equivalentes utilizam a extensão `.js`.
 
----
+## Inicialização do bot
 
-<details>
-<summary><strong>Criação Manual (Avançado)</strong></summary>
+No arquivo de entrada, `src/index.ts`, configure a inicialização do Nexocord:
 
-Se você quiser montar a base sem o gerador, siga o fluxo antigo abaixo.
-
-### 🚀 Como funciona
-
-- 🧠 Você cria arquivos em pastas específicas.
-- 📁 Nexo carrega automaticamente comandos e eventos dos caminhos definidos em `paths.commands` e `paths.events`.
-- ⚡ O Bot inicia com `Bootstrap.init()`.
-- ✅ Não precisa de registro manual de comandos ou eventos.
-
-### 📁 Estrutura mínima (exemplo)
-
-Exemplo de estrutura de pastas:
-
-```
-📂 src/
-┣ 📂 commands/
-┃ ┗ 📂 util/             (categoria)
-┃   ┗ 📜 ping.ts         (seu primeiro comando)
-┣ 📂 events/
-┃ ┗ 📜 ready.ts          (evento de inicialização)
-┗ 📜 index.ts            (arquivo principal)
-```
-
-:::info Estrutura esperada
-Este é apenas um exemplo usando `src/commands` e `src/events`.
-:::
-
-
-### 🚀 Inicializando o bot
-
-Crie seu arquivo principal (por exemplo, `src/index.ts`) com a inicialização do bot usando `Bootstrap.init()`:
-
-<Tabs groupId="lang-bootstrap">
-  <TabItem value="js" label="JavaScript">
-
-```js
-const { Bootstrap } = require('nexocord');
-const { GatewayIntentBits } = require('discord.js');
-
-async function main() {
-  await Bootstrap.init({
-    token: process.env.TOKEN,
-    intents: [GatewayIntentBits.Guilds],
-    paths: {
-      commands: 'src/commands', // exemplo
-      events: 'src/events', // exemplo
-    },
-  });
-}
-
-main();
-```
-
-  </TabItem>
-  <TabItem value="ts" label="TypeScript">
-
-```ts
-import { Bootstrap } from 'nexocord';
-import { GatewayIntentBits } from 'discord.js';
+```ts title="src/index.ts"
+import { Bootstrap, GatewayIntentBits } from "nexocord";
 
 await Bootstrap.init({
   token: process.env.TOKEN,
   intents: [GatewayIntentBits.Guilds],
   paths: {
-    commands: 'src/commands', // exemplo
-    events: 'src/events', // exemplo
+    commands: "src/commands",
+    events: "src/events",
   },
 });
 ```
 
-  </TabItem>
-</Tabs>
+Em JavaScript, use o mesmo código em `src/index.js`. O template gerado configura o projeto para utilizar ESM.
 
-:::info O que acontece aqui
-- **`token`**: Seu token de bot do Discord (mais abaixo como obter).
-- **`intents`**: Permissões que o bot precisa. Aqui usamos apenas `Guilds` (o mínimo para começar).
-  - Veja [discord.js intents](https://discord.js.org/docs/packages/discord.js/14.25.1/GatewayIntentBits:Enum) para mais opções.
-- **`paths`**: Diretórios onde o Nexo encontrará comandos e eventos para carregamento automático.
-- **`await`**: `Bootstrap.init()` é assíncrono e inicializa o bot.
-:::
+## Criar um comando
 
-### 🔘 Primeiro comando
+Crie o arquivo `src/commands/utils/ping.ts`:
 
-Crie o arquivo do comando no diretório definido em `paths.commands` (exemplo: `src/commands/util/ping.ts`):
-
-<Tabs groupId="lang-command-first">
-	<TabItem value="js" label="JavaScript">
-
-```js
-const { createCommand, CommandType } = require('nexocord');
-
-module.exports = createCommand({
-  name: 'ping',
-  description: 'Responde com pong!',
-  type: CommandType.ChatInput,
-  async run(interaction) {
-    await interaction.reply({ content: 'Pong! 🏓' });
-  },
-});
-```
-
-	</TabItem>
-  <TabItem value="ts" label="TypeScript">
-
-```ts
-import { createCommand, CommandType } from 'nexocord';
+```ts title="src/commands/utils/ping.ts"
+import { CommandType, createCommand } from "nexocord";
 
 export default createCommand({
-  name: 'ping',
-  description: 'Responde com pong!',
+  name: "ping",
+  description: "Responde com Pong.",
   type: CommandType.ChatInput,
-  async run(interaction) {
-    await interaction.reply({ content: 'Pong! 🏓' });
+  async run(ctx) {
+    await ctx.reply({ content: "Pong!" });
   },
 });
 ```
 
-	</TabItem>
-</Tabs>
+## Criar um evento
 
-:::info
-- **`export default`**: Nexo busca exportações padrão em cada arquivo.
-- **`createCommand(...)`**: Função que registra um comando.
-- **`CommandType.ChatInput`**: Comando de slash (começando com `/`).
-- **`interaction`**: Objeto da interação do Discord (contém dados do usuário, servidor, etc).
-:::
+Crie o arquivo `src/events/ready.ts`:
 
-### ✅ Evento de inicialização
-
-Crie o arquivo do evento no diretório definido em `paths.events` (exemplo: `src/events/ready.ts`):
-
-<Tabs groupId="lang-event-first">
-	<TabItem value="js" label="JavaScript">
-
-```js
-const { createEvent, EventType } = require('nexocord');
-
-module.exports = createEvent({
-  name: 'ready',
-  once: true,
-  run(client) {
-    console.log(`✅ Bot ${client.user?.username} está online!`);
-  },
-});
-```
-
-	</TabItem>
-  <TabItem value="ts" label="TypeScript">
-
-```ts
-import { createEvent, EventType } from 'nexocord';
+```ts title="src/events/ready.ts"
+import { createEvent, Events } from "nexocord";
 
 export default createEvent({
-  name: 'ready',
-  once: true, // Executar apenas uma vez
+  name: Events.ClientReady,
+  once: true,
   run(client) {
-    console.log(`✅ Bot ${client.user?.username} está online!`);
+    console.log(`${client.user.displayName} online.`);
   },
 });
 ```
 
-	</TabItem>
-</Tabs>
+Os arquivos de comandos e eventos devem exportar seus objetos usando `default`. O Nexocord carrega esses arquivos durante a inicialização feita por `Bootstrap.init`, sem exigir o registro manual de cada comando.
 
-:::info
-- **`EventType.Discord`**: Evento nativo do Discord.js (em vez de um evento customizado).
-- **`once: true`**: Dispara apenas uma vez quando o bot inicia.
-  - Sem `once`, dispararia toda vez que o evento ocorrer.
-- **`name: 'ready'`**: Nome do evento Discord.js (corresponde a `client.on('ready', ...)`)
-- **`client`**: Cliente discord.js com dados do bot (usuário, guilds, etc).
-:::
+## Executar em produção
 
-### ▶️ Executando o bot
+No projeto TypeScript, compile o código antes de iniciar o bot.
 
-Rode o bot em modo desenvolvimento:
-
-<Tabs groupId="runtime-exec">
-	<TabItem value="npm" label="npm">
+### CLI
 
 ```bash
-npm run dev
+nexo build
+nexo start
 ```
 
-	</TabItem>
-	<TabItem value="bun" label="bun">
+### Node.js com npm
 
 ```bash
-bun run dev
+npm run build
+npm run start
 ```
 
-	</TabItem>
-</Tabs>
-
-Ou use o CLI do Nexo diretamente:
+### Bun
 
 ```bash
-# npm
-npx nexo dev
-
-# bun
-bunx nexo dev
+bun run build
+bun start
 ```
 
-### 🎯 Resultado esperado
-
-Quando tudo funcionar:
-
-1. ✅ Bot aparece **online** no Discord
-2. ✅ Console mostra: `✅ Bot [seu-bot-nome] está online!`
-3. ✅ Comando `/ping` aparece na lista de comandos
-4. ✅ Digitar `/ping` e pressionar Enter → responde **Pong! 🏓**
-
-Pronto! Seu primeiro bot está rodando! 🎉
-
----
-
-### 💡 Dicas rápidas
-
-#### 🔐 Token seguro
-
-Para não expor seu token no código:
-
-1. **Crie um arquivo `.env`** na raiz do projeto:
-
-```env
-DISCORD_TOKEN=MTA1Nzk4OTU5NzE2NzY0Nzc4Nw.xxx
-```
-
-2. **Nexo carrega automaticamente** — você acessa via `process.env.DISCORD_TOKEN`
-
-:::warning Importante
-- **Nunca commite `.env`** no Git — adicione à `.gitignore`
-- Seu token é como uma **senha** — qualquer pessoa pode usar para controlar seu bot
-- Se expuser o token, **revogue-o imediatamente** no Dashboard do Discord
-:::
-
-#### ⚠️ Erros comuns
-
-| Erro | Solução |
-|------|---------|
-| `Error: no token provided` | Verifique se `.env` existe e tem `DISCORD_TOKEN` com valor correto |
-| `Comando `/ping` não aparece` | Reinicie o bot ou execute `/` novamente para sincronizar comandos |
-| `Error: GUILDS intent is required` | Adicione `GatewayIntentBits.Guilds` aos intents |
-| `Bot não conecta` | Verifique token, internet e se o token não foi revogado |
-
-</details>
-
-**📚 Próximos passos:**
-- Leia [Comandos →](../guia/comandos.mdx) para aprender mais detalhes
-- Leia [Eventos →](../guia/eventos.mdx) para outros eventos
-- Explore [Responders →](../guia/responders.mdx) para interações
+Os comandos e scripts disponíveis podem variar conforme o template e o runtime escolhidos.

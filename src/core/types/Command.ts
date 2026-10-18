@@ -7,9 +7,9 @@ import {
   APIApplicationCommandOption,
   PermissionResolvable,
   PermissionFlagsBits,
-} from 'discord.js';
+} from "discord.js";
 
-import { RunCommand, RunAutoComplete } from './Run';
+import { RunCommand, RunAutoComplete } from "./Run";
 
 export enum CommandType {
   ChatInput = ApplicationCommandType.ChatInput,
@@ -33,7 +33,7 @@ export type Command<Type extends CommandType = CommandType> = {
   name: string;
   description: string;
   type: Type;
-  cooldown?: number
+  cooldown?: number;
   options?: APIApplicationCommandOption[];
 
   defaultMemberPermission?: PermissionResolvable | null;

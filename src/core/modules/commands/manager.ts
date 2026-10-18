@@ -1,5 +1,5 @@
-import { Collection } from 'discord.js';
-import type { Command } from '@types';
+import { Collection } from "discord.js";
+import type { Command } from "@types";
 
 export class CommandManager {
   private readonly commands = new Collection<string, Command>();

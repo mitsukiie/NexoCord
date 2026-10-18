@@ -1,180 +1,181 @@
 ---
 sidebar_position: 1
 title: Comandos
+slug: /commands
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Comandos
 
-Comandos são a principal forma de interação com o bot.
-
----
+Os comandos permitem que os usuários interajam com seu bot por meio de comandos de barra (`/`) e menus de contexto do Discord. No Nexocord, cada comando é definido em um arquivo e exportado com `default`.
 
 ## 🚀 Como funciona
 
-- ⚡ O Nexo carrega automaticamente os comandos ao iniciar o bot.
-- 📄 O diretório de comandos é definido por você em `paths.commands` no `Bootstrap.init`.
-- 📦 Cada arquivo deve exportar um `default`.
-- 🗂️ O primeiro nível de subpastas é tratado como categoria.
+- ⚡ O Nexocord carrega os comandos durante a inicialização do bot.
+- 📁 O diretório dos comandos é configurado em `paths.commands`, dentro de `Bootstrap.init`.
+- 📦 Cada arquivo de comando deve exportar seu comando com `default`.
+- 🗂️ A organização em pastas depende das convenções de carregamento de comandos e subcomandos do Nexocord.
 
----
+## 🧪 Criando um comando
 
-## 🧪 Exemplo curto
+Neste exemplo, criaremos um comando `/ping` que responde `Pong!`.
 
-<Tabs groupId="lang-command-short">
-	<TabItem value="js" label="JavaScript">
+<Tabs groupId="command-language">
+<TabItem value="ts" label="TypeScript">
 
-```js
-const { createCommand, CommandType } = require('nexocord');
-
-module.exports = createCommand({
-  name: 'ping',
-  description: 'Responde com pong!',
-  type: CommandType.ChatInput,
-  async run(interaction) {
-    await interaction.reply({ content: 'Pong! 🏓' });
-  },
-});
-```
-
-	</TabItem>
-  <TabItem value="ts" label="TypeScript">
-
-```ts
-import { createCommand, CommandType } from 'nexocord';
+```ts title="src/commands/utils/ping.ts"
+import { CommandType, createCommand } from "nexocord";
 
 export default createCommand({
-  name: 'ping',
-  description: 'Responde com pong!',
+  name: "ping",
+  description: "Verifica se o bot está online.",
   type: CommandType.ChatInput,
-  async run(interaction) {
-    await interaction.reply({ content: 'Pong! 🏓' });
+  async run(ctx) {
+    await ctx.reply({ content: "Pong!" });
   },
 });
 ```
 
-	</TabItem>
+</TabItem>
+<TabItem value="js" label="JavaScript">
+
+```js title="src/commands/utils/ping.js"
+const { CommandType, createCommand } = require("nexocord");
+
+module.exports = createCommand({
+  name: "ping",
+  description: "Verifica se o bot está online.",
+  type: CommandType.ChatInput,
+  async run(ctx) {
+    await ctx.reply({ content: "Pong!" });
+  },
+});
+```
+
+</TabItem>
 </Tabs>
 
-## 📋 Campos do comando
+O comando precisa estar dentro do diretório configurado em `paths.commands`. Quando o Nexocord inicializar, o carregador encontrará o arquivo e processará sua definição.
 
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `name` | `string` | Sim | Nome único do comando |
-| `description` | `string` | Sim | Texto mostrado no Discord |
-| `type` | `CommandType` | Sim | Tipo de comando |
-| `run` | `function` | Sim | Função executada |
-| `options` | `array` | Não | Parâmetros do comando |
-| `cooldown` | `number` | Não | Tempo entre usos |
-| `autocomplete` | `function` | Não | Sugestões em tempo real |
-| `defaultMemberPermission` | `PermissionResolvable` | Não | Permissão exigida do usuário |
-| `botpermission` | `PermissionFlagsBits key` | Não | Permissão exigida do bot |
-| `allowIds` | `string[]` | Não | IDs permitidos |
-| `dmPermission` | `boolean` | Não | Permite uso em DM |
-| `nsfw` | `boolean` | Não | Restringe a canal NSFW |
+## 📋 Propriedades de um comando
+
+| Propriedade | Tipo | Obrigatória | Descrição |
+| --- | --- | --- | --- |
+| `name` | `string` | Sim | Nome do comando. |
+| `description` | `string` | Sim | Descrição exibida pelo Discord. |
+| `type` | `CommandType` | Sim | Tipo de comando. |
+| `run` | função | Sim | Executa a lógica do comando. |
+| `options` | `APIApplicationCommandOption[]` | Não | Parâmetros aceitos pelo comando. |
+| `cooldown` | `number` | Não | Intervalo entre usos, em segundos. |
+| `autocomplete` | função | Não | Fornece sugestões para opções com autocomplete. |
+| `defaultMemberPermission` | `PermissionResolvable \| null` | Não | Permissões exigidas do membro. |
+| `botpermission` | chave de `PermissionFlagsBits` | Não | Permissão exigida do bot. |
+| `allowIds` | `string[] \| null` | Não | Restringe o uso a IDs permitidos. |
+| `dmPermission` | `boolean` | Não | Define se o comando pode ser usado em mensagens diretas. |
+| `nsfw` | `boolean` | Não | Restringe o comando a canais NSFW. |
+
+Os nomes e tipos das propriedades correspondem à API do Nexocord. Consulte os exemplos específicos para entender como utilizar cada uma.
 
 ## 🎯 Tipos de comandos
 
-O Nexo suporta diferentes formas de interação:
+O Nexocord oferece os tipos de comandos do Discord representados por `CommandType`.
 
-<Tabs groupId="command-types"> 
+<Tabs groupId="command-types">
 <TabItem value="chatinput" label="Slash">
-```js
+
+```ts
 type: CommandType.ChatInput
 ```
 
-Comandos tradicionais com `/`.
+Cria um comando de barra, como `/ping`. É a opção mais comum para comandos com parâmetros e respostas interativas.
 
-</TabItem> <TabItem value="user" label="User">
-```js
+</TabItem>
+<TabItem value="user" label="User">
+
+```ts
 type: CommandType.User
 ```
 
-Menu ao clicar com botão direito em um usuário.
+Cria uma ação disponível no menu de contexto de um usuário.
 
-</TabItem> <TabItem value="message" label="Message">
-```js
+</TabItem>
+<TabItem value="message" label="Message">
+
+```ts
 type: CommandType.Message
 ```
 
-Menu ao clicar com botão direito em uma mensagem.
+Cria uma ação disponível no menu de contexto de uma mensagem.
 
-</TabItem> 
+</TabItem>
+<TabItem value="primary" label="PrimaryEntryPoint">
+
+```ts
+type: CommandType.PrimaryEntryPoint
+```
+
+Representa o tipo `PrimaryEntryPoint` disponibilizado pela API. Seu uso depende dos recursos e requisitos específicos do Discord para esse tipo de comando.
+
+</TabItem>
 </Tabs>
 
-:::info Na prática
-O tipo mais usado é `ChatInput`.
-:::
+## 🔐 Permissões e restrições
 
-## 🔐 Permissões e controle
+Você pode definir regras de acesso diretamente na configuração do comando.
 
-Use esses campos para restringir uso:
+- `defaultMemberPermission`: define as permissões necessárias para o membro.
+- `botpermission`: define uma permissão necessária para o bot.
+- `allowIds`: limita o acesso aos IDs autorizados.
+- `dmPermission`: controla a disponibilidade em mensagens diretas.
+- `nsfw`: restringe o comando a canais marcados como NSFW.
+- `cooldown`: define o intervalo mínimo entre usos, em segundos.
 
-- `defaultMemberPermission`: permissão do usuário
-- `botpermission`: permissão do bot
-- `allowIds`: libera só para IDs de usuários específicos
-- `dmPermission`: bloqueia/libera em DM
-- `nsfw`: exige canal NSFW
+Essas configurações ajudam a controlar a disponibilidade dos comandos. Ainda assim, valide as permissões e os dados recebidos ao executar operações administrativas ou sensíveis.
 
-:::warning Importante
-Sempre valide permissões em comandos administrativos.
-:::
+## 🧩 Opções e autocomplete
 
-## 🤖 Parâmetros (options) e Autocomplete
+As opções permitem receber informações do usuário, como textos, números, usuários e canais. O Nexocord disponibiliza builders por meio de `option`.
 
-### Options 
-Define parâmetros do comando.
-```js
-options: [
-  {
-    type: ApplicationCommandOptionType.String,
-    name: 'message',
-    description: 'Mensagem',
-    required: true,
-  }
-]
-  ```
+Para aprender a declarar parâmetros, configurar limites e implementar sugestões, consulte [Opções de comandos](/docs/options).
 
----
+## 🗂️ Subcomandos
 
-### Autocomplete
-Responde sugestões em tempo real:
-```js
-autocomplete: async (interaction, focused) => {
-  const choices = ['Opção 1', 'Opção 2'];
+Os subcomandos permitem agrupar ações relacionadas em um único comando, como `/user ban` e `/user kick`.
 
-  await interaction.respond(
-    choices.map(c => ({ name: c, value: c }))
-  );
-}
-```
-  
-## 🔄 Subcomandos
+No Nexocord, eles são criados automaticamente a partir da estrutura de pastas. **O nome da pasta define o comando principal, e cada arquivo dentro dela representa um subcomando.**
 
-Subcomandos são automáticos quando você cria uma pasta dentro da categoria.
+### 📁 Estrutura de arquivos
 
-### 📁 Estrutura
+Organize os arquivos dentro do diretório configurado em `paths.commands`:
 
-```txt
+```text
 src/
-  commands/
-    admin/
-      user/
-        ban.ts
-        kick.ts
-        mute.ts
+└── commands/
+    └── utils/
+        └── user/
+            ├── ban.ts
+            ├── kick.ts
+            └── info.ts
 ```
 
-### 🎯 Resultado
+Nesse exemplo, a pasta `user/` cria o comando principal `/user`, enquanto os arquivos `ban.ts`, `kick.ts` e `info.ts` definem seus respectivos subcomandos.
 
-```
-/user ban
-/user kick
-/user mute
-```
+### ⚙️ Como funciona
 
-:::tip
-Cada arquivo dentro da pasta vira um subcomando.
-:::
+- Cada subcomando deve ser um arquivo separado dentro da pasta do comando principal.
+- Cada arquivo deve exportar sua definição usando `default`, assim como um comando convencional.
+- As propriedades `name` e `description` definem o nome e a descrição do subcomando.
+- As propriedades `options`, quando utilizadas, definem os parâmetros aceitos pelo subcomando.
+- O Nexocord carrega os arquivos e registra automaticamente o comando principal com seus subcomandos.
+
+Não é necessário criar manualmente um arquivo para o comando principal. Ele é gerado pelo carregador a partir do nome da pasta.
+
+**Importante:** para criar `/user ban`, o arquivo `ban.ts` precisa estar dentro da pasta `user/`. Se estiver diretamente em `commands/` ou em uma pasta de categoria, será tratado como um comando independente, conforme a estrutura de carregamento.
+
+## ⚠️ Tratamento de erros
+
+Trate falhas esperadas dentro da função `run`, principalmente ao acessar recursos externos ou executar operações que podem falhar.
+
+Se uma interação já tiver recebido uma resposta, não tente respondê-la novamente. O comportamento de tratamento de erros do framework depende do estado da interação e da implementação do Nexocord.

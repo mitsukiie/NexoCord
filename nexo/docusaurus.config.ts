@@ -15,7 +15,7 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://docs.seu-projeto.dev',
+  url: 'https://nexocord.vercel.app',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -87,15 +87,15 @@ const config: Config = {
           items: [
             {
               label: 'Introdução',
-              to: '/docs/comecando/introducao',
+              to: '/docs/introduction',
             },
             {
               label: 'Instalação',
-              to: '/docs/comecando/instalacao',
+              to: '/docs/installation',
             },
             {
               label: 'Primeiro Bot',
-              to: '/docs/comecando/primeiro-bot',
+              to: '/docs/first-bot',
             },
           ],
         },
@@ -104,23 +104,27 @@ const config: Config = {
           items: [
             {
               label: 'Comandos',
-              to: '/docs/guia/comandos',
+              to: '/docs/commands',
             },
             {
               label: 'Eventos',
-              to: '/docs/guia/eventos',
+              to: '/docs/events',
             },
             {
               label: 'Responders',
-              to: '/docs/guia/responders',
+              to: '/docs/responders',
             },
             {
               label: 'UI',
-              to: '/docs/guia/ui',
+              to: '/docs/components-v2',
             },
             {
               label: 'Configuração',
-              to: '/docs/guia/configuracao',
+              to: '/docs/configuration',
+            },
+            {
+              label: 'CLI',
+              to: '/docs/cli',
             },
           ],
         },

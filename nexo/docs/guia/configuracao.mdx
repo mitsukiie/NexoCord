@@ -1,6 +1,7 @@
 ---
 sidebar_position: 5
 title: Configuração
+slug: /configuration
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,25 +9,22 @@ import TabItem from '@theme/TabItem';
 
 # ⚙️ Configuração (settings)
 
-No Nexo, você configura comportamentos globais no `Bootstrap.init` usando a propriedade `settings`.
+No Nexo, você configura os comportamentos globais do framework usando a propriedade `settings` do `Bootstrap.init()`.
+
+As configurações permitem controlar os logs do terminal, definir o cooldown padrão dos comandos e armazenar valores personalizados da sua aplicação.
 
 :::info
-Nesta página, `paths.commands` e `paths.events` aparecem como exemplos.
-Você pode usar qualquer estrutura de pastas.
+Nesta página, `paths.commands` e `paths.events` são utilizados como exemplos. Você pode organizar seus arquivos em qualquer estrutura de pastas, desde que configure os caminhos corretamente.
 :::
-
----
 
 ## 🚀 Como configurar
 
-Você pode configurar de 2 formas:
+Você pode definir as configurações de duas formas:
 
-1. Inline no `Bootstrap.init` (bom para projetos pequenos)
-2. Arquivo separado `settings.ts` ou `settings.js` (recomendado para projetos médios e grandes)
+1. **Inline:** diretamente no `Bootstrap.init()`, ideal para projetos pequenos.
+2. **Em um arquivo separado:** usando `settings.ts` ou `settings.js`, recomendado para projetos médios e grandes.
 
----
-
-## 🧩 Exemplo inline (simples)
+## 🧩 Configuração inline
 
 <Tabs groupId="lang-settings-inline">
 <TabItem value="js" label="JavaScript">
@@ -58,11 +56,11 @@ async function main() {
   });
 }
 
-main()
+main();
 ```
 
-	</TabItem>
-	<TabItem value="ts" label="TypeScript">
+</TabItem>
+<TabItem value="ts" label="TypeScript">
 
 ```ts
 import { Bootstrap } from 'nexocord';
@@ -90,23 +88,23 @@ await Bootstrap.init({
 });
 ```
 
-	</TabItem>
+</TabItem>
 </Tabs>
 
 :::tip
-Em projetos pequenos, inline costuma ser suficiente.
+Para projetos pequenos, definir as configurações diretamente no `Bootstrap.init()` costuma ser suficiente.
 :::
 
-## 📂 Arquivo separado (recomendado)
+## 📂 Arquivo separado
 
-Para projetos maiores, evite poluir o `Bootstrap.init`.
+Em projetos maiores, separar as configurações ajuda a manter o arquivo de inicialização organizado.
 
 Estrutura sugerida:
 
-```txt
-📂 src/      
-┣ 📜 index.ts
-┗ 📜 settings.ts
+```text
+src/
+├── index.ts
+└── settings.ts
 ```
 
 <Tabs groupId="lang-settings-file">
@@ -151,11 +149,11 @@ async function main() {
 main();
 ```
 
-	</TabItem>
-	<TabItem value="ts" label="TypeScript">
+</TabItem>
+<TabItem value="ts" label="TypeScript">
 
 ```ts title="src/settings.ts"
-import { Settings } from 'nexocord';
+import type { Settings } from 'nexocord';
 
 export const settings: Settings = {
   terminal: {
@@ -178,7 +176,7 @@ export const settings: Settings = {
 ```ts title="src/index.ts"
 import { Bootstrap } from 'nexocord';
 import { GatewayIntentBits } from 'discord.js';
-import settings from './settings';
+import { settings } from './settings';
 
 await Bootstrap.init({
   token: process.env.DISCORD_TOKEN,
@@ -191,74 +189,78 @@ await Bootstrap.init({
 });
 ```
 
-	</TabItem>
+</TabItem>
 </Tabs>
 
-## 🧠 Defaults
+## 🧠 Valores padrão
 
-O Nexo já possui valores padrão internos.
-Você só precisa sobrescrever o que quiser.
+O Nexo permite fornecer apenas as configurações que você deseja personalizar por meio de `PartialSettings`.
 
-Exemplo: se você definir apenas `bot.cooldown`, os outros campos continuam com os defaults.
+Por exemplo, você pode definir apenas o cooldown:
 
-:::info
-`settings` é mesclado com os valores padrão automaticamente.
+```ts
+await Bootstrap.init({
+  settings: {
+    bot: {
+      cooldown: 5,
+    },
+  },
+});
+```
+
+Os demais valores dependem dos padrões definidos pela implementação de `setGlobalSettings()`.
+
+:::warning
+Confira se os padrões estão configurados corretamente no framework. O `Bootstrap.init()` recebe as configurações parciais, mas é `setGlobalSettings()` quem determina como elas são armazenadas e combinadas com os valores padrão.
 :::
 
-## 📋 Campos principais
+## 📋 Opções disponíveis
 
-### 🖥️ terminal
+### 🖥️ `terminal`
 
-Controla como o Nexo exibe informações no console.
+Controla as informações exibidas no terminal.
+
+| Propriedade | Tipo | Descrição |
+| --- | --- | --- |
+| `mode` | `'informativo' \| 'minimalista'` | Define o modo de exibição dos logs. |
+| `showSlashCommandsFiles` | `boolean` | Exibe os arquivos de comandos encontrados durante o carregamento. |
+| `showSlashCommandsRegistred` | `boolean` | Exibe informações sobre os comandos registrados no Discord. |
+| `showEventsFiles` | `boolean` | Exibe os arquivos de eventos encontrados. |
+| `showEventsRegistred` | `boolean` | Exibe informações sobre os eventos registrados no cliente. |
+
+### 🤖 `bot`
+
+Define configurações globais relacionadas aos comandos e servidores.
+
+| Propriedade | Tipo | Descrição |
+| --- | --- | --- |
+| `cooldown` | `number` | Cooldown padrão dos comandos, em segundos. |
+| `guildID` | `string[]` | Lista de IDs de servidores utilizada pelo framework quando aplicável ao registro ou à sincronização de comandos. |
+
+### 🧩 `custom`
+
+Permite armazenar configurações específicas da sua aplicação sem precisar adicioná-las às opções internas do Nexo.
+
+O tipo é `Record<string, any>`.
 
 ```ts
-terminal: {
-  mode: 'informativo' | 'minimalista';
-  showSlashCommandsFiles?: boolean;
-  showSlashCommandsRegistred?: boolean;
-  showEventsFiles?: boolean;
-  showEventsRegistred?: boolean;
+custom: {
+  projectName: 'Meu Bot',
+  supportServer: 'https://discord.gg/seu-servidor',
+  welcomeChannelId: '123456789012345678',
 }
 ```
 
-- `mode`: define o nível de detalhe dos logs.
-- `showSlashCommandsFiles`: mostra os arquivos de comando encontrados no carregamento.
-- `showSlashCommandsRegistred`: mostra os comandos registrados no Discord.
-- `showEventsFiles`: mostra os arquivos de eventos encontrados.
-- `showEventsRegistred`: mostra os eventos registrados no cliente.
+Você pode acessar esses valores por meio do mecanismo de configurações disponibilizado pelo framework.
 
-### 🤖 bot
-
-Configurações globais de comportamento.
-
-```ts
-bot: {
-  cooldown: number;
-  guildID: string[];
-}
-```
-
-- `cooldown`: cooldown global padrão em segundos para comandos.
-- `guildID`: lista de IDs de guild para escopo de registro/sincronização quando necessário.
-
-### 🧩 custom
-
-Espaço livre para configurações da sua aplicação.
-
-```ts
-custom: Record<string, any>
-```
-
-Use para dados que não fazem parte do core do Nexo, por exemplo:
-- IDs de canais e cargos
-- URLs internas
-- flags de ambiente
-
----
+:::tip
+Use `custom` para valores próprios do seu projeto, como IDs de canais, IDs de cargos, URLs e opções específicas da aplicação.
+:::
 
 ## ✅ Boas práticas
 
-- 🗂️ Em projetos médios e grandes, use arquivo separado (`settings.ts` ou `settings.js`).
-- 🧩 Use `custom` para configurações da sua aplicação.
-- 🧼 Mantenha `settings` declarativo (evite lógica de negócio dentro dele).
-- 🎯 Sobrescreva só o necessário e aproveite os defaults do Nexo.
+- 🗂️ Separe as configurações em um arquivo próprio quando o projeto crescer.
+- 🔐 Armazene o token em uma variável de ambiente e nunca o publique no repositório.
+- 🧩 Utilize `custom` para configurações específicas da sua aplicação.
+- 🎯 Personalize somente as opções necessárias.
+- 🧼 Mantenha as configurações declarativas, sem colocar a lógica de negócio dentro delas.

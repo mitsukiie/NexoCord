@@ -6,20 +6,20 @@ import {
   RoleSelectMenuInteraction,
   ChannelSelectMenuInteraction,
   MentionableSelectMenuInteraction,
-} from 'discord.js';
+} from "discord.js";
 
-import { ZodTypeAny, infer as zInfer } from 'zod/v3';
+import { ZodTypeAny, infer as zInfer } from "zod/v3";
 
-import type { RunResponder } from './Run';
+import type { RunResponder } from "./Run";
 
 export enum ResponderType {
-  Button = 'button',
-  Modal = 'modal',
-  SelectString = 'select.string',
-  SelectUser = 'select.user',
-  SelectRole = 'select.role',
-  SelectChannel = 'select.channel',
-  SelectMentionable = 'select.mentionable',
+  Button = "button",
+  Modal = "modal",
+  SelectString = "select.string",
+  SelectUser = "select.user",
+  SelectRole = "select.role",
+  SelectChannel = "select.channel",
+  SelectMentionable = "select.mentionable",
 }
 
 type Map = {
@@ -34,7 +34,7 @@ type Map = {
 export type ResponderInteraction<T extends ResponderType> = Map[T];
 
 export type ResponderTypes = ResponderType | readonly ResponderType[];
-export type CacheType = 'cached' | 'guild'
+export type CacheType = "cached" | "guild";
 
 type ResponderInteractionFromInput<T extends ResponderTypes> =
   T extends readonly ResponderType[]
@@ -43,15 +43,17 @@ type ResponderInteractionFromInput<T extends ResponderTypes> =
       ? ResponderInteraction<T>
       : never;
 
-type SegmentParamName<Segment extends string> = Segment extends `:${infer Param}`
-  ? Param
-  : never;
+type SegmentParamName<Segment extends string> =
+  Segment extends `:${infer Param}` ? Param : never;
 
-type PathParamNames<Path extends string> = Path extends `${infer Segment}/${infer Rest}`
-  ? SegmentParamName<Segment> | PathParamNames<Rest>
-  : SegmentParamName<Path>;
+type PathParamNames<Path extends string> =
+  Path extends `${infer Segment}/${infer Rest}`
+    ? SegmentParamName<Segment> | PathParamNames<Rest>
+    : SegmentParamName<Path>;
 
-export type ResponderParams<Path extends string> = [PathParamNames<Path>] extends [never]
+export type ResponderParams<Path extends string> = [
+  PathParamNames<Path>,
+] extends [never]
   ? Record<never, never>
   : { [K in PathParamNames<Path>]: string };
 
@@ -74,7 +76,7 @@ export type Responder<
   type: Type;
   parse?: Parse;
   run: RunResponder<ResponderInteractionFromInput<Type>, Path, Parse>;
-  lifetime?: 'once' | 'temporary';
+  lifetime?: "once" | "temporary";
   expire?: number;
-  cache?: CacheType;  
+  cache?: CacheType;
 };
