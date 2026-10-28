@@ -42,7 +42,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "🔎 Referência",
       items: [
-        "referencia/contexto",
+        "referencia/migracao",
         "referencia/solucao-de-problemas",
       ],
     },

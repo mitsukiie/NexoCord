@@ -30,7 +30,7 @@ import type {
   MediaItem,
   RowComponent,
   SelectMenu,
-} from "@types";
+} from "../types";
 
 import { validate } from "./validate";
 
@@ -281,7 +281,7 @@ function build_easy_child(component: ContainerNode): ContainerChild {
     }
 
     default: {
-      throw new Error("Unknown container component.");
+      throw new Error("Componente de container desconhecido.");
     }
   }
 }

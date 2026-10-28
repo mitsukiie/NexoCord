@@ -18,7 +18,7 @@ import type {
   StringSelectOption,
   Thumbnail,
   UserSelect,
-} from "@types";
+} from "../types";
 
 import {
   attach_container_attachments,
@@ -30,7 +30,9 @@ import { validate } from "./validate";
 
 function get_attachment_name(attachment: AttachmentInput): string {
   if (!attachment || typeof attachment !== "object") {
-    throw new Error("Attachment must be an object with a valid file name.");
+    throw new Error(
+      "O anexo deve ser um objeto com um nome de arquivo válido.",
+    );
   }
 
   const candidate = attachment as {
@@ -47,7 +49,7 @@ function get_attachment_name(attachment: AttachmentInput): string {
 
   if (!name) {
     throw new Error(
-      "Attachment name was not found. Define a name in AttachmentBuilder options.",
+      "Nome do anexo não encontrado. Defina um nome nas opções do AttachmentBuilder.",
     );
   }
 
@@ -314,6 +316,7 @@ function string_select(
 }
 
 export const ui = {
+  /** Cria um bloco de texto para uma resposta com Components V2. */
   text(content: string) {
     return {
       type: "text" as const,
@@ -321,24 +324,32 @@ export const ui = {
     };
   },
 
+  /** Cria um divisor visual. */
   divider() {
     return {
       type: "separator" as const,
     };
   },
 
+  /** Cria um botão a partir das opções informadas. */
   button(options: Button): Button {
     return options;
   },
 
   select: {
+    /** Cria um menu de seleção de usuários. */
     user: user_select,
+    /** Cria um menu de seleção de strings. */
     string: string_select,
+    /** Cria um menu de seleção de cargos. */
     role: role_select,
+    /** Cria um menu de seleção de canais. */
     channel: channel_select,
+    /** Cria um menu de seleção de entidades mencionáveis. */
     mentionable: mentionable_select,
   },
 
+  /** Cria uma seção com até três textos e, opcionalmente, uma mídia ou botão. */
   section(texts: SectionTexts, opts: SectionOptions = {}) {
     return {
       type: "section" as const,
@@ -347,10 +358,12 @@ export const ui = {
     };
   },
 
+  /** Cria uma miniatura para uso em uma seção. */
   thumbnail(options: Thumbnail): Thumbnail {
     return options;
   },
 
+  /** Cria uma galeria de mídia. */
   gallery(...items: MediaItem[]) {
     return {
       type: "gallery" as const,
@@ -358,12 +371,14 @@ export const ui = {
     };
   },
 
+  /** Cria um item de mídia para uso em uma galeria. */
   image(options: MediaItem): MediaItem {
     return options;
   },
 
   file,
 
+  /** Cria uma linha com botões ou menus de seleção. */
   row(...components: RowComponent[]) {
     return {
       type: "row" as const,
@@ -371,6 +386,7 @@ export const ui = {
     };
   },
 
+  /** Agrupa componentes em um container e anexa automaticamente os arquivos usados. */
   container(
     ...args: [ContainerOptions, ...ContainerInput[]] | ContainerInput[]
   ) {

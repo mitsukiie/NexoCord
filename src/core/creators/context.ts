@@ -6,13 +6,14 @@ import {
   type MessageFlagsResolvable,
 } from "discord.js";
 
-import type { CommandInteraction, CommandType, DisplayInput } from "@types";
+import type { CommandInteraction, CommandType, DisplayInput } from "../types";
 
 import { prepare_components } from "../ui/normalize";
 
 type ReplyFiles = NonNullable<InteractionReplyOptions["files"]>;
 type ReplyComponents = NonNullable<InteractionReplyOptions["components"]>;
 
+/** Opções de resposta de um comando, incluindo componentes do NexoCord. */
 export type ContextReplyOptions = Omit<
   InteractionReplyOptions,
   "components" | "flags" | "files"
@@ -28,6 +29,7 @@ function resolve_flags(flags: InteractionReplyOptions["flags"]): number {
     : MessageFlagsBitField.resolve(flags as MessageFlagsResolvable);
 }
 
+/** Cria o contexto usado pelo callback de um comando. */
 export function create_context<T extends CommandType>(
   interaction: CommandInteraction<T>,
   client: Client,
@@ -77,6 +79,7 @@ export function create_context<T extends CommandType>(
   };
 }
 
+/** Contexto entregue ao callback de um comando. */
 export type CommandContext<T extends CommandType = CommandType> = ReturnType<
   typeof create_context<T>
 >;

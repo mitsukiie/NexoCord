@@ -1,88 +1,78 @@
 import chalk from "chalk";
+import type { NexoConfig } from "../config";
 
-async function info(msg: any) {
-  switch (settings.terminal.mode) {
-    case "informativo":
-      const date = new Date();
-      console.log(
-        chalk.blueBright(
-          `[INFO] [${date.getDay()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}] ${msg}`,
-        ),
-      );
+type LogMode = NexoConfig["terminal"]["mode"];
+
+let mode: LogMode = "minimalista";
+
+function configure_logger(config: NexoConfig): void {
+  mode = config.terminal.mode;
+}
+
+function timestamp(): string {
+  const date = new Date();
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+function log(level: "INFO" | "WARN" | "ERROR" | "SUCCESS", msg: unknown): void {
+  const message = String(msg);
+
+  if (mode === "informativo") {
+    const prefix = `[${level}] [${timestamp()}] ${message}`;
+
+    switch (level) {
+      case "INFO":
+        console.log(chalk.blueBright(prefix));
+        break;
+      case "WARN":
+        console.warn(chalk.yellowBright(prefix));
+        break;
+      case "ERROR":
+        console.error(chalk.redBright(prefix));
+        break;
+      case "SUCCESS":
+        console.log(chalk.greenBright(prefix));
+        break;
+    }
+
+    return;
+  }
+
+  switch (level) {
+    case "INFO":
+      console.log(chalk.blueBright(message));
       break;
-
-    case "minimalista":
-      console.log(chalk.blueBright(`${msg}`));
+    case "WARN":
+      console.warn(chalk.yellowBright(message));
       break;
-
-    default:
+    case "ERROR":
+      console.error(chalk.redBright(`${message}`));
+      break;
+    case "SUCCESS":
+      console.log(chalk.greenBright(message));
       break;
   }
 }
 
-async function warn(msg: any) {
-  switch (settings.terminal.mode) {
-    case "informativo":
-      const date = new Date();
-      console.log(
-        chalk.yellowBright(
-          `[WARN] [${date.getDay()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}] ${msg}`,
-        ),
-      );
-      break;
-
-    case "minimalista":
-      console.log(chalk.yellowBright(`${msg}`));
-      break;
-
-    default:
-      break;
-  }
-}
-
-async function error(msg: any) {
-  switch (settings.terminal.mode) {
-    case "informativo":
-      const date = new Date();
-      console.error(
-        chalk.redBright(
-          `[ERROR] [${date.getDay()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}] ${msg}`,
-        ),
-      );
-      break;
-
-    case "minimalista":
-      console.error(chalk.redBright(`✗ ${msg}`));
-      break;
-
-    default:
-      break;
-  }
-}
-
-async function success(msg: any) {
-  switch (globalThis.settings?.terminal?.mode ?? "informativo") {
-    case "informativo":
-      const date = new Date();
-      console.log(
-        chalk.greenBright(
-          `[SUCCESS] [${date.getDay()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}] ${msg}`,
-        ),
-      );
-      break;
-
-    case "minimalista":
-      console.log(chalk.greenBright(`${msg}`));
-      break;
-
-    default:
-      break;
-  }
-}
-
+/** Exibe mensagens de log respeitando o modo configurado do NexoCord. */
 export const logger = {
-  info,
-  warn,
-  success,
-  error,
+  /** Aplica o modo de saída definido na configuração do bot. */
+  configure: configure_logger,
+  /** Exibe uma mensagem informativa. */
+  info: (msg: unknown) => log("INFO", msg),
+  /** Exibe um aviso. */
+  warn: (msg: unknown) => log("WARN", msg),
+  /** Exibe um erro. */
+  error: (msg: unknown) => log("ERROR", msg),
+  /** Exibe uma mensagem de sucesso. */
+  success: (msg: unknown) => log("SUCCESS", msg),
 };

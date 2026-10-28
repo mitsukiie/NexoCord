@@ -4,263 +4,222 @@ title: Configuração
 slug: /configuration
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# ⚙️ Configuração
 
-# ⚙️ Configuração (settings)
+O NexoCord permite personalizar o comportamento do framework por meio de um arquivo de configuração na raiz do projeto.
 
-No Nexo, você configura os comportamentos globais do framework usando a propriedade `settings` do `Bootstrap.init()`.
-
-As configurações permitem controlar os logs do terminal, definir o cooldown padrão dos comandos e armazenar valores personalizados da sua aplicação.
-
-:::info
-Nesta página, `paths.commands` e `paths.events` são utilizados como exemplos. Você pode organizar seus arquivos em qualquer estrutura de pastas, desde que configure os caminhos corretamente.
-:::
-
-## 🚀 Como configurar
-
-Você pode definir as configurações de duas formas:
-
-1. **Inline:** diretamente no `Bootstrap.init()`, ideal para projetos pequenos.
-2. **Em um arquivo separado:** usando `settings.ts` ou `settings.js`, recomendado para projetos médios e grandes.
-
-## 🧩 Configuração inline
-
-<Tabs groupId="lang-settings-inline">
-<TabItem value="js" label="JavaScript">
-
-```js
-const { Bootstrap } = require('nexocord');
-const { GatewayIntentBits } = require('discord.js');
-
-async function main() {
-  await Bootstrap.init({
-    token: process.env.DISCORD_TOKEN,
-    intents: [GatewayIntentBits.Guilds],
-    paths: {
-      commands: 'src/commands',
-      events: 'src/events',
-    },
-    settings: {
-      terminal: {
-        mode: 'minimalista',
-        showSlashCommandsRegistred: true,
-      },
-      bot: {
-        cooldown: 5,
-      },
-      custom: {
-        projectName: 'Meu Bot',
-      },
-    },
-  });
-}
-
-main();
-```
-
-</TabItem>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-import { Bootstrap } from 'nexocord';
-import { GatewayIntentBits } from 'discord.js';
-
-await Bootstrap.init({
-  token: process.env.DISCORD_TOKEN,
-  intents: [GatewayIntentBits.Guilds],
-  paths: {
-    commands: 'src/commands',
-    events: 'src/events',
-  },
-  settings: {
-    terminal: {
-      mode: 'minimalista',
-      showSlashCommandsRegistred: true,
-    },
-    bot: {
-      cooldown: 5,
-    },
-    custom: {
-      projectName: 'Meu Bot',
-    },
-  },
-});
-```
-
-</TabItem>
-</Tabs>
-
-:::tip
-Para projetos pequenos, definir as configurações diretamente no `Bootstrap.init()` costuma ser suficiente.
-:::
-
-## 📂 Arquivo separado
-
-Em projetos maiores, separar as configurações ajuda a manter o arquivo de inicialização organizado.
-
-Estrutura sugerida:
-
-```text
-src/
-├── index.ts
-└── settings.ts
-```
-
-<Tabs groupId="lang-settings-file">
-<TabItem value="js" label="JavaScript">
-
-```js title="src/settings.js"
-module.exports = {
-  terminal: {
-    mode: 'minimalista',
-    showSlashCommandsFiles: false,
-    showSlashCommandsRegistred: true,
-    showEventsFiles: false,
-    showEventsRegistred: true,
-  },
-  bot: {
-    cooldown: 3,
-    guildID: [],
-  },
-  custom: {
-    supportServer: 'https://discord.gg/seu-servidor',
-  },
-};
-```
-
-```js title="src/index.js"
-const { Bootstrap } = require('nexocord');
-const { GatewayIntentBits } = require('discord.js');
-const settings = require('./settings.js');
-
-async function main() {
-  await Bootstrap.init({
-    token: process.env.DISCORD_TOKEN,
-    intents: [GatewayIntentBits.Guilds],
-    paths: {
-      commands: 'src/commands',
-      events: 'src/events',
-    },
-    settings,
-  });
-}
-
-main();
-```
-
-</TabItem>
-<TabItem value="ts" label="TypeScript">
-
-```ts title="src/settings.ts"
-import type { Settings } from 'nexocord';
-
-export const settings: Settings = {
-  terminal: {
-    mode: 'minimalista',
-    showSlashCommandsFiles: false,
-    showSlashCommandsRegistred: true,
-    showEventsFiles: false,
-    showEventsRegistred: true,
-  },
-  bot: {
-    cooldown: 3,
-    guildID: [],
-  },
-  custom: {
-    supportServer: 'https://discord.gg/seu-servidor',
-  },
-};
-```
-
-```ts title="src/index.ts"
-import { Bootstrap } from 'nexocord';
-import { GatewayIntentBits } from 'discord.js';
-import { settings } from './settings';
-
-await Bootstrap.init({
-  token: process.env.DISCORD_TOKEN,
-  intents: [GatewayIntentBits.Guilds],
-  paths: {
-    commands: 'src/commands',
-    events: 'src/events',
-  },
-  settings,
-});
-```
-
-</TabItem>
-</Tabs>
-
-## 🧠 Valores padrão
-
-O Nexo permite fornecer apenas as configurações que você deseja personalizar por meio de `PartialSettings`.
-
-Por exemplo, você pode definir apenas o cooldown:
-
-```ts
-await Bootstrap.init({
-  settings: {
-    bot: {
-      cooldown: 5,
-    },
-  },
-});
-```
-
-Os demais valores dependem dos padrões definidos pela implementação de `setGlobalSettings()`.
+Você pode utilizar `nexocord.json` ou `nexocord.config`, dependendo do formato de sua preferência.
 
 :::warning
-Confira se os padrões estão configurados corretamente no framework. O `Bootstrap.init()` recebe as configurações parciais, mas é `setGlobalSettings()` quem determina como elas são armazenadas e combinadas com os valores padrão.
+Utilize apenas um arquivo de configuração. Se `nexocord.json` e `nexocord.config` existirem ao mesmo tempo, o NexoCord exibirá um erro.
 :::
 
-## 📋 Opções disponíveis
+## 🚀 Criando o arquivo de configuração
 
-### 🖥️ `terminal`
+### `nexocord.json`
 
-Controla as informações exibidas no terminal.
+Crie um arquivo chamado `nexocord.json` na raiz do projeto:
 
-| Propriedade | Tipo | Descrição |
-| --- | --- | --- |
-| `mode` | `'informativo' \| 'minimalista'` | Define o modo de exibição dos logs. |
-| `showSlashCommandsFiles` | `boolean` | Exibe os arquivos de comandos encontrados durante o carregamento. |
-| `showSlashCommandsRegistred` | `boolean` | Exibe informações sobre os comandos registrados no Discord. |
-| `showEventsFiles` | `boolean` | Exibe os arquivos de eventos encontrados. |
-| `showEventsRegistred` | `boolean` | Exibe informações sobre os eventos registrados no cliente. |
-
-### 🤖 `bot`
-
-Define configurações globais relacionadas aos comandos e servidores.
-
-| Propriedade | Tipo | Descrição |
-| --- | --- | --- |
-| `cooldown` | `number` | Cooldown padrão dos comandos, em segundos. |
-| `guildID` | `string[]` | Lista de IDs de servidores utilizada pelo framework quando aplicável ao registro ou à sincronização de comandos. |
-
-### 🧩 `custom`
-
-Permite armazenar configurações específicas da sua aplicação sem precisar adicioná-las às opções internas do Nexo.
-
-O tipo é `Record<string, any>`.
-
-```ts
-custom: {
-  projectName: 'Meu Bot',
-  supportServer: 'https://discord.gg/seu-servidor',
-  welcomeChannelId: '123456789012345678',
+```json
+{
+  "directories": {
+    "commands": "./src/commands",
+    "events": "./src/events"
+  },
+  "terminal": {
+    "mode": "minimalista",
+    "commands": {
+      "showFiles": false,
+      "showRegistered": true,
+      "registeredMessage": "✓ {count} comandos registrados"
+    },
+    "events": {
+      "showFiles": false,
+      "showRegistered": true,
+      "registeredMessage": "✓ {count} eventos carregados"
+    }
+  },
+  "bot": {
+    "cooldown": 3,
+    "guildID": [],
+    "errors": {
+      "interaction": "Ocorreu um erro ao executar este comando."
+    }
+  }
 }
 ```
 
-Você pode acessar esses valores por meio do mecanismo de configurações disponibilizado pelo framework.
+### `nexocord.config`
+
+Se preferir um formato de configuração baseado em chaves e valores, utilize `nexocord.config`:
+
+```properties
+# Diretórios
+DIRECTORIES_COMMANDS=./src/commands
+DIRECTORIES_EVENTS=./src/events
+
+# Terminal
+TERMINAL_MODE=minimalista
+TERMINAL_COMMANDS_SHOW_FILES=false
+TERMINAL_COMMANDS_SHOW_REGISTERED=true
+TERMINAL_COMMANDS_REGISTERED_MESSAGE="✓ {count} comandos registrados"
+TERMINAL_EVENTS_SHOW_FILES=false
+TERMINAL_EVENTS_SHOW_REGISTERED=true
+TERMINAL_EVENTS_REGISTERED_MESSAGE="✓ {count} eventos carregados"
+
+# Bot
+BOT_COOLDOWN=3
+BOT_GUILD_ID=[]
+BOT_ERRORS_INTERACTION="Ocorreu um erro ao executar este comando."
+```
+
+Os dois formatos permitem configurar as mesmas opções. Escolha aquele que preferir.
+
+## 📂 Diretórios
+
+A propriedade `directories` define onde o NexoCord procura os arquivos de comandos e eventos.
+
+| Propriedade | Tipo | Descrição |
+|---|---|---|
+| `directories.commands` | `string` | Caminho da pasta de comandos. |
+| `directories.events` | `string` | Caminho da pasta de eventos. |
+
+Exemplo:
+
+```json
+{
+  "directories": {
+    "commands": "./src/commands",
+    "events": "./src/events"
+  }
+}
+```
+
+Os caminhos devem corresponder à estrutura do seu projeto.
+
+## 🖥️ Terminal
+
+A propriedade `terminal` controla as informações exibidas durante a inicialização do framework.
+
+| Propriedade | Tipo | Descrição |
+|---|---|---|
+| `terminal.mode` | `"informativo" \| "minimalista"` | Define o formato dos logs. |
+| `terminal.commands.showFiles` | `boolean` | Exibe os arquivos de comandos encontrados. |
+| `terminal.commands.showRegistered` | `boolean` | Exibe a mensagem de registro dos comandos. |
+| `terminal.commands.registeredMessage` | `string` | Personaliza a mensagem de registro dos comandos. |
+| `terminal.events.showFiles` | `boolean` | Exibe os arquivos de eventos encontrados. |
+| `terminal.events.showRegistered` | `boolean` | Exibe a mensagem de carregamento dos eventos. |
+| `terminal.events.registeredMessage` | `string` | Personaliza a mensagem de carregamento dos eventos. |
+
+### Modos de exibição
+
+- `informativo`: exibe informações adicionais nos logs, como nível e horário.
+- `minimalista`: mantém a saída do terminal mais simples.
+
+### Personalizando mensagens
+
+As mensagens de registro aceitam o marcador `{count}`, substituído pela quantidade correspondente de comandos ou eventos.
+
+Exemplo:
+
+```json
+{
+  "terminal": {
+    "commands": {
+      "registeredMessage": "✓ {count} comandos registrados com sucesso"
+    },
+    "events": {
+      "registeredMessage": "✓ {count} eventos carregados com sucesso"
+    }
+  }
+}
+```
+
+## 🤖 Bot
+
+A propriedade `bot` reúne configurações relacionadas ao comportamento do bot.
+
+| Propriedade | Tipo | Descrição |
+|---|---|---|
+| `bot.cooldown` | `number` | Cooldown padrão dos comandos, em segundos. |
+| `bot.guildID` | `string[]` | Lista de IDs de servidores utilizada pelo framework quando aplicável. |
+| `bot.errors.interaction` | `string` | Mensagem exibida quando ocorre um erro durante a execução de uma interação. |
+
+### Cooldown padrão
+
+O cooldown define o tempo de espera padrão entre execuções de um comando, conforme o comportamento implementado pelo framework.
+
+```json
+{
+  "bot": {
+    "cooldown": 5
+  }
+}
+```
+
+Nesse exemplo, o cooldown padrão é de cinco segundos. Caso o comando permita configurar seu próprio cooldown, o valor específico do comando pode prevalecer sobre o padrão global.
+
+### Mensagem de erro
+
+Você pode personalizar a mensagem exibida quando uma interação falha:
+
+```json
+{
+  "bot": {
+    "errors": {
+      "interaction": "Não foi possível executar esta interação."
+    }
+  }
+}
+```
+
+## 🔑 Inicializando o bot
+
+O arquivo de configuração não substitui as opções de inicialização do bot. O token, as intents e outras opções suportadas continuam sendo informados em `Bootstrap.init()`.
+
+```ts
+import { Bootstrap } from "nexocord";
+import { GatewayIntentBits } from "discord.js";
+
+await Bootstrap.init({
+  token: process.env.TOKEN,
+  intents: [GatewayIntentBits.Guilds]
+});
+```
+
+O NexoCord carrega automaticamente o arquivo de configuração encontrado na raiz do projeto.
 
 :::tip
-Use `custom` para valores próprios do seu projeto, como IDs de canais, IDs de cargos, URLs e opções específicas da aplicação.
+Mantenha o token em uma variável de ambiente, como `TOKEN`, e nunca o publique no repositório.
 :::
+
+## 🧩 Configurações personalizadas da aplicação
+
+Se precisar armazenar valores específicos do seu bot, você pode passá-los pela propriedade `settings` de `Bootstrap.init()`.
+
+```ts
+import { Bootstrap } from "nexocord";
+import { GatewayIntentBits } from "discord.js";
+
+await Bootstrap.init({
+  token: process.env.TOKEN,
+  intents: [GatewayIntentBits.Guilds],
+  settings: {
+    projectName: "Meu Bot",
+    supportServer: "https://discord.gg/seu-servidor",
+    welcomeChannelId: "123456789012345678"
+  }
+});
+```
+
+Esses valores pertencem à sua aplicação, não à configuração interna do NexoCord.
+
+Consulte a documentação da API para saber como acessar `settings` durante a execução do bot.
 
 ## ✅ Boas práticas
 
-- 🗂️ Separe as configurações em um arquivo próprio quando o projeto crescer.
-- 🔐 Armazene o token em uma variável de ambiente e nunca o publique no repositório.
-- 🧩 Utilize `custom` para configurações específicas da sua aplicação.
-- 🎯 Personalize somente as opções necessárias.
-- 🧼 Mantenha as configurações declarativas, sem colocar a lógica de negócio dentro delas.
+- Mantenha apenas um arquivo de configuração na raiz do projeto.
+- Utilize `nexocord.json` se preferir uma estrutura organizada em JSON.
+- Armazene segredos, como o token do bot, em variáveis de ambiente.
+- Utilize `settings` para dados personalizados da aplicação.
+- Mantenha os diretórios configurados de acordo com a estrutura do projeto.

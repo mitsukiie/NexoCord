@@ -1,9 +1,10 @@
 import { Interaction } from "discord.js";
 import { ZodType } from "zod";
 import { interaction_type } from "../../utils/responder";
-import { CacheType } from "@types";
+import { CacheType } from "../../types";
 import { session } from "./session";
 import { route } from "./route";
+import { handle_error } from "../../utils";
 
 function check_interaction_type(
   interaction: Interaction,
@@ -29,12 +30,15 @@ function CacheErrorMessage(cache_type: CacheType) {
   return "Esta interação exige contexto raw de servidor.";
 }
 
+/** Gerencia o registro e a execução dos responders de interação. */
 export class ResponderManager {
   private routes = new route();
   private sessions = new session();
 
+  /** Registra um responder e retorna a rota criada. */
   register = this.routes.create.bind(this.routes);
 
+  /** Executa o responder correspondente à interação, quando houver uma rota compatível. */
   async run(interaction: Interaction) {
     if (!("customId" in interaction)) return;
     const id = interaction.customId;
@@ -101,7 +105,7 @@ export class ResponderManager {
 
       await route.run(interaction as any, data);
     } catch (err) {
-      console.error("Responder error:", err);
+      handle_error(err);
       if (
         "reply" in interaction &&
         interaction.isRepliable() &&

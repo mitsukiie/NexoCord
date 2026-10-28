@@ -1,5 +1,6 @@
-import fs from "fs";
-import path from "path";
+
+import fs from "node:fs";
+import path from "node:path";
 
 import { NexoError } from "../../errors";
 
@@ -8,7 +9,11 @@ import type {
   InitOptions,
   InitPackageJson,
 } from "./types";
-import type { ProjectLanguage, ProjectRuntime } from "../create/prompts";
+
+import type {
+  ProjectLanguage,
+  ProjectRuntime,
+} from "../project/types";
 
 export function get_project_paths(): {
   target_dir: string;
@@ -27,8 +32,12 @@ export function get_project_paths(): {
   return { target_dir, package_path };
 }
 
-export function read_package_json(package_path: string): InitPackageJson {
-  return JSON.parse(fs.readFileSync(package_path, "utf8")) as InitPackageJson;
+export function read_package_json(
+  package_path: string,
+): InitPackageJson {
+  return JSON.parse(
+    fs.readFileSync(package_path, "utf8"),
+  ) as InitPackageJson;
 }
 
 export function detect_project(
@@ -36,10 +45,9 @@ export function detect_project(
   package_json: InitPackageJson,
 ): DetectedProject {
   const runtime: ProjectRuntime =
-    fs.existsSync(path.join(target_dir, "bun.lockb")) ||
     fs.existsSync(path.join(target_dir, "bun.lock")) ||
-    (typeof package_json.packageManager === "string" &&
-      package_json.packageManager.startsWith("bun@"))
+    fs.existsSync(path.join(target_dir, "bun.lockb")) ||
+    package_json.packageManager?.startsWith("bun@") === true
       ? "bun"
       : "node";
 
@@ -54,8 +62,8 @@ export function detect_project(
     package_json.nexocord !== undefined ||
     package_json.dependencies?.nexocord !== undefined ||
     package_json.devDependencies?.nexocord !== undefined ||
-    Object.values(package_json.scripts ?? {}).some((script) =>
-      script.includes("nexo"),
+    Object.values(package_json.scripts ?? {}).some(
+      (script) => script.includes("nexo"),
     );
 
   return { runtime, language, has_nexo_configuration };
@@ -102,50 +110,11 @@ export function resolve_init_choices(
         ? options.runtime
         : undefined,
     language:
-      requested_language === "typescript" || requested_language === "javascript"
+      requested_language === "typescript" ||
+      requested_language === "javascript"
         ? requested_language
         : undefined,
   };
-}
-
-export function configure_package_json(
-  package_json: InitPackageJson,
-  language: ProjectLanguage,
-  runtime: ProjectRuntime,
-  expected_type: string,
-  update_type: boolean,
-): void {
-  package_json.dependencies ??= {};
-  package_json.scripts ??= {};
-
-  package_json.dependencies.nexocord ??= "latest";
-  package_json.dependencies["discord.js"] ??= "^14.25.1";
-
-  if (language === "typescript") {
-    package_json.devDependencies ??= {};
-    package_json.devDependencies.typescript ??= "^6.0.2";
-
-    if (runtime === "bun") {
-      package_json.devDependencies["@types/bun"] ??= "latest";
-    } else {
-      package_json.devDependencies.tsx ??= "^4.20.0";
-      package_json.devDependencies["@types/node"] ??= "^24.0.0";
-    }
-  }
-
-  if (update_type) {
-    package_json.type = expected_type;
-  }
-
-  package_json.scripts.build ??= "nexo build";
-  package_json.scripts.start ??=
-    language === "typescript"
-      ? "nexo start dist/index.js"
-      : "nexo start src/index.js";
-  package_json.scripts.dev ??=
-    language === "typescript"
-      ? "nexo dev src/index.ts"
-      : "nexo dev src/index.js";
 }
 
 export function write_package_json(

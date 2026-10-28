@@ -4,7 +4,7 @@ import {
   ResponderTypes,
   ResponderParser,
   ResponderParams,
-} from "@types";
+} from "../../types";
 
 export interface Route<
   Path extends string,
@@ -33,7 +33,9 @@ export class route {
     Parse extends ResponderParser<Path> | undefined = undefined,
   >(opts: Responder<Path, T, Parse>) {
     if (opts.lifetime === "temporary" && !opts.expire) {
-      throw new Error("Temporary responders must define expire time.");
+      throw new Error(
+        "Responders temporários devem definir um tempo de expiração.",
+      );
     }
 
     const created: Route<Path, T, Parse> = {
@@ -44,6 +46,7 @@ export class route {
     const types = (
       Array.isArray(opts.type) ? opts.type : [opts.type]
     ) as readonly ResponderType[];
+
     for (const type of types) {
       const list = this.routes.get(type) ?? [];
       list.push(created as unknown as Router);
@@ -82,6 +85,7 @@ export class route {
 
     values.forEach((value, i) => {
       const part = route.parts[i];
+
       if (part?.startsWith(":")) {
         const key = normalize(part.slice(1));
         params[key] = value;

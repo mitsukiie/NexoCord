@@ -3,17 +3,22 @@ import path from "path";
 import { pathToFileURL } from "url";
 
 // Importações internas do projeto
-import { ExtendedClient, App } from "@base";
-import { Event } from "@types";
-import { logger } from "@utils";
+import { ExtendedClient, App } from "../../index";
+import { Event } from "../../types";
+import { NexoConfig, format_message } from "../../config";
+import { logger } from "../../utils";
 import { GLOB } from "../../utils/extensions";
 
 export async function load_events(
+  config: NexoConfig,
   client?: ExtendedClient,
-  eventsPath = "src/events",
 ): Promise<Event[]> {
   const app = App.get();
-  const base_events_path = path.resolve(process.cwd(), eventsPath);
+  const base_events_path = path.resolve(
+    process.cwd(),
+    config.directories.events,
+  );
+
   const files = await glob(GLOB, {
     cwd: base_events_path,
     absolute: true,
@@ -21,7 +26,7 @@ export async function load_events(
 
   app.events.clear();
 
-  if (settings.terminal.showEventsFiles) {
+  if (config.terminal.events.showFiles) {
     logger.info("🔄 Iniciando o carregamento de eventos...");
     logger.success(`📂 Total de eventos encontrados: ${files.length}`);
   }
@@ -44,13 +49,17 @@ export async function load_events(
   const events = app.events.all();
 
   if (client) {
-    await register_events(client, events);
+    await register_events(client, events, config);
   }
 
   return events;
 }
 
-export async function register_events(client: ExtendedClient, events: Event[]) {
+export async function register_events(
+  client: ExtendedClient,
+  events: Event[],
+  config: NexoConfig,
+) {
   events.forEach((event) => {
     if (event.once) {
       client.once(event.name, (...args) => event.run(...args, client));
@@ -59,16 +68,9 @@ export async function register_events(client: ExtendedClient, events: Event[]) {
     }
   });
 
-  if (settings.terminal.showEventsRegistred) {
-    if (events.length === 1) {
-      logger.success(`${events.length} evento registrado.`);
-    } else {
-      logger.success(`${events.length} eventos registrados.`);
-    }
+  if (config.terminal.events.showRegistered) {
+    logger.success(
+      format_message(config.terminal.events.registeredMessage, events.length),
+    );
   }
-}
-
-export async function Events(client: ExtendedClient) {
-  const events = await load_events();
-  await register_events(client, events);
 }

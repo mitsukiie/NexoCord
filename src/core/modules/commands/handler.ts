@@ -4,23 +4,25 @@ import path from "path";
 import { pathToFileURL } from "url";
 
 // Importações internas do projeto
-import { ExtendedClient, App } from "@base";
-import { Command } from "@types";
-import { logger } from "@utils";
+import { ExtendedClient, App } from "../../index";
+import { Command } from "../../types";
+import { logger } from "../../utils";
+import { NexoConfig, format_message } from "../../config";
+
 import { is_script } from "../../utils/extensions";
 import { createSubcommand } from "../../creators";
 
 type Serialized = ReturnType<typeof serialize>;
 
 export async function load_commands(
+  config: NexoConfig,
   client?: ExtendedClient,
   token?: string,
-  commandsPath = "src/commands",
 ): Promise<Serialized[]> {
   const app = App.get();
   const commands: Serialized[] = [];
 
-  const folders = path.resolve(process.cwd(), commandsPath);
+  const folders = path.resolve(process.cwd(), config.directories.commands);
 
   if (!existsSync(folders)) {
     logger.warn(`⚠️ Pasta de comandos não encontrada: ${folders}`);
@@ -32,7 +34,7 @@ export async function load_commands(
 
   app.commands.clear();
 
-  if (settings.terminal.showSlashCommandsFiles) {
+  if (config.terminal.commands.showFiles) {
     logger.info("🔄 Iniciando o carregamento de comandos...");
     logger.success(`📂 Total de categorias: ${categories.length}`);
   }
@@ -42,7 +44,7 @@ export async function load_commands(
       const category_path = path.join(folders, categorie);
       const entries = readdirSync(category_path, { withFileTypes: true });
 
-      if (settings.terminal.showSlashCommandsFiles) {
+      if (config.terminal.commands.showFiles) {
         logger.success(
           `📂 Categoria: ${categorie} - ${entries.length} comandos`,
         );
@@ -79,7 +81,7 @@ export async function load_commands(
             commands.push(cmd);
             app.commands.add(command);
 
-            if (settings.terminal.showSlashCommandsFiles) {
+            if (config.terminal.commands.showFiles) {
               logger.success(`📄 Comando carregado: ${cmd.name}`);
             }
           } else {
@@ -91,15 +93,16 @@ export async function load_commands(
   );
 
   if (client) {
-    await register_commands(client, commands, token);
+    await register_commands(client, commands, config, token);
   }
 
   return commands;
 }
 
-export async function register_commands(
+async function register_commands(
   client: ExtendedClient,
   commands: Serialized[],
+  config: NexoConfig,
   token?: string,
 ) {
   const Token = token ?? process.env.TOKEN;
@@ -112,8 +115,8 @@ export async function register_commands(
   const rest = new REST({ version: "10" }).setToken(Token);
 
   try {
-    if (settings.bot.guildID && settings.bot.guildID?.length > 0) {
-      const guilds = settings.bot.guildID;
+    if (config.bot.guildID && config.bot.guildID.length > 0) {
+      const guilds = config.bot.guildID;
 
       const servers = await Promise.all(
         guilds.map(async (ID: string) => {
@@ -144,7 +147,7 @@ export async function register_commands(
         }),
       );
 
-      if (settings.terminal.showSlashCommandsRegistred) {
+      if (config.terminal.commands.showRegistered) {
         logger.info(JSON.stringify(servers, null, 2));
       }
     } else {
@@ -152,22 +155,18 @@ export async function register_commands(
         body: commands,
       });
 
-      if (settings.terminal.showSlashCommandsRegistred) {
-        if (commands.length === 1) {
-          logger.success(`${commands.length} comando registrado.`);
-        } else {
-          logger.success(`${commands.length} comandos registrados.`);
-        }
+      if (config.terminal.commands.showRegistered) {
+        logger.success(
+          format_message(
+            config.terminal.commands.registeredMessage,
+            commands.length,
+          ),
+        );
       }
     }
   } catch (err) {
     console.error("Erro ao registrar comandos:", err);
   }
-}
-
-export async function Commands(client: ExtendedClient) {
-  const commands = await load_commands();
-  await register_commands(client, commands);
 }
 
 function serialize(command: Command) {

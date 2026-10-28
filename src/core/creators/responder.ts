@@ -1,7 +1,12 @@
 import { Responder, ResponderParser, ResponderTypes } from "../types";
 
-import { App } from "@base";
+import { App } from "../index";
 
+/**
+ * Registra um responder para interações identificadas por um caminho de `customId`.
+ *
+ * Os segmentos iniciados por `:` são extraídos e entregues ao callback como parâmetros.
+ */
 export function createResponder<
   const Path extends string,
   const Type extends ResponderTypes,

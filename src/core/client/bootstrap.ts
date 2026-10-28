@@ -1,41 +1,33 @@
-import type { ClientOptions } from "discord.js";
+import { ExtendedClient, App } from "../index";
+import { logger, handle_error } from "../utils";
+import { load_commands, load_events } from "../modules";
 
-import { ExtendedClient, App } from "@base";
-import { logger } from "@utils";
-import { load_commands, load_events } from "@modules";
-
-import type { PartialSettings } from "@types";
-import { setGlobalSettings } from "../settings";
-
+import { set_global_settings } from "../settings";
+import { NexoConfig, load_config, BootstrapOptions } from "../config";
 import { Router } from "./Interactions";
 
-interface Paths {
-  commands: string;
-  events: string;
-}
-
-interface Options {
-  token?: string;
-  intents?: ClientOptions["intents"];
-  partials?: ClientOptions["partials"];
-  paths?: Partial<Paths>;
-  settings?: PartialSettings;
-}
-
+/** Ponto de entrada para configurar e iniciar um bot NexoCord. */
 const Bootstrap = {
-  async init(options: Options) {
-    const Token = options.token ?? process.env.TOKEN ?? "";
-    const paths: Paths = {
-      commands: options.paths?.commands ?? "src/commands",
-      events: options.paths?.events ?? "src/events",
-    };
+  /**
+   * Inicia o cliente, carrega comandos e eventos e conecta o bot ao Discord.
+   *
+   * O token pode ser informado nas opções ou pela variável de ambiente `TOKEN`.
+   */
+  async init(options: BootstrapOptions) {
+    const token = options.token ?? process.env.TOKEN ?? "";
 
-    setGlobalSettings({
-      ...(options.settings ?? {}),
-      bot: {
-        ...(options.settings?.bot ?? {}),
-      },
-    });
+    let config: NexoConfig;
+
+    try {
+      config = load_config();
+    } catch (error) {
+      handle_error(error, "Erro ao carregar a configuração do bot.");
+      return;
+    }
+
+    logger.configure(config);
+
+    if (options.settings) set_global_settings(options.settings);
 
     const client = new ExtendedClient({
       intents: options.intents,
@@ -43,19 +35,23 @@ const Bootstrap = {
     });
 
     App.init(client);
-    client.on("interactionCreate", (interaction) => Router(interaction));
+    client.on("interactionCreate", (interaction) =>
+      Router(interaction, config),
+    );
 
     try {
-      // valida token
-      if (!Token) {
+      if (!token) {
         logger.error("Token não fornecido!");
         process.exit(1);
       }
 
-      await load_events(client, paths.events);
-      await client.login(Token);
-      await load_commands(client, Token, paths.commands);
+      await load_events(config, client);
+
+      await client.login(token);
+
+      await load_commands(config, client, token);
     } catch (error) {
+      logger.error("Erro ao iniciar o bot:");
       console.error(error);
     }
   },

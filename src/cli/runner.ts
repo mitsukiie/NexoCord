@@ -13,7 +13,6 @@ export function create_program(version: string): Command {
       "Framework moderno para bots Discord com foco em DX e performance",
     )
     .version(version)
-    .option("--verbose", "Exibe informações detalhadas")
     .addHelpText(
       "after",
       `\n${chalk.cyan("Docs:")} ${chalk.gray(
@@ -46,23 +45,12 @@ export async function run_program(
 
     return 0;
   } catch (error: unknown) {
-    const verbose = program.opts().verbose === true;
-
     if (error instanceof NexoError) {
       log.error(error.message);
-
-      if (verbose) {
-        console.error(chalk.gray(`\nCódigo: ${error.code}`));
-      }
-
       return error.exit_code;
     }
 
     log.error(get_error_message(error));
-
-    if (verbose && error instanceof Error && error.stack) {
-      console.error(chalk.gray(`\n${error.stack}`));
-    }
 
     return 1;
   }

@@ -1,5 +1,5 @@
 import { Interaction } from "discord.js";
-import { ResponderType, type ResponderInteraction } from "@types";
+import { ResponderType, type ResponderInteraction } from "../types";
 
 export function interaction_type(
   interaction: Interaction,

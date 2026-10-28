@@ -18,14 +18,8 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
 
-    
-    "paths": {
-      "@base": ["./src/core"],
-      "@types": ["./src/core/types"],
-      "@modules": ["./src/core/modules"],
-      "@utils": ["./src/core/utils"],
-    }
   },
 
   "include": ["src"]
 }
+

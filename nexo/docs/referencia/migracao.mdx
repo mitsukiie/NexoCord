@@ -1,0 +1,326 @@
+---
+sidebar_position: 1
+title: Migração
+slug: /migration
+---
+
+# 🧩 Migração
+
+Esta página reúne as principais mudanças entre as versões do NexoCord e documenta o contexto utilizado na execução dos comandos.
+
+Se você está atualizando um projeto existente, siga a seção correspondente à sua versão antes de continuar.
+
+## 📋 O que mudou?
+
+- **v2.0.0:** introdução do objeto de contexto `ctx` para acessar a interação, o cliente e os métodos de resposta.
+- **v3.0.0:** mudanças na configuração do framework, com suporte a `nexocord.json` e `nexocord.config`, além de uma separação mais clara entre as opções do NexoCord e as configurações personalizadas da aplicação.
+
+:::warning Antes de atualizar
+A v3.0.0 contém mudanças incompatíveis com versões anteriores. Faça uma cópia do projeto e consulte as instruções abaixo antes de atualizar as dependências.
+:::
+
+## 🔄 Da v1 para a v2
+
+Na versão 2.0.0, o NexoCord passou a fornecer um objeto de contexto (`ctx`) ao executar comandos.
+
+Esse contexto reúne os recursos mais utilizados durante a execução, evitando que você precise trabalhar exclusivamente com a interação original do Discord.js.
+
+### Antes da v2.0.0
+
+Se o seu projeto utilizava diretamente a interação recebida pelo comando, a adaptação consiste em utilizar o contexto disponibilizado pelo NexoCord.
+
+### A partir da v2.0.0
+
+```ts
+import { createCommand, CommandType } from "nexocord";
+
+export default createCommand({
+  name: "ping",
+  description: "Responde com pong.",
+  type: CommandType.ChatInput,
+
+  async run(ctx) {
+    await ctx.reply({
+      content: "Pong! 🏓",
+    });
+  },
+});
+```
+
+O parâmetro `ctx` fornece acesso à interação original, ao cliente Discord e ao método de resposta.
+
+Se você estiver atualizando um projeto antigo, compare a assinatura dos seus comandos com os exemplos da versão atual e ajuste a função `run` conforme necessário.
+
+## ⚙️ Da v2.0.0 para a v3.0.0
+
+A principal mudança documentada nesta migração é a separação entre a configuração do framework e os valores personalizados da aplicação.
+
+Na v2, era possível reunir opções como caminhos, terminal e comportamento do bot dentro de `Bootstrap.init()`.
+
+Na v3, a configuração do framework passa a ser definida em um arquivo próprio, enquanto `Bootstrap.init()` continua responsável pela inicialização do bot e pelos valores específicos da aplicação.
+
+### 1. Migrando os caminhos
+
+Na configuração antiga, os diretórios podiam ser definidos pela propriedade `paths`:
+
+```ts
+await Bootstrap.init({
+  paths: {
+    commands: "./src/commands",
+    events: "./src/events",
+  },
+});
+```
+
+Na v3, defina esses caminhos no arquivo `nexocord.json`:
+
+```json
+{
+  "directories": {
+    "commands": "./src/commands",
+    "events": "./src/events"
+  }
+}
+```
+
+Remova a propriedade `paths` da chamada de inicialização quando ela não fizer mais parte da API da versão utilizada.
+
+### 2. Migrando as opções do terminal
+
+Na configuração antiga, as opções do terminal podiam ser agrupadas dentro de `settings.terminal`.
+
+Na v3, elas ficam na propriedade `terminal` do arquivo de configuração:
+
+```json
+{
+  "terminal": {
+    "mode": "minimalista",
+    "commands": {
+      "showFiles": false,
+      "showRegistered": true,
+      "registeredMessage": "✓ {count} comandos registrados"
+    },
+    "events": {
+      "showFiles": false,
+      "showRegistered": true,
+      "registeredMessage": "✓ {count} eventos carregados"
+    }
+  }
+}
+```
+
+As opções antigas, como `showSlashCommandsFiles`, `showSlashCommandsRegistred`, `showEventsFiles` e `showEventsRegistred`, foram reorganizadas.
+
+| Configuração antiga | Configuração na v3 |
+|---|---|
+| `terminal.mode` | `terminal.mode` |
+| `terminal.showSlashCommandsFiles` | `terminal.commands.showFiles` |
+| `terminal.showSlashCommandsRegistred` | `terminal.commands.showRegistered` |
+| `terminal.showEventsFiles` | `terminal.events.showFiles` |
+| `terminal.showEventsRegistred` | `terminal.events.showRegistered` |
+
+As mensagens de registro agora podem ser personalizadas com `registeredMessage`, utilizando `{count}` para representar a quantidade correspondente.
+
+### 3. Migrando as opções do bot
+
+As opções internas do bot também ficam no arquivo de configuração da v3:
+
+```json
+{
+  "bot": {
+    "cooldown": 3,
+    "guildID": [],
+    "errors": {
+      "interaction": "Ocorreu um erro ao executar este comando."
+    }
+  }
+}
+```
+
+| Propriedade | Finalidade |
+|---|---|
+| `bot.cooldown` | Define o cooldown padrão dos comandos, em segundos. |
+| `bot.guildID` | Lista de IDs de servidores utilizada pelo framework quando aplicável. |
+| `bot.errors.interaction` | Define a mensagem exibida quando ocorre um erro durante uma interação. |
+
+Se você já possuía essas opções em `settings.bot`, transfira os valores correspondentes para `bot` no arquivo de configuração.
+
+### 4. Migrando as configurações personalizadas
+
+Na v2, valores específicos da aplicação podiam ficar agrupados em uma propriedade chamada `custom`.
+
+Na v3, utilize `settings` diretamente em `Bootstrap.init()` para armazenar os dados próprios do seu bot.
+
+Por exemplo, uma configuração antiga como:
+
+```ts
+settings: {
+  custom: {
+    projectName: "Meu Bot",
+    supportServer: "https://discord.gg/seu-servidor",
+  },
+}
+```
+
+Passa a ser:
+
+```ts
+settings: {
+  projectName: "Meu Bot",
+  supportServer: "https://discord.gg/seu-servidor",
+}
+```
+
+Os valores personalizados não precisam ser adicionados ao `nexocord.json`, pois pertencem à aplicação e não às opções internas do framework.
+
+Consulte a documentação da configuração para conhecer os formatos disponíveis e as opções suportadas.
+
+### 5. Atualizando a inicialização
+
+Na v3, o arquivo de configuração é carregado automaticamente pelo NexoCord. O token e as intents continuam sendo informados em `Bootstrap.init()`.
+
+```ts
+import { Bootstrap } from "nexocord";
+import { GatewayIntentBits } from "discord.js";
+
+await Bootstrap.init({
+  token: process.env.DISCORD_TOKEN,
+  intents: [GatewayIntentBits.Guilds],
+
+  settings: {
+    projectName: "Meu Bot",
+  },
+});
+```
+
+O exemplo pressupõe que o projeto já possui um arquivo `nexocord.json` ou `nexocord.config` válido na raiz.
+
+:::info
+Não mantenha `nexocord.json` e `nexocord.config` simultaneamente. O framework exige apenas um arquivo de configuração.
+:::
+
+## 🧩 Contexto e respostas
+
+O contexto é o objeto disponibilizado pelo NexoCord ao executar um comando. Ele centraliza o acesso à interação original, ao cliente Discord e aos métodos de resposta.
+
+### Acessando o contexto
+
+```ts
+import { createCommand, CommandType } from "nexocord";
+
+export default createCommand({
+  name: "me",
+  description: "Mostra informações do usuário.",
+  type: CommandType.ChatInput,
+
+  async run(ctx) {
+    const user = ctx.interaction.user;
+
+    console.log(ctx.client.user);
+
+    await ctx.reply({
+      content: `Você é ${user.tag}.`,
+    });
+  },
+});
+```
+
+### Propriedades disponíveis
+
+| Propriedade | Descrição |
+|---|---|
+| `ctx.interaction` | Interação original do Discord.js, tipada conforme o tipo do comando. |
+| `ctx.client` | Cliente Discord utilizado pelo NexoCord. |
+| `ctx.reply(options)` | Responde à interação e prepara os componentes quando necessário. |
+
+Você pode utilizar `ctx.interaction` sempre que precisar acessar propriedades ou métodos específicos da interação original.
+
+### 💬 Respondendo a uma interação
+
+Utilize `ctx.reply()` para responder ao comando.
+
+```ts
+await ctx.reply({
+  content: "Olá! 👋",
+});
+```
+
+O método recebe as opções de resposta suportadas pela implementação do NexoCord, incluindo conteúdo textual e opções de componentes.
+
+### 🔒 Respostas efêmeras
+
+Para enviar uma resposta visível somente ao usuário que executou o comando, utilize `MessageFlags.Ephemeral`.
+
+```ts
+import { MessageFlags } from "discord.js";
+
+await ctx.reply({
+  content: "Somente você pode ver esta mensagem.",
+  flags: MessageFlags.Ephemeral,
+});
+```
+
+### 🧱 Components V2
+
+O método `ctx.reply()` também permite enviar componentes por meio da propriedade `components`.
+
+```ts
+import { createCommand, ui } from "nexocord";
+
+export default createCommand({
+  name: "painel",
+  description: "Exibe um painel.",
+  type: CommandType.ChatInput,
+
+  async run(ctx) {
+    const components = [
+      ui.text("## Meu painel"),
+      ui.divider(),
+      ui.text("Escolha uma opção."),
+    ];
+
+    await ctx.reply({ components });
+  },
+});
+```
+
+O NexoCord prepara os componentes e adiciona automaticamente a flag `MessageFlags.IsComponentsV2`.
+
+**Importante:** mensagens com Components V2 não podem combinar `components` com `content` ou `embeds`. A implementação do `ctx.reply()` rejeita essa combinação.
+
+Para conhecer os componentes disponíveis, consulte a página [Components V2](/docs/components-v2).
+
+### 📎 Enviando arquivos
+
+A propriedade `files` continua disponível para enviar anexos compatíveis com o Discord.js.
+
+```ts
+import { AttachmentBuilder } from "discord.js";
+
+const file = new AttachmentBuilder(
+  Buffer.from("Relatório gerado."),
+  { name: "relatorio.txt" },
+);
+
+await ctx.reply({
+  content: "Seu arquivo está pronto.",
+  files: [file],
+});
+```
+
+Quando Components V2 é utilizado, os arquivos associados aos componentes são reunidos automaticamente com os arquivos informados em `files`.
+
+## ✅ Checklist de migração para a v3
+
+Antes de considerar a atualização concluída, verifique os seguintes pontos:
+
+- [ ] Atualize o NexoCord para a versão desejada.
+- [ ] Crie ou atualize o arquivo `nexocord.json` ou `nexocord.config`.
+- [ ] Transfira os caminhos antigos para `directories`.
+- [ ] Reorganize as opções de terminal e de bot conforme a nova estrutura.
+- [ ] Mova os valores de `custom` para `settings` em `Bootstrap.init()`.
+- [ ] Remova opções antigas de `Bootstrap.init()` que não fazem mais parte da API.
+- [ ] Teste a inicialização, o registro dos comandos e o carregamento dos eventos.
+- [ ] Teste respostas comuns, respostas efêmeras, anexos e Components V2.
+
+Para informações adicionais, consulte a página [Configuração](/docs/configuration) e o anúncio de lançamento da versão 3.0.0.

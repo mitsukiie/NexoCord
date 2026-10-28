@@ -1,8 +1,13 @@
 import { MessageFlags, ChatInputCommandInteraction } from "discord.js";
-import { App } from "@base";
+import { App } from "../../index";
+import type { NexoConfig } from "../../config";
 import { create_context } from "../../creators";
+import { handle_error } from "../../utils";
 
-export async function Command(i: ChatInputCommandInteraction) {
+export async function Command(
+  i: ChatInputCommandInteraction,
+  config: NexoConfig,
+) {
   const app = App.get();
 
   const name = i.commandName;
@@ -24,11 +29,11 @@ export async function Command(i: ChatInputCommandInteraction) {
 
     await command.run(ctx);
 
-    app.cooldowns.set(id, name, command.cooldown ?? undefined);
+    app.cooldowns.set(id, name, command.cooldown ?? config.bot.cooldown);
   } catch (err) {
-    console.error(err);
-    const msg =
-      "Ocorreu um erro ao executar este comando. Por favor, tente novamente mais tarde.";
+    handle_error(err);
+    const msg = config.bot.errors.interaction;
+
     if (i.replied || i.deferred)
       await i.followUp({ content: msg, flags: [MessageFlags.Ephemeral] });
     else await i.reply({ content: msg, flags: [MessageFlags.Ephemeral] });

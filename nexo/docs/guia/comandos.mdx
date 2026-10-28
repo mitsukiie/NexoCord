@@ -14,7 +14,7 @@ Os comandos permitem que os usuários interajam com seu bot por meio de comandos
 ## 🚀 Como funciona
 
 - ⚡ O Nexocord carrega os comandos durante a inicialização do bot.
-- 📁 O diretório dos comandos é configurado em `paths.commands`, dentro de `Bootstrap.init`.
+- 📁 O diretório dos comandos é configurado em `directories.commands`, no arquivo `nexocord.json` ou `nexocord.config`.
 - 📦 Cada arquivo de comando deve exportar seu comando com `default`.
 - 🗂️ A organização em pastas depende das convenções de carregamento de comandos e subcomandos do Nexocord.
 
@@ -57,7 +57,7 @@ module.exports = createCommand({
 </TabItem>
 </Tabs>
 
-O comando precisa estar dentro do diretório configurado em `paths.commands`. Quando o Nexocord inicializar, o carregador encontrará o arquivo e processará sua definição.
+O comando precisa estar dentro do diretório configurado em `directories.commands`. Quando o Nexocord inicializar, o carregador encontrará o arquivo e processará sua definição.
 
 ## 📋 Propriedades de um comando
 
@@ -148,7 +148,7 @@ No Nexocord, eles são criados automaticamente a partir da estrutura de pastas. 
 
 ### 📁 Estrutura de arquivos
 
-Organize os arquivos dentro do diretório configurado em `paths.commands`:
+Organize os arquivos dentro do diretório configurado em `directories.commands`:
 
 ```text
 src/

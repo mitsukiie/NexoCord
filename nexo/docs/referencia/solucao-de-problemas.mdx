@@ -29,16 +29,22 @@ O `Bootstrap.init()` também aceita o token diretamente pela opção `token`.
 
 Confira se:
 
-- O arquivo está dentro do diretório configurado em `paths.commands`.
+- O arquivo está dentro do diretório configurado em `directories.commands`.
 - O arquivo exporta o comando como `default`.
 - O comando contém as propriedades obrigatórias `name`, `description`, `type` e `run`.
 - O comando foi registrado corretamente no Discord.
 
-Para obter mais informações nos logs, habilite as opções correspondentes em `settings.terminal`:
+Para obter mais informações nos logs, configure as opções correspondentes em `terminal.commands` no arquivo `nexocord.json`:
 
 ```ts
-showSlashCommandsFiles: true,
-showSlashCommandsRegistred: true,
+{
+  "terminal": {
+    "commands": {
+      "showFiles": true,
+      "showRegistered": true
+    }
+  }
+}
 ```
 
 Essas opções ajudam a verificar o carregamento dos arquivos e o registro dos comandos.

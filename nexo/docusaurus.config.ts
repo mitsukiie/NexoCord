@@ -120,7 +120,7 @@ const config: Config = {
             },
             {
               label: 'Configuração',
-              to: '/docs/configuration',
+              to: '/docs/guia/configuration',
             },
             {
               label: 'CLI',

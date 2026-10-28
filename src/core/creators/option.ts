@@ -62,6 +62,7 @@ type MentionableOption = BaseOption;
 type AttachmentOption = BaseOption;
 
 export const option = {
+  /** Define uma opção de texto para um comando. */
   string(options: StringOption) {
     return {
       type: ApplicationCommandOptionType.String,
@@ -69,6 +70,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção de número inteiro para um comando. */
   integer(options: IntegerOption) {
     return {
       type: ApplicationCommandOptionType.Integer,
@@ -76,6 +78,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção de número decimal para um comando. */
   number(options: NumberOption) {
     return {
       type: ApplicationCommandOptionType.Number,
@@ -83,6 +86,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção booleana para um comando. */
   boolean(options: BooleanOption) {
     return {
       type: ApplicationCommandOptionType.Boolean,
@@ -90,6 +94,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção que recebe um usuário. */
   user(options: UserOption) {
     return {
       type: ApplicationCommandOptionType.User,
@@ -97,6 +102,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção que recebe um canal. */
   channel(options: ChannelOption) {
     return {
       type: ApplicationCommandOptionType.Channel,
@@ -104,6 +110,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção que recebe um cargo. */
   role(options: RoleOption) {
     return {
       type: ApplicationCommandOptionType.Role,
@@ -111,6 +118,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção que recebe um usuário, cargo ou outra entidade mencionável. */
   mentionable(options: MentionableOption) {
     return {
       type: ApplicationCommandOptionType.Mentionable,
@@ -118,6 +126,7 @@ export const option = {
     } as const;
   },
 
+  /** Define uma opção que recebe um anexo. */
   attachment(options: AttachmentOption) {
     return {
       type: ApplicationCommandOptionType.Attachment,

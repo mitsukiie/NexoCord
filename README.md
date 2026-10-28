@@ -4,7 +4,7 @@
 
 # ⚡ NEXOCORD
 
-### **V2.0.0**
+### **V3.0.0**
 
 **Build better Discord bots.**
 
@@ -27,7 +27,7 @@ Um framework moderno para criar bots Discord com TypeScript ou JavaScript, proje
 
 O **Nexocord** é um framework construído sobre o [discord.js](https://discord.js.org/) para tornar o desenvolvimento de bots Discord mais organizado e produtivo.
 
-Em vez de configurar manualmente toda a estrutura do projeto, você conta com uma arquitetura modular, carregamento automático de comandos e eventos, uma CLI própria e ferramentas para simplificar o desenvolvimento.
+Em vez de configurar manualmente toda a estrutura do projeto, você conta com uma arquitetura modular, carregamento automático de comandos e eventos, uma CLI própria e arquivos de configuração declarativos.
 
 A proposta é simples: menos código repetitivo, mais foco na lógica do seu bot.
 
@@ -41,29 +41,20 @@ A proposta é simples: menos código repetitivo, mais foco na lógica do seu bot
 | 🧩 **Components V2** | Construa interfaces interativas para suas mensagens Discord. |
 | 🔄 **Node.js e Bun** | Escolha o runtime que combina com seu projeto. |
 | 📦 **ESM e CommonJS** | Suporte aos formatos de módulos disponibilizados pelo pacote. |
+| ⚙️ **Configuração declarativa** | Configure diretórios, terminal e comportamento do bot em `nexocord.json` ou `nexocord.config`. |
 | 🛠️ **Ferramentas de desenvolvimento** | Execute, compile e diagnostique seu projeto usando a CLI. |
 
 ## 📦 Instalação
 
 Requisitos: **Node.js 20 ou superior** ou um ambiente Bun compatível com o seu projeto.
 
-Para instalar o Nexocord em um projeto existente:
-
-```bash
-npm install nexocord discord.js
-```
-
-Para instalar a CLI globalmente:
+Instale a CLI para utilizar os comandos `nexo`:
 
 ```bash
 npm install --global nexocord
 ```
 
-Você também pode utilizar o gerenciador de pacotes e o runtime de sua preferência.
-
-## ⚡ Comece em segundos
-
-Crie seu primeiro projeto com a CLI:
+Para criar um projeto novo:
 
 ```bash
 nexo create meu-bot
@@ -71,7 +62,23 @@ cd meu-bot
 nexo dev
 ```
 
-Pronto! A CLI prepara a estrutura inicial para você começar a desenvolver.
+Para instalar o Nexocord em um projeto existente:
+
+```bash
+npm install nexocord discord.js
+nexo init
+```
+
+Você também pode utilizar o gerenciador de pacotes e o runtime de sua preferência.
+
+Depois, escolha a linguagem e o runtime de forma interativa ou informe as opções diretamente:
+
+```bash
+nexo init --language ts --runtime node
+nexo init --language js --runtime bun
+```
+
+O comando preserva arquivos existentes e só altera configurações do projeto quando necessário.
 
 ## 🧰 CLI
 
@@ -126,6 +133,101 @@ nexo start
 
 O comportamento de compilação e execução depende da linguagem, do runtime e da configuração do projeto.
 
+## ⚙️ Configuração
+
+O NexoCord procura automaticamente a configuração na raiz do projeto. Utilize apenas um dos formatos:
+
+### `nexocord.json`
+
+```json
+{
+  "directories": {
+    "commands": "./src/commands",
+    "events": "./src/events"
+  },
+  "terminal": {
+    "mode": "minimalista",
+    "commands": {
+      "showFiles": false,
+      "showRegistered": true,
+      "registeredMessage": "{count} comandos registrados"
+    },
+    "events": {
+      "showFiles": false,
+      "showRegistered": true,
+      "registeredMessage": "{count} eventos carregados"
+    }
+  },
+  "bot": {
+    "cooldown": 3,
+    "guildID": [],
+    "errors": {
+      "interaction": "Ocorreu um erro ao executar este comando."
+    }
+  }
+}
+```
+
+Sem arquivo de configuração, os diretórios padrão são `src/commands` e `src/events`.
+
+Crie um arquivo `.env` na raiz do projeto para o token:
+
+```env
+TOKEN=seu_token_aqui
+```
+
+O token também pode ser informado diretamente em `Bootstrap.init()`, embora uma variável de ambiente seja recomendada:
+
+```ts
+import { Bootstrap, GatewayIntentBits } from "nexocord";
+
+await Bootstrap.init({
+  token: process.env.TOKEN,
+  intents: [GatewayIntentBits.Guilds],
+});
+```
+
+Mantenha o token privado e adicione os arquivos de ambiente ao `.gitignore`:
+
+```gitignore
+.env
+.env.*
+!.env.example
+```
+
+Consulte o [guia completo de configuração](https://nexocord.vercel.app/docs/guia/configuration).
+
+## 🧩 Criando comandos
+
+Os comandos são carregados automaticamente a partir de `directories.commands` e devem exportar sua definição como `default`:
+
+```ts
+import { CommandType, createCommand } from "nexocord";
+
+export default createCommand({
+  name: "ping",
+  description: "Verifica se o bot está online.",
+  type: CommandType.ChatInput,
+  async run(ctx) {
+    await ctx.reply({ content: "Pong!" });
+  },
+});
+```
+
+Eventos seguem o mesmo padrão em `directories.events`:
+
+```ts
+import { createEvent, Events } from "nexocord";
+
+export default createEvent({
+  name: Events.ClientReady,
+  once: true,
+  run(client) {
+    console.log(`${client.user.displayName} online.`);
+  },
+});
+```
+
 ## 🧩 Components V2
 
 O Nexocord oferece uma API de construção de interfaces baseada nos Components V2 do Discord, permitindo compor mensagens com elementos como textos, divisores, botões, seções e outros componentes suportados pela biblioteca.
@@ -144,24 +246,6 @@ await ctx.reply({ components });
 A API de Components V2 do Nexocord é própria do framework. Consulte a documentação para conhecer as assinaturas, opções e limitações de cada componente.
 
 📚 **[Ver documentação de Components V2](https://nexocord.vercel.app/docs/components-v2)**
-
-## ⚙️ Configuração
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-TOKEN=seu_token_aqui
-```
-
-Mantenha seu token privado. Nunca publique credenciais no GitHub nem as inclua diretamente no código-fonte.
-
-Adicione arquivos de ambiente ao `.gitignore`:
-
-```gitignore
-.env
-.env.*
-!.env.example
-```
 
 ## 📂 Organização do projeto
 
@@ -186,15 +270,19 @@ meu-bot/
 
 A extensão dos arquivos depende da linguagem escolhida durante a configuração.
 
-## 🔥 O que esperar da V2.0.0?
+## 🔥 O que mudou na V3?
 
-A versão **2.0.0** marca uma nova etapa para o Nexocord, com mudanças importantes na forma de criar comandos e construir interfaces com Components V2.
+A versão **3.0.0** atualiza a forma de configurar e inicializar projetos:
 
-Por envolver mudanças na API, exemplos e implementações feitos para versões anteriores podem precisar de ajustes.
+- A configuração principal agora utiliza `nexocord.json` ou `nexocord.config`.
+- Os diretórios são definidos em `directories.commands` e `directories.events`.
+- As opções de terminal ficam em `terminal.commands` e `terminal.events`.
+- O token padrão é lido de `process.env.TOKEN`.
+- A CLI oferece `nexo create` para projetos novos e `nexo init` para projetos existentes.
 
-Antes de atualizar um projeto existente, consulte a documentação correspondente à versão instalada e as notas de migração.
+Projetos da v2 que utilizavam `paths` ou configurações inline antigas devem migrar para o formato atual. Consulte a [documentação de configuração](https://nexocord.vercel.app/docs/guia/configuration) e o [guia de migração](https://nexocord.vercel.app/docs/migration).
 
-> **Atenção:** a versão 2.0.0 deve ser tratada como uma atualização potencialmente incompatível (*breaking change*). Publique as notas definitivas de migração junto com a versão oficial.
+> **Atenção:** a v3 contém mudanças incompatíveis com versões anteriores. Revise a configuração do projeto antes de atualizar.
 
 ## 📚 Documentação
 

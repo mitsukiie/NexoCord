@@ -1,0 +1,8 @@
+const { Bootstrap, GatewayIntentBits } = require("__NEXO_PACKAGE__");
+
+(async () => {
+  await Bootstrap.init({
+    token: process.env.TOKEN,
+    intents: [GatewayIntentBits.Guilds],
+  });
+})();

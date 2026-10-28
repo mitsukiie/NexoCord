@@ -11,6 +11,7 @@ import {
 
 import { RunCommand, RunAutoComplete } from "./Run";
 
+/** Tipos de comandos que podem ser registrados no Discord. */
 export enum CommandType {
   ChatInput = ApplicationCommandType.ChatInput,
   User = ApplicationCommandType.User,
@@ -18,6 +19,7 @@ export enum CommandType {
   PrimaryEntryPoint = ApplicationCommandType.PrimaryEntryPoint,
 }
 
+/** Interação do Discord recebida pelo callback de um comando. */
 export type CommandInteraction<Type extends CommandType = CommandType> =
   Type extends CommandType.ChatInput
     ? ChatInputCommandInteraction
@@ -29,6 +31,7 @@ export type CommandInteraction<Type extends CommandType = CommandType> =
           ? ContextMenuCommandInteraction
           : never;
 
+/** Configuração de um comando registrado pelo NexoCord. */
 export type Command<Type extends CommandType = CommandType> = {
   name: string;
   description: string;

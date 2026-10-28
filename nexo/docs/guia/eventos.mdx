@@ -8,7 +8,7 @@ slug: /events
 
 Os eventos permitem executar código quando algo acontece no Discord, como quando o bot fica online, um usuário entra em um servidor ou uma mensagem é enviada.
 
-Use `createEvent()` para definir um evento. Os arquivos são carregados recursivamente a partir do diretório configurado em `paths.events` e devem exportar o evento como `default`.
+Use `createEvent()` para definir um evento. Os arquivos são carregados recursivamente a partir do diretório configurado em `directories.events` e devem exportar o evento como `default`.
 
 ## 🚀 Exemplo
 
@@ -60,4 +60,4 @@ Consulte a [documentação do Discord.js](https://discord.js.org/docs/packages/d
 - 🎯 Utilize `Events` para evitar erros ao escrever nomes de eventos manualmente.
 - 🧩 Mantenha cada evento em seu próprio arquivo para facilitar a organização.
 - 🔁 Use `once: true` quando o evento precisar ser executado apenas uma vez.
-- 📂 Confira se o caminho configurado em `paths.events` corresponde à localização dos seus arquivos.
+- 📂 Confira se o caminho configurado em `directories.events` corresponde à localização dos seus arquivos.

@@ -1,6 +1,6 @@
 {
   "name": "nexocord",
-  "version": "2.0.0",
+  "version": "3.0.1",
   "description": "Framework TypeScript moderno para criar bots escaláveis ​​do Discord com discord.js v14, apresentando arquitetura modular, cli e utilitários amigáveis ​​para desenvolvedores.",
   "type": "module",
   "private": false,
@@ -57,12 +57,14 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "bun build src/index.ts src/core/types/index.ts src/core/ui/index.ts src/core/utils/index.ts --outdir dist --target node --format esm && bun build src/index.ts --target node --format cjs --outfile dist/index.cjs && bun build src/bin/cli.ts --outdir dist/bin --target node --format esm && mkdir -p dist/create && rm -rf dist/create/templates && cp -R src/create/templates dist/create/ && bunx tsc --emitDeclarationOnly --outDir dist",
-    "publish:pkg": "bun run build && npm publish --access public"
+    "build": "bun build src/index.ts src/core/types/index.ts src/core/ui/index.ts src/core/utils/index.ts --outdir dist --target node --format esm && bun build src/index.ts --target node --format cjs --outfile dist/index.cjs && bun build src/bin/cli.ts --outdir dist/bin --target node --format esm && mkdir -p dist/bin/templates && cp -R src/cli/services/project/templates/. dist/bin/templates/ && bunx tsc --emitDeclarationOnly --outDir dist",
+    "pub": "bun run build && npm publish --access public"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",
-    "@types/node": "^25.9.9"
+    "@types/node": "^25.9.9",
+    "tsx": "^4.20.0",
+    "typescript": "^6.0.2"
   },
   "peerDependencies": {
     "typescript": "^7.0.2"

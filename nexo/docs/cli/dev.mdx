@@ -74,13 +74,13 @@ Se existir um arquivo `.env` no projeto, o comando o utiliza para carregar as va
 Exemplo de arquivo `.env`:
 
 ```dotenv
-DISCORD_TOKEN=seu_token
+TOKEN=seu_token
 ```
 
 No código, a variável pode ser acessada por meio de `process.env`:
 
 ```ts
-const token = process.env.DISCORD_TOKEN;
+const token = process.env.TOKEN;
 ```
 
 Mantenha tokens e outras informações sensíveis no arquivo `.env` e evite enviá-los para repositórios públicos.

@@ -1,6 +1,4 @@
 export * from "./core/client/bootstrap";
-export { Settings } from "./core/types/Settings";
-
 export { logger } from "./core/utils/logger";
 
 export * from "./core/types";

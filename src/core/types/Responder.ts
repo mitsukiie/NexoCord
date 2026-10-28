@@ -12,6 +12,7 @@ import { ZodTypeAny, infer as zInfer } from "zod/v3";
 
 import type { RunResponder } from "./Run";
 
+/** Tipos de interação que podem ser associados a um responder. */
 export enum ResponderType {
   Button = "button",
   Modal = "modal",
@@ -31,9 +32,13 @@ type Map = {
   [ResponderType.SelectChannel]: ChannelSelectMenuInteraction;
   [ResponderType.SelectMentionable]: MentionableSelectMenuInteraction;
 };
+
+/** Interação do Discord correspondente ao tipo de um responder. */
 export type ResponderInteraction<T extends ResponderType> = Map[T];
 
+/** Tipos de interação aceitos por um responder. */
 export type ResponderTypes = ResponderType | readonly ResponderType[];
+/** Define se a interação precisa estar em um servidor ou cache específicos. */
 export type CacheType = "cached" | "guild";
 
 type ResponderInteractionFromInput<T extends ResponderTypes> =
@@ -57,6 +62,7 @@ export type ResponderParams<Path extends string> = [
   ? Record<never, never>
   : { [K in PathParamNames<Path>]: string };
 
+/** Transforma os parâmetros do `customId` antes de executar o responder. */
 export type ResponderParser<Path extends string, Output = unknown> =
   | ZodTypeAny
   | ((params: ResponderParams<Path>) => Output);
@@ -67,6 +73,7 @@ export type ResponderParse<P, Path extends string> = P extends ZodTypeAny
     ? R
     : ResponderParams<Path>;
 
+/** Configuração de um responder associado a um ou mais tipos de interação. */
 export type Responder<
   Path extends string,
   Type extends ResponderTypes,

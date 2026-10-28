@@ -1,5 +1,5 @@
 import { type AutocompleteInteraction } from "discord.js";
-import { App } from "@base";
+import { App } from "../../index";
 
 export async function AutoComplete(i: AutocompleteInteraction) {
   const app = App.get();

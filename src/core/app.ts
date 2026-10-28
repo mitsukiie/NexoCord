@@ -1,5 +1,5 @@
-import { ExtendedClient } from "@base";
-import { CommandManager, EventManager, ResponderManager } from "@modules";
+import { ExtendedClient } from "./index";
+import { CommandManager, EventManager, ResponderManager } from "./modules";
 import { CooldownManager } from "./utils/cooldown";
 
 export class App {

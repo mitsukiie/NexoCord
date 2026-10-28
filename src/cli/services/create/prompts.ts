@@ -1,35 +1,39 @@
-import { cancel, isCancel, select, text } from "@clack/prompts";
+
+import { isCancel, select, text } from "@clack/prompts";
 import chalk from "chalk";
 
-export type ProjectRuntime = "node" | "bun";
+import { NexoError } from "../../errors";
 
-export type ProjectLanguage =
-  | "typescript"
-  | "javascript";
+import type {
+  ProjectChoices,
+  ProjectLanguage,
+  ProjectRuntime,
+} from "../project/types";
 
-export interface CreateAnswers {
-  name: string;
-  runtime: ProjectRuntime;
-  language: ProjectLanguage;
-}
+export type {
+  ProjectChoices,
+  ProjectLanguage,
+  ProjectRuntime,
+} from "../project/types";
 
 function abort_on_cancel<T>(value: T): T {
   if (isCancel(value)) {
-    cancel(chalk.yellow("Operação cancelada."));
     throw new Error("Operação cancelada.");
   }
 
   return value;
 }
 
-export async function ask_project_name(initial_name?: string): Promise<string> {
+export async function ask_project_name(
+  initial_name?: string,
+): Promise<string> {
   const normalized_name = initial_name?.trim();
 
   if (normalized_name) {
     return normalized_name;
   }
 
-  const name = abort_on_cancel(
+  const value = abort_on_cancel(
     await text({
       message: chalk.cyan("Nome do bot"),
       placeholder: chalk.gray("my-bot"),
@@ -37,52 +41,38 @@ export async function ask_project_name(initial_name?: string): Promise<string> {
         if (!value?.trim()) {
           return chalk.red("Informe um nome para o projeto.");
         }
-
-        return undefined;
       },
     }),
-  ) as string;
+  );
 
-  return name.trim();
+  return String(value).trim();
 }
 
 export async function ask_runtime(
-  initialValue: ProjectRuntime = "node",
+  initial_value: ProjectRuntime = "node",
 ): Promise<ProjectRuntime> {
   return abort_on_cancel(
     await select<ProjectRuntime>({
       message: chalk.cyan("Runtime"),
-      initialValue,
+      initialValue: initial_value,
       options: [
-        {
-          value: "node",
-          label: chalk.blue("Node.js"),
-        },
-        {
-          value: "bun",
-          label: chalk.magenta("Bun"),
-        },
+        { value: "node", label: chalk.blue("Node.js") },
+        { value: "bun", label: chalk.magenta("Bun") },
       ],
     }),
   ) as ProjectRuntime;
 }
 
 export async function ask_language(
-  initialValue: ProjectLanguage = "typescript",
+  initial_value: ProjectLanguage = "typescript",
 ): Promise<ProjectLanguage> {
   return abort_on_cancel(
     await select<ProjectLanguage>({
       message: chalk.cyan("Linguagem"),
-      initialValue,
+      initialValue: initial_value,
       options: [
-        {
-          value: "typescript",
-          label: chalk.blue("TypeScript"),
-        },
-        {
-          value: "javascript",
-          label: chalk.yellow("JavaScript"),
-        },
+        { value: "typescript", label: chalk.blue("TypeScript") },
+        { value: "javascript", label: chalk.yellow("JavaScript") },
       ],
     }),
   ) as ProjectLanguage;
@@ -90,14 +80,60 @@ export async function ask_language(
 
 export async function ask_create_choices(
   initial_name?: string,
-): Promise<CreateAnswers> {
+  initial_runtime?: ProjectRuntime,
+  initial_language?: ProjectLanguage,
+): Promise<ProjectChoices> {
   const name = await ask_project_name(initial_name);
-  const runtime = await ask_runtime();
-  const language = await ask_language();
+  const runtime = initial_runtime ?? (await ask_runtime());
+  const language = initial_language ?? (await ask_language());
+
+  return { name, runtime, language };
+}
+
+export function resolve_create_choices(options: {
+  runtime?: string;
+  language?: string;
+}): {
+  runtime?: ProjectRuntime;
+  language?: ProjectLanguage;
+} {
+  if (
+    options.runtime !== undefined &&
+    options.runtime !== "node" &&
+    options.runtime !== "bun"
+  ) {
+    throw new NexoError(
+      `Runtime inválido: "${options.runtime}". Use "node" ou "bun".`,
+      "INVALID_RUNTIME",
+    );
+  }
+
+  const language =
+    options.language === "ts"
+      ? "typescript"
+      : options.language === "js"
+        ? "javascript"
+        : options.language;
+
+  if (
+    language !== undefined &&
+    language !== "typescript" &&
+    language !== "javascript"
+  ) {
+    throw new NexoError(
+      `Linguagem inválida: "${options.language}". Use "ts" ou "js".`,
+      "INVALID_LANGUAGE",
+    );
+  }
 
   return {
-    name,
-    runtime,
-    language,
+    runtime:
+      options.runtime === "node" || options.runtime === "bun"
+        ? options.runtime
+        : undefined,
+    language:
+      language === "typescript" || language === "javascript"
+        ? language
+        : undefined,
   };
 }

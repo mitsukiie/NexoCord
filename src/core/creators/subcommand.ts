@@ -12,13 +12,18 @@ import { readdirSync } from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 
-import { App, ExtendedClient } from "@base";
+import { App, ExtendedClient } from "../index";
 
-import { Command } from "@types";
+import { Command } from "../types";
 import { create_context } from "./context";
-import { logger } from "@utils";
+import { logger } from "../utils";
 import { is_script } from "../utils/extensions";
 
+/**
+ * Carrega os subcomandos de um diretório e cria um comando de grupo.
+ *
+ * Os arquivos do diretório devem exportar uma configuração de comando válida.
+ */
 export async function createSubcommand(
   name: string,
   directory: string,
