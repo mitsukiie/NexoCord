@@ -4,7 +4,7 @@ module.exports = createCommand({
   name: "ping",
   description: "Responde com Pong!",
   type: CommandType.ChatInput,
-  async run(ctx) {
-    await ctx.reply({ content: "Pong!" });
+  async run(interaction) {
+    await interaction.reply({ content: "Pong!" });
   },
 });
