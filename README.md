@@ -2,7 +2,7 @@
 
 <div align="center">
 
-### **v3.1.1**
+### **v3.1.2**
 
 **Build better Discord bots.**
 

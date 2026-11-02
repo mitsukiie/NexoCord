@@ -2,7 +2,7 @@ import { AutocompleteInteraction, ClientEvents } from "discord.js";
 import type { ExtendedClient } from "../client/ExtendedClient";
 import type { ui } from "../ui";
 import type { ExtendedInteraction } from "../creators";
-import type { CommandType } from "./Command";
+import type { CommandType, CommandInteraction } from "./Command";
 import type { ResponderParse } from "./Responder";
 
 /**
@@ -29,7 +29,7 @@ export type CommandDependencies = {
  * [en] Callback executed by a command.
  */
 export type RunCommand<T extends CommandType> = (
-  interaction: ExtendedInteraction<T>,
+  interaction: ExtendedInteraction<CommandInteraction<T>>,
   client: ExtendedClient,
   dependencies: CommandDependencies,
 ) => Promise<unknown> | unknown;

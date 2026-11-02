@@ -130,22 +130,22 @@ function prepare_message(
  * [en] Use this type in a callback when replying with components from the
  * `ui` API.
  */
-export type ExtendedInteraction<T extends CommandType> = Omit<
-  BaseInteraction<T>,
+export type ExtendedInteraction<I extends BaseInteraction<CommandType>> = Omit<
+  I,
   "reply" | "followUp" | "editReply" | "update"
 > & {
   reply(
     options: InteractionMessageOptions,
-  ): ReturnType<BaseInteraction<T>["reply"]>;
+  ): ReturnType<I["reply"]>;
 
   followUp(
     options: InteractionMessageOptions,
-  ): ReturnType<BaseInteraction<T>["followUp"]>;
+  ): ReturnType<I["followUp"]>;
 
   editReply(
     options: InteractionMessageOptions,
-  ): ReturnType<BaseInteraction<T>["editReply"]>;
-} & (BaseInteraction<T> extends MessageComponentInteraction
+  ): ReturnType<I["editReply"]>;
+} & (I extends MessageComponentInteraction
   ? {
       update(
         options: InteractionMessageOptions,
@@ -168,9 +168,9 @@ export type ExtendedInteraction<T extends CommandType> = Omit<
  * @returns [pt-BR] Interação com as respostas estendidas.
  * [en] Interaction with extended response methods.
  */
-export function extend_interaction<T extends CommandType>(
-  interaction: BaseInteraction<T>,
-): ExtendedInteraction<T> {
+export function extend_interaction<I extends BaseInteraction<CommandType>>(
+  interaction: I,
+): ExtendedInteraction<I> {
   return new Proxy(interaction, {
     get(target, property) {
       switch (property) {
@@ -205,5 +205,5 @@ export function extend_interaction<T extends CommandType>(
         }
       }
     },
-  }) as unknown as ExtendedInteraction<T>;
+  }) as unknown as ExtendedInteraction<I>;
 }
