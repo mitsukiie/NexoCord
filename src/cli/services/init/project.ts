@@ -1,43 +1,31 @@
+import fs from 'node:fs';
+import path from 'node:path';
 
-import fs from "node:fs";
-import path from "node:path";
+import { NexoError } from '../../errors';
 
-import { NexoError } from "../../errors";
+import type { DetectedProject, InitOptions, InitPackageJson } from './types';
 
-import type {
-  DetectedProject,
-  InitOptions,
-  InitPackageJson,
-} from "./types";
-
-import type {
-  ProjectLanguage,
-  ProjectRuntime,
-} from "../project/types";
+import type { ProjectLanguage, ProjectRuntime } from '../project/types';
 
 export function get_project_paths(): {
   target_dir: string;
   package_path: string;
 } {
   const target_dir = process.cwd();
-  const package_path = path.join(target_dir, "package.json");
+  const package_path = path.join(target_dir, 'package.json');
 
   if (!fs.existsSync(package_path)) {
     throw new NexoError(
-      "O projeto existente precisa conter um package.json.",
-      "PACKAGE_JSON_NOT_FOUND",
+      'O projeto existente precisa conter um package.json.',
+      'PACKAGE_JSON_NOT_FOUND',
     );
   }
 
   return { target_dir, package_path };
 }
 
-export function read_package_json(
-  package_path: string,
-): InitPackageJson {
-  return JSON.parse(
-    fs.readFileSync(package_path, "utf8"),
-  ) as InitPackageJson;
+export function read_package_json(package_path: string): InitPackageJson {
+  return JSON.parse(fs.readFileSync(package_path, 'utf8')) as InitPackageJson;
 }
 
 export function detect_project(
@@ -45,73 +33,68 @@ export function detect_project(
   package_json: InitPackageJson,
 ): DetectedProject {
   const runtime: ProjectRuntime =
-    fs.existsSync(path.join(target_dir, "bun.lock")) ||
-    fs.existsSync(path.join(target_dir, "bun.lockb")) ||
-    package_json.packageManager?.startsWith("bun@") === true
-      ? "bun"
-      : "node";
+    fs.existsSync(path.join(target_dir, 'bun.lock')) ||
+    fs.existsSync(path.join(target_dir, 'bun.lockb')) ||
+    package_json.packageManager?.startsWith('bun@') === true
+      ? 'bun'
+      : 'node';
 
   const language: ProjectLanguage =
-    fs.existsSync(path.join(target_dir, "tsconfig.json")) ||
-    fs.existsSync(path.join(target_dir, "src/index.ts")) ||
+    fs.existsSync(path.join(target_dir, 'tsconfig.json')) ||
+    fs.existsSync(path.join(target_dir, 'src/index.ts')) ||
     package_json.devDependencies?.typescript !== undefined
-      ? "typescript"
-      : "javascript";
+      ? 'typescript'
+      : 'javascript';
 
   const has_nexo_configuration =
     package_json.nexocord !== undefined ||
     package_json.dependencies?.nexocord !== undefined ||
     package_json.devDependencies?.nexocord !== undefined ||
-    Object.values(package_json.scripts ?? {}).some(
-      (script) => script.includes("nexo"),
-    );
+    Object.values(package_json.scripts ?? {}).some((script) => script.includes('nexo'));
 
   return { runtime, language, has_nexo_configuration };
 }
 
-export function resolve_init_choices(
-  options: InitOptions,
-): {
+export function resolve_init_choices(options: InitOptions): {
   runtime?: ProjectRuntime;
   language?: ProjectLanguage;
 } {
   if (
     options.runtime !== undefined &&
-    options.runtime !== "node" &&
-    options.runtime !== "bun"
+    options.runtime !== 'node' &&
+    options.runtime !== 'bun'
   ) {
     throw new NexoError(
       `Runtime inválido: "${options.runtime}". Use "node" ou "bun".`,
-      "INVALID_RUNTIME",
+      'INVALID_RUNTIME',
     );
   }
 
   const requested_language =
-    options.language === "ts"
-      ? "typescript"
-      : options.language === "js"
-        ? "javascript"
+    options.language === 'ts'
+      ? 'typescript'
+      : options.language === 'js'
+        ? 'javascript'
         : options.language;
 
   if (
     requested_language !== undefined &&
-    requested_language !== "typescript" &&
-    requested_language !== "javascript"
+    requested_language !== 'typescript' &&
+    requested_language !== 'javascript'
   ) {
     throw new NexoError(
       `Linguagem inválida: "${options.language}". Use "ts" ou "js".`,
-      "INVALID_LANGUAGE",
+      'INVALID_LANGUAGE',
     );
   }
 
   return {
     runtime:
-      options.runtime === "node" || options.runtime === "bun"
+      options.runtime === 'node' || options.runtime === 'bun'
         ? options.runtime
         : undefined,
     language:
-      requested_language === "typescript" ||
-      requested_language === "javascript"
+      requested_language === 'typescript' || requested_language === 'javascript'
         ? requested_language
         : undefined,
   };
@@ -121,9 +104,5 @@ export function write_package_json(
   package_path: string,
   package_json: InitPackageJson,
 ): void {
-  fs.writeFileSync(
-    package_path,
-    `${JSON.stringify(package_json, null, 2)}\n`,
-    "utf8",
-  );
+  fs.writeFileSync(package_path, `${JSON.stringify(package_json, null, 2)}\n`, 'utf8');
 }

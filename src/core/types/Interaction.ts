@@ -1,8 +1,8 @@
-import type { InteractionReplyOptions } from "discord.js";
+import type { InteractionReplyOptions } from 'discord.js';
 
-import type { DisplayInput } from "../ui/types";
+import type { DisplayInput } from '../ui/types';
 
-type ReplyFiles = NonNullable<InteractionReplyOptions["files"]>;
+type ReplyFiles = NonNullable<InteractionReplyOptions['files']>;
 
 /**
  * Opções de mensagem aceitas pelo NexoCord.
@@ -15,7 +15,7 @@ type ReplyFiles = NonNullable<InteractionReplyOptions["files"]>;
  */
 export type InteractionMessageOptions = Omit<
   InteractionReplyOptions,
-  "components" | "files"
+  'components' | 'files'
 > & {
   components?: DisplayInput | readonly DisplayInput[];
   files?: ReplyFiles;

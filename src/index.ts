@@ -1,14 +1,9 @@
-export * from "./core/client/bootstrap";
-export { logger } from "./core/utils/logger";
+export * from './core/client/bootstrap';
+export { logger } from './core/utils/logger';
 
-export * from "./core/types";
-export {
-  createCommand,
-  createEvent,
-  createResponder,
-  option,
-} from "./core/creators";
-export { ui } from "./core/ui";
+export * from './core/types';
+export { createCommand, createEvent, createResponder, option } from './core/creators';
+export { ui } from './core/ui';
 
 export {
   MessageFlags,
@@ -24,4 +19,4 @@ export {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-} from "discord.js";
+} from 'discord.js';

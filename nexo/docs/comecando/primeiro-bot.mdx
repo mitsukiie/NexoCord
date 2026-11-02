@@ -20,7 +20,6 @@ nexo dev
 
 O assistente solicitará o runtime (**Node.js ou Bun**) e a linguagem (**TypeScript ou JavaScript**).
 
-
 ## Configurar o token
 
 Crie um arquivo `.env` na raiz do projeto:
@@ -52,7 +51,7 @@ Em JavaScript, os arquivos equivalentes utilizam a extensão `.js`.
 No arquivo de entrada, `src/index.ts`, configure a inicialização do Nexocord:
 
 ```ts title="src/index.ts"
-import { Bootstrap, GatewayIntentBits } from "nexocord";
+import { Bootstrap, GatewayIntentBits } from 'nexocord';
 
 await Bootstrap.init({
   token: process.env.TOKEN,
@@ -69,14 +68,14 @@ Em JavaScript, use o mesmo código em `src/index.js`. O template gerado configur
 Crie o arquivo `src/commands/utils/ping.ts`:
 
 ```ts title="src/commands/utils/ping.ts"
-import { CommandType, createCommand } from "nexocord";
+import { CommandType, createCommand } from 'nexocord';
 
 export default createCommand({
-  name: "ping",
-  description: "Responde com Pong.",
+  name: 'ping',
+  description: 'Responde com Pong.',
   type: CommandType.ChatInput,
   async run(interaction) {
-    await interaction.reply({ content: "Pong!" });
+    await interaction.reply({ content: 'Pong!' });
   },
 });
 ```
@@ -86,7 +85,7 @@ export default createCommand({
 Crie o arquivo `src/events/ready.ts`:
 
 ```ts title="src/events/ready.ts"
-import { createEvent, Events } from "nexocord";
+import { createEvent, Events } from 'nexocord';
 
 export default createEvent({
   name: Events.ClientReady,

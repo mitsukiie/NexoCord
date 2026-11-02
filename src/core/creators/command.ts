@@ -1,4 +1,4 @@
-import { Command, CommandType } from "../types";
+import { Command, CommandType } from '../types';
 
 /**
  * Cria uma configuração de comando pronta para ser exportada pelo projeto.

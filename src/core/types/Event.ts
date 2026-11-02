@@ -1,5 +1,5 @@
-import { ClientEvents } from "discord.js";
-import { RunEvent } from "./Run";
+import { ClientEvents } from 'discord.js';
+import { RunEvent } from './Run';
 
 /**
  * Configuração de um evento do cliente do Discord.

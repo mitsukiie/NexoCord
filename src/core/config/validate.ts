@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const config_overrides_schema = z
   .object({
@@ -12,7 +12,7 @@ const config_overrides_schema = z
 
     terminal: z
       .object({
-        mode: z.enum(["informativo", "minimalista"]).optional(),
+        mode: z.enum(['informativo', 'minimalista']).optional(),
 
         commands: z
           .object({
@@ -61,10 +61,10 @@ export function validate_config_overrides(input: unknown): ConfigOverrides {
   if (!result.success) {
     const details = result.error.issues
       .map((issue) => {
-        const field = issue.path.join(".") || "(raiz)";
+        const field = issue.path.join('.') || '(raiz)';
         return `  - ${field}: ${issue.message}`;
       })
-      .join("\n");
+      .join('\n');
 
     throw new Error(`Configuração do NexoCord inválida:\n${details}`);
   }

@@ -3,7 +3,7 @@ import {
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
   ThumbnailBuilder,
-} from "discord.js";
+} from 'discord.js';
 
 import type {
   AttachmentInput,
@@ -11,7 +11,7 @@ import type {
   MediaItem,
   MediaGallery,
   Thumbnail,
-} from "../types";
+} from '../types';
 
 /**
  * Armazena os anexos associados a cada componente normalizado.
@@ -32,16 +32,12 @@ export function attach_attachments<T extends object>(
 }
 
 /** Recupera os anexos associados a um componente. */
-export function get_component_attachments(
-  component: object,
-): AttachmentInput[] {
+export function get_component_attachments(component: object): AttachmentInput[] {
   return component_attachments.get(component) ?? [];
 }
 
 /** Coleta os anexos associados a vários componentes. */
-export function collect_attachments(
-  components: readonly object[],
-): AttachmentInput[] {
+export function collect_attachments(components: readonly object[]): AttachmentInput[] {
   return components.flatMap(get_component_attachments);
 }
 

@@ -6,13 +6,13 @@ import type {
   SelectMenu,
   StringSelect,
   UserSelect,
-} from "../types";
+} from '../types';
 
-import { UI_LIMITS } from "../constants";
+import { UI_LIMITS } from '../constants';
 
 export function validate_select_base(select: SelectBase): void {
   if (!select.customId?.trim()) {
-    throw new Error("O select precisa possuir um customId.");
+    throw new Error('O select precisa possuir um customId.');
   }
 
   if (select.customId.length > UI_LIMITS.custom_id) {
@@ -38,7 +38,7 @@ export function validate_select_base(select: SelectBase): void {
       minValues < UI_LIMITS.select_min_values ||
       minValues > UI_LIMITS.select_max_values)
   ) {
-    throw new Error("O minValues do select é inválido.");
+    throw new Error('O minValues do select é inválido.');
   }
 
   if (
@@ -47,15 +47,11 @@ export function validate_select_base(select: SelectBase): void {
       maxValues < 1 ||
       maxValues > UI_LIMITS.select_max_values)
   ) {
-    throw new Error("O maxValues do select é inválido.");
+    throw new Error('O maxValues do select é inválido.');
   }
 
-  if (
-    minValues !== undefined &&
-    maxValues !== undefined &&
-    minValues > maxValues
-  ) {
-    throw new Error("O minValues não pode ser maior que maxValues.");
+  if (minValues !== undefined && maxValues !== undefined && minValues > maxValues) {
+    throw new Error('O minValues não pode ser maior que maxValues.');
   }
 }
 
@@ -63,7 +59,7 @@ export function validate_string_select(select: StringSelect): void {
   validate_select_base(select);
 
   if (select.options.length === 0) {
-    throw new Error("O select de texto precisa possuir pelo menos uma opção.");
+    throw new Error('O select de texto precisa possuir pelo menos uma opção.');
   }
 
   if (select.options.length > UI_LIMITS.select_options) {
@@ -76,7 +72,7 @@ export function validate_string_select(select: StringSelect): void {
 
   for (const option of select.options) {
     if (!option.label?.trim()) {
-      throw new Error("Todas as opções precisam possuir um label.");
+      throw new Error('Todas as opções precisam possuir um label.');
     }
 
     if (option.label.length > UI_LIMITS.select_option_label) {
@@ -86,7 +82,7 @@ export function validate_string_select(select: StringSelect): void {
     }
 
     if (!option.value?.trim()) {
-      throw new Error("Todas as opções precisam possuir um value.");
+      throw new Error('Todas as opções precisam possuir um value.');
     }
 
     if (option.value.length > UI_LIMITS.select_option_value) {
@@ -130,23 +126,23 @@ export function validate_channel_select(select: ChannelSelect): void {
 
 export function validate_select(select: SelectMenu): void {
   switch (select.type) {
-    case "select.user":
+    case 'select.user':
       validate_user_select(select);
       break;
 
-    case "select.role":
+    case 'select.role':
       validate_role_select(select);
       break;
 
-    case "select.mentionable":
+    case 'select.mentionable':
       validate_mentionable_select(select);
       break;
 
-    case "select.channel":
+    case 'select.channel':
       validate_channel_select(select);
       break;
 
-    case "select.string":
+    case 'select.string':
       validate_string_select(select);
       break;
   }

@@ -7,19 +7,19 @@ import {
   AutocompleteInteraction,
   GuildMember,
   MessageFlags,
-} from "discord.js";
-import { readdirSync } from "fs";
-import path from "path";
-import { pathToFileURL } from "url";
+} from 'discord.js';
+import { readdirSync } from 'fs';
+import path from 'path';
+import { pathToFileURL } from 'url';
 
-import { App, ExtendedClient } from "../index";
+import { App, ExtendedClient } from '../index';
 
-import { Command } from "../types";
-import { extend_interaction } from "./interaction";
-import { logger } from "../utils";
-import { is_script } from "../utils/extensions";
-import { NexoConfig } from "../config";
-import { ui } from "../ui";
+import { Command } from '../types';
+import { extend_interaction } from './interaction';
+import { logger } from '../utils';
+import { is_script } from '../utils/extensions';
+import { NexoConfig } from '../config';
+import { ui } from '../ui';
 
 /**
  * Carrega os subcomandos de um diretório e cria um comando de grupo.
@@ -38,7 +38,7 @@ import { ui } from "../ui";
 export async function createSubcommand(
   name: string,
   directory: string,
-  config: NexoConfig
+  config: NexoConfig,
 ): Promise<any> {
   const app = App.get();
 
@@ -90,7 +90,7 @@ export async function createSubcommand(
       const sub = subcommands[name];
       if (!sub) {
         return i.reply({
-          content: "Subcomando não encontrado.",
+          content: 'Subcomando não encontrado.',
           ephemeral: true,
         });
       }
@@ -105,10 +105,7 @@ export async function createSubcommand(
   };
 }
 
-async function CheckPermission(
-  i: ChatInputCommandInteraction,
-  command: Command,
-) {
+async function CheckPermission(i: ChatInputCommandInteraction, command: Command) {
   const member = i.member as GuildMember;
 
   // 1️⃣ allowIds
@@ -118,7 +115,7 @@ async function CheckPermission(
     !command.allowIds.includes(i.user.id)
   ) {
     await i.reply({
-      content: "Você não tem permissão para usar este subcomando",
+      content: 'Você não tem permissão para usar este subcomando',
       flags: [MessageFlags.Ephemeral],
     });
     return false;
@@ -140,7 +137,7 @@ async function CheckPermission(
   if (command.defaultMemberPermission && member) {
     if (!member.permissions.has(command.defaultMemberPermission)) {
       await i.reply({
-        content: "Você não tem permissão para usar este subcomando.",
+        content: 'Você não tem permissão para usar este subcomando.',
         flags: [MessageFlags.Ephemeral],
       });
       return false;
@@ -148,9 +145,9 @@ async function CheckPermission(
   }
 
   // 4️⃣ NSFW
-  if (command.nsfw && i.channel && "nsfw" in i.channel && !i.channel.nsfw) {
+  if (command.nsfw && i.channel && 'nsfw' in i.channel && !i.channel.nsfw) {
     await i.reply({
-      content: "Este subcomando só pode ser usado em canais NSFW.",
+      content: 'Este subcomando só pode ser usado em canais NSFW.',
       flags: [MessageFlags.Ephemeral],
     });
     return false;
@@ -159,7 +156,7 @@ async function CheckPermission(
   // 5️⃣ DM Permission
   if (i.guild === null && command.dmPermission === false) {
     await i.reply({
-      content: "Este comando não pode ser usado em DMs.",
+      content: 'Este comando não pode ser usado em DMs.',
       flags: [MessageFlags.Ephemeral],
     });
     return false;

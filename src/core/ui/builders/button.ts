@@ -1,4 +1,4 @@
-import type { Button } from "../types";
+import type { Button } from '../types';
 
 /**
  * Cria um botão a partir das opções informadas.

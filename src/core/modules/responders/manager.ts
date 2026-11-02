@@ -1,33 +1,30 @@
-import { Interaction } from "discord.js";
-import { ZodType } from "zod";
-import { interaction_type } from "../../utils/responder";
-import { CacheType } from "../../types";
-import { session } from "./session";
-import { route } from "./route";
-import { handle_error } from "../../utils";
+import { Interaction } from 'discord.js';
+import { ZodType } from 'zod';
+import { interaction_type } from '../../utils/responder';
+import { CacheType } from '../../types';
+import { session } from './session';
+import { route } from './route';
+import { logger } from '../../utils';
 
-function check_interaction_type(
-  interaction: Interaction,
-  cache_type?: CacheType,
-) {
+function check_interaction_type(interaction: Interaction, cache_type?: CacheType) {
   if (!cache_type) return true;
 
-  if (cache_type === "cached") return interaction.inCachedGuild();
-  if (cache_type === "guild") return interaction.inGuild();
+  if (cache_type === 'cached') return interaction.inCachedGuild();
+  if (cache_type === 'guild') return interaction.inGuild();
 
   return true;
 }
 
 function CacheErrorMessage(cache_type: CacheType) {
-  if (cache_type === "cached") {
-    return "Esta interação exige servidor em cache para continuar.";
+  if (cache_type === 'cached') {
+    return 'Esta interação exige servidor em cache para continuar.';
   }
 
-  if (cache_type === "guild") {
-    return "Esta interação só pode ser usada dentro de servidor.";
+  if (cache_type === 'guild') {
+    return 'Esta interação só pode ser usada dentro de servidor.';
   }
 
-  return "Esta interação exige contexto raw de servidor.";
+  return 'Esta interação exige contexto raw de servidor.';
 }
 
 /** Gerencia o registro e a execução dos responders de interação. */
@@ -40,22 +37,18 @@ export class ResponderManager {
 
   /** Executa o responder correspondente à interação, quando houver uma rota compatível. */
   async run(interaction: Interaction) {
-    if (!("customId" in interaction)) return;
+    if (!('customId' in interaction)) return;
     const id = interaction.customId;
 
     const type = interaction_type(interaction);
     if (!type) return;
 
     if (this.sessions.isExpired(id)) {
-      if (
-        "reply" in interaction &&
-        interaction.isRepliable() &&
-        !interaction.replied
-      ) {
+      if ('reply' in interaction && interaction.isRepliable() && !interaction.replied) {
         await interaction
           .reply({
-            content: "Esta interação não está mais disponível.",
-            flags: ["Ephemeral"],
+            content: 'Esta interação não está mais disponível.',
+            flags: ['Ephemeral'],
           })
           .catch(() => {});
       }
@@ -67,15 +60,11 @@ export class ResponderManager {
 
     const cache = route.cache;
     if (cache && !check_interaction_type(interaction, cache)) {
-      if (
-        "reply" in interaction &&
-        interaction.isRepliable() &&
-        !interaction.replied
-      ) {
+      if ('reply' in interaction && interaction.isRepliable() && !interaction.replied) {
         await interaction
           .reply({
             content: CacheErrorMessage(cache),
-            flags: ["Ephemeral"],
+            flags: ['Ephemeral'],
           })
           .catch(() => {});
       }
@@ -88,33 +77,29 @@ export class ResponderManager {
       let data: any = params;
 
       if (route.parse) {
-        if (typeof route.parse === "function") {
+        if (typeof route.parse === 'function') {
           data = route.parse(params);
         } else if (route.parse instanceof ZodType) {
           data = route.parse.parse(params);
         }
       }
 
-      if (route.lifetime === "temporary" && !this.sessions.has(id)) {
+      if (route.lifetime === 'temporary' && !this.sessions.has(id)) {
         this.sessions.add(id, route.lifetime, route.expire);
       }
 
-      if (route.lifetime === "once") {
+      if (route.lifetime === 'once') {
         this.sessions.add(id, route.lifetime);
       }
 
       await route.run(interaction as any, data);
     } catch (err) {
-      handle_error(err);
-      if (
-        "reply" in interaction &&
-        interaction.isRepliable() &&
-        !interaction.replied
-      ) {
+      logger.error(err);
+      if ('reply' in interaction && interaction.isRepliable() && !interaction.replied) {
         await interaction
           .reply({
-            content: "Erro ao processar interação.",
-            flags: ["Ephemeral"],
+            content: 'Erro ao processar interação.',
+            flags: ['Ephemeral'],
           })
           .catch(() => {});
       }

@@ -1,6 +1,6 @@
 {
   "name": "nexocord",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Framework TypeScript moderno para criar bots escaláveis ​​do Discord com discord.js v14, apresentando arquitetura modular, cli e utilitários amigáveis ​​para desenvolvedores.",
   "type": "module",
   "private": false,
@@ -58,7 +58,9 @@
   },
   "scripts": {
     "build": "rm -rf dist && bun build src/index.ts src/core/types/index.ts src/core/ui/index.ts src/core/utils/index.ts --outdir dist --target node --format esm && bun build src/index.ts --target node --format cjs --outfile dist/index.cjs && bun build src/bin/cli.ts --outdir dist/bin --target node --format esm && mkdir -p dist/bin/templates && cp -R src/cli/services/project/templates/. dist/bin/templates/ && bunx tsc --emitDeclarationOnly --outDir dist",
-    "pub": "bun run build && npm publish --access public"
+    "pub": "bun run build && npm publish --access public",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",
@@ -75,6 +77,7 @@
     "commander": "^15.0.0",
     "discord.js": "^14.27.0",
     "glob": "^13.0.6",
+    "prettier": "^3.9.10",
     "zod": "^4.6.5"
   }
 }

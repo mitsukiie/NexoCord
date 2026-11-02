@@ -1,4 +1,4 @@
-import type { InteractionReplyOptions } from "discord.js";
+import type { InteractionReplyOptions } from 'discord.js';
 
 /**
  * [pt-BR] URL HTTP ou HTTPS.
@@ -22,9 +22,7 @@ export type MediaUrl = HttpUrl | AttachmentUrlString;
  * [pt-BR] Entrada de arquivo aceita pelas opções de resposta do Discord.js.
  * [en] File input accepted by Discord.js reply options.
  */
-export type AttachmentInput = NonNullable<
-  InteractionReplyOptions["files"]
->[number];
+export type AttachmentInput = NonNullable<InteractionReplyOptions['files']>[number];
 
 /**
  * [pt-BR] Opções de uma imagem ou miniatura.
@@ -61,7 +59,7 @@ export type Thumbnail = MediaItem;
  * [en] Media gallery component.
  */
 export type MediaGallery = {
-  type: "gallery";
+  type: 'gallery';
 
   /**
    * [pt-BR] Imagens que serão exibidas na galeria.
@@ -75,7 +73,7 @@ export type MediaGallery = {
  * [en] File component displayed in a message.
  */
 export type FileComponent = {
-  type: "file";
+  type: 'file';
 
   /**
    * [pt-BR] URL do arquivo, normalmente no formato attachment://.

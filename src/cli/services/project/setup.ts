@@ -1,11 +1,7 @@
+import { generate_project } from './generator';
+import { install_dependencies } from './install';
 
-import { generate_project } from "./generator";
-import { install_dependencies } from "./install";
-
-import type {
-  ProjectChoices,
-  GenerateProjectOptions,
-} from "./types";
+import type { ProjectChoices, GenerateProjectOptions } from './types';
 
 export interface SetupProjectOptions {
   target_dir: string;
@@ -13,17 +9,8 @@ export interface SetupProjectOptions {
   generate?: GenerateProjectOptions;
 }
 
-export async function setup_project(
-  options: SetupProjectOptions,
-): Promise<void> {
-  await generate_project(
-    options.choices,
-    options.target_dir,
-    options.generate,
-  );
+export async function setup_project(options: SetupProjectOptions): Promise<void> {
+  await generate_project(options.choices, options.target_dir, options.generate);
 
-  await install_dependencies(
-    options.target_dir,
-    options.choices.runtime,
-  );
+  await install_dependencies(options.target_dir, options.choices.runtime);
 }

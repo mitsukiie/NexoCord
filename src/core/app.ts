@@ -1,6 +1,6 @@
-import { ExtendedClient } from "./index";
-import { CommandManager, EventManager, ResponderManager } from "./modules";
-import { CooldownManager } from "./utils/cooldown";
+import { ExtendedClient } from './index';
+import { CommandManager, EventManager, ResponderManager } from './modules';
+import { CooldownManager } from './utils/cooldown';
 
 /**
  * Acesso aos serviços registrados na instância do NexoCord.
@@ -36,7 +36,7 @@ export class App {
 
   public static get() {
     if (!this.instance) {
-      throw new Error("App não inicializado");
+      throw new Error('App não inicializado');
     }
     return this.instance;
   }

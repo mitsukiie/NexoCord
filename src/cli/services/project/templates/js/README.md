@@ -1,4 +1,4 @@
-# __PROJECT_NAME__
+# **PROJECT_NAME**
 
 Projeto criado com [NexoCord](https://www.npmjs.com/package/nexocord), um framework para bots Discord baseado em discord.js.
 
@@ -15,7 +15,6 @@ Projeto criado com [NexoCord](https://www.npmjs.com/package/nexocord), um framew
 ## Scripts
 
 - `bun dev` — inicia o bot em modo de desenvolvimento.
-
 
 ## Documentação
 

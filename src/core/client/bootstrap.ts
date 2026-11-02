@@ -1,10 +1,10 @@
-import { ExtendedClient, App } from "../index";
-import { logger, handle_error } from "../utils";
-import { load_commands, load_events } from "../modules";
+import { ExtendedClient, App } from '../index';
+import { logger } from '../utils';
+import { load_commands, load_events } from '../modules';
 
-import { set_global_settings } from "../settings";
-import { NexoConfig, load_config, BootstrapOptions } from "../config";
-import { Router } from "./Interactions";
+import { set_global_settings } from '../settings';
+import { NexoConfig, load_config, BootstrapOptions } from '../config';
+import { Router } from './Interactions';
 
 /**
  * Ponto de entrada para configurar e iniciar um bot NexoCord.
@@ -23,14 +23,14 @@ const Bootstrap = {
    * [en] Token and client options.
    */
   async init(options: BootstrapOptions) {
-    const token = options.token ?? process.env.TOKEN ?? "";
+    const token = options.token ?? process.env.TOKEN ?? '';
 
     let config: NexoConfig;
 
     try {
       config = load_config();
     } catch (error) {
-      handle_error(error, "Erro ao carregar a configuração do bot.");
+      logger.error(error, 'Erro ao carregar a configuração do bot.');
       return;
     }
 
@@ -44,13 +44,11 @@ const Bootstrap = {
     });
 
     App.init(client);
-    client.on("interactionCreate", (interaction) =>
-      Router(interaction, config),
-    );
+    client.on('interactionCreate', (interaction) => Router(interaction, config));
 
     try {
       if (!token) {
-        logger.error("Token não fornecido!");
+        logger.error('Token não fornecido!');
         process.exit(1);
       }
 
@@ -60,7 +58,7 @@ const Bootstrap = {
 
       await load_commands(config, client, token);
     } catch (error) {
-      logger.error("Erro ao iniciar o bot:");
+      logger.error('Erro ao iniciar o bot:');
       console.error(error);
     }
   },

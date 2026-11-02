@@ -1,14 +1,11 @@
-import { MessageFlags, ChatInputCommandInteraction } from "discord.js";
-import { App } from "../../index";
-import type { NexoConfig } from "../../config";
-import { extend_interaction } from "../../creators";
-import { handle_error } from "../../utils";
-import { ui } from "../../ui";
+import { MessageFlags, ChatInputCommandInteraction } from 'discord.js';
+import { App } from '../../index';
+import type { NexoConfig } from '../../config';
+import { extend_interaction } from '../../creators';
+import { logger } from '../../utils';
+import { ui } from '../../ui';
 
-export async function Command(
-  i: ChatInputCommandInteraction,
-  config: NexoConfig,
-) {
+export async function Command(i: ChatInputCommandInteraction, config: NexoConfig) {
   const app = App.get();
 
   const name = i.commandName;
@@ -34,7 +31,7 @@ export async function Command(
 
     app.cooldowns.set(id, name, command.cooldown ?? config.bot.cooldown);
   } catch (err) {
-    handle_error(err);
+    logger.error(err);
     const msg = config.bot.errors.interaction;
 
     if (i.replied || i.deferred)

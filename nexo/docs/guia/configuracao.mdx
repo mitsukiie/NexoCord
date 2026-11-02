@@ -79,10 +79,10 @@ Os dois formatos permitem configurar as mesmas opções. Escolha aquele que pref
 
 A propriedade `directories` define onde o NexoCord procura os arquivos de comandos e eventos.
 
-| Propriedade | Tipo | Descrição |
-|---|---|---|
+| Propriedade            | Tipo     | Descrição                     |
+| ---------------------- | -------- | ----------------------------- |
 | `directories.commands` | `string` | Caminho da pasta de comandos. |
-| `directories.events` | `string` | Caminho da pasta de eventos. |
+| `directories.events`   | `string` | Caminho da pasta de eventos.  |
 
 Exemplo:
 
@@ -101,15 +101,15 @@ Os caminhos devem corresponder à estrutura do seu projeto.
 
 A propriedade `terminal` controla as informações exibidas durante a inicialização do framework.
 
-| Propriedade | Tipo | Descrição |
-|---|---|---|
-| `terminal.mode` | `"informativo" \| "minimalista"` | Define o formato dos logs. |
-| `terminal.commands.showFiles` | `boolean` | Exibe os arquivos de comandos encontrados. |
-| `terminal.commands.showRegistered` | `boolean` | Exibe a mensagem de registro dos comandos. |
-| `terminal.commands.registeredMessage` | `string` | Personaliza a mensagem de registro dos comandos. |
-| `terminal.events.showFiles` | `boolean` | Exibe os arquivos de eventos encontrados. |
-| `terminal.events.showRegistered` | `boolean` | Exibe a mensagem de carregamento dos eventos. |
-| `terminal.events.registeredMessage` | `string` | Personaliza a mensagem de carregamento dos eventos. |
+| Propriedade                           | Tipo                             | Descrição                                           |
+| ------------------------------------- | -------------------------------- | --------------------------------------------------- |
+| `terminal.mode`                       | `"informativo" \| "minimalista"` | Define o formato dos logs.                          |
+| `terminal.commands.showFiles`         | `boolean`                        | Exibe os arquivos de comandos encontrados.          |
+| `terminal.commands.showRegistered`    | `boolean`                        | Exibe a mensagem de registro dos comandos.          |
+| `terminal.commands.registeredMessage` | `string`                         | Personaliza a mensagem de registro dos comandos.    |
+| `terminal.events.showFiles`           | `boolean`                        | Exibe os arquivos de eventos encontrados.           |
+| `terminal.events.showRegistered`      | `boolean`                        | Exibe a mensagem de carregamento dos eventos.       |
+| `terminal.events.registeredMessage`   | `string`                         | Personaliza a mensagem de carregamento dos eventos. |
 
 ### Modos de exibição
 
@@ -139,11 +139,11 @@ Exemplo:
 
 A propriedade `bot` reúne configurações relacionadas ao comportamento do bot.
 
-| Propriedade | Tipo | Descrição |
-|---|---|---|
-| `bot.cooldown` | `number` | Cooldown padrão dos comandos, em segundos. |
-| `bot.guildID` | `string[]` | Quando preenchida, registra os comandos nas guildas informadas; quando vazia, usa o registro global. |
-| `bot.errors.interaction` | `string` | Mensagem exibida quando ocorre um erro durante a execução de uma interação. |
+| Propriedade              | Tipo       | Descrição                                                                                            |
+| ------------------------ | ---------- | ---------------------------------------------------------------------------------------------------- |
+| `bot.cooldown`           | `number`   | Cooldown padrão dos comandos, em segundos.                                                           |
+| `bot.guildID`            | `string[]` | Quando preenchida, registra os comandos nas guildas informadas; quando vazia, usa o registro global. |
+| `bot.errors.interaction` | `string`   | Mensagem exibida quando ocorre um erro durante a execução de uma interação.                          |
 
 ### Cooldown padrão
 
@@ -178,12 +178,12 @@ Você pode personalizar a mensagem exibida quando uma interação falha:
 O arquivo de configuração não substitui as opções de inicialização do bot. O token, as intents e outras opções suportadas continuam sendo informados em `Bootstrap.init()`.
 
 ```ts
-import { Bootstrap } from "nexocord";
-import { GatewayIntentBits } from "discord.js";
+import { Bootstrap } from 'nexocord';
+import { GatewayIntentBits } from 'discord.js';
 
 await Bootstrap.init({
   token: process.env.TOKEN,
-  intents: [GatewayIntentBits.Guilds]
+  intents: [GatewayIntentBits.Guilds],
 });
 ```
 
@@ -198,17 +198,17 @@ Mantenha o token em uma variável de ambiente, como `TOKEN`, e nunca o publique 
 Se precisar armazenar valores específicos do seu bot, você pode passá-los pela propriedade `settings` de `Bootstrap.init()`.
 
 ```ts
-import { Bootstrap } from "nexocord";
-import { GatewayIntentBits } from "discord.js";
+import { Bootstrap } from 'nexocord';
+import { GatewayIntentBits } from 'discord.js';
 
 await Bootstrap.init({
   token: process.env.TOKEN,
   intents: [GatewayIntentBits.Guilds],
   settings: {
-    projectName: "Meu Bot",
-    supportServer: "https://discord.gg/seu-servidor",
-    welcomeChannelId: "123456789012345678"
-  }
+    projectName: 'Meu Bot',
+    supportServer: 'https://discord.gg/seu-servidor',
+    welcomeChannelId: '123456789012345678',
+  },
 });
 ```
 

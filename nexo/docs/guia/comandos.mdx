@@ -4,8 +4,8 @@ title: Comandos
 slug: /commands
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Comandos
 
@@ -26,14 +26,14 @@ Neste exemplo, criaremos um comando `/ping` que responde `Pong!`.
 <TabItem value="ts" label="TypeScript">
 
 ```ts title="src/commands/utils/ping.ts"
-import { CommandType, createCommand } from "nexocord";
+import { CommandType, createCommand } from 'nexocord';
 
 export default createCommand({
-  name: "ping",
-  description: "Verifica se o bot está online.",
+  name: 'ping',
+  description: 'Verifica se o bot está online.',
   type: CommandType.ChatInput,
   async run(interaction) {
-    await interaction.reply({ content: "Pong!" });
+    await interaction.reply({ content: 'Pong!' });
   },
 });
 ```
@@ -42,14 +42,14 @@ export default createCommand({
 <TabItem value="js" label="JavaScript">
 
 ```js title="src/commands/utils/ping.js"
-const { CommandType, createCommand } = require("nexocord");
+const { CommandType, createCommand } = require('nexocord');
 
 module.exports = createCommand({
-  name: "ping",
-  description: "Verifica se o bot está online.",
+  name: 'ping',
+  description: 'Verifica se o bot está online.',
   type: CommandType.ChatInput,
   async run(interaction) {
-    await interaction.reply({ content: "Pong!" });
+    await interaction.reply({ content: 'Pong!' });
   },
 });
 ```
@@ -61,20 +61,20 @@ O comando precisa estar dentro do diretório configurado em `directories.command
 
 ## 📋 Propriedades de um comando
 
-| Propriedade | Tipo | Obrigatória | Descrição |
-| --- | --- | --- | --- |
-| `name` | `string` | Sim | Nome do comando. |
-| `description` | `string` | Sim | Descrição exibida pelo Discord. |
-| `type` | `CommandType` | Sim | Tipo de comando. |
-| `run` | função | Sim | Executa a lógica do comando. |
-| `options` | `APIApplicationCommandOption[]` | Não | Parâmetros aceitos pelo comando. |
-| `cooldown` | `number` | Não | Intervalo entre usos, em segundos. |
-| `autocomplete` | função | Não | Fornece sugestões para opções com autocomplete. |
-| `defaultMemberPermission` | `PermissionResolvable \| null` | Não | Permissões exigidas do membro. |
-| `botpermission` | chave de `PermissionFlagsBits` | Não | Permissão exigida do bot. |
-| `allowIds` | `string[] \| null` | Não | Restringe o uso a IDs permitidos. |
-| `dmPermission` | `boolean` | Não | Define se o comando pode ser usado em mensagens diretas. |
-| `nsfw` | `boolean` | Não | Restringe o comando a canais NSFW. |
+| Propriedade               | Tipo                            | Obrigatória | Descrição                                                |
+| ------------------------- | ------------------------------- | ----------- | -------------------------------------------------------- |
+| `name`                    | `string`                        | Sim         | Nome do comando.                                         |
+| `description`             | `string`                        | Sim         | Descrição exibida pelo Discord.                          |
+| `type`                    | `CommandType`                   | Sim         | Tipo de comando.                                         |
+| `run`                     | função                          | Sim         | Executa a lógica do comando.                             |
+| `options`                 | `APIApplicationCommandOption[]` | Não         | Parâmetros aceitos pelo comando.                         |
+| `cooldown`                | `number`                        | Não         | Intervalo entre usos, em segundos.                       |
+| `autocomplete`            | função                          | Não         | Fornece sugestões para opções com autocomplete.          |
+| `defaultMemberPermission` | `PermissionResolvable \| null`  | Não         | Permissões exigidas do membro.                           |
+| `botpermission`           | chave de `PermissionFlagsBits`  | Não         | Permissão exigida do bot.                                |
+| `allowIds`                | `string[] \| null`              | Não         | Restringe o uso a IDs permitidos.                        |
+| `dmPermission`            | `boolean`                       | Não         | Define se o comando pode ser usado em mensagens diretas. |
+| `nsfw`                    | `boolean`                       | Não         | Restringe o comando a canais NSFW.                       |
 
 O callback `run` recebe a interação como primeiro argumento. Quando necessário,
 você também pode receber o cliente como segundo argumento. Para utilizar
@@ -91,7 +91,7 @@ async run(interaction, client, { ui }) {
 Também é possível importar a mesma API diretamente de `nexocord/ui`:
 
 ```ts
-import { ui } from "nexocord/ui";
+import { ui } from 'nexocord/ui';
 ```
 
 Nesse caso, não é necessário receber `{ ui }` no callback.
@@ -104,7 +104,7 @@ O Nexocord oferece os tipos de comandos do Discord representados por `CommandTyp
 <TabItem value="chatinput" label="Slash">
 
 ```ts
-type: CommandType.ChatInput
+type: CommandType.ChatInput;
 ```
 
 Cria um comando de barra, como `/ping`. É a opção mais comum para comandos com parâmetros e respostas interativas.
@@ -113,7 +113,7 @@ Cria um comando de barra, como `/ping`. É a opção mais comum para comandos co
 <TabItem value="user" label="User">
 
 ```ts
-type: CommandType.User
+type: CommandType.User;
 ```
 
 Cria uma ação disponível no menu de contexto de um usuário.
@@ -122,7 +122,7 @@ Cria uma ação disponível no menu de contexto de um usuário.
 <TabItem value="message" label="Message">
 
 ```ts
-type: CommandType.Message
+type: CommandType.Message;
 ```
 
 Cria uma ação disponível no menu de contexto de uma mensagem.
@@ -131,7 +131,7 @@ Cria uma ação disponível no menu de contexto de uma mensagem.
 <TabItem value="primary" label="PrimaryEntryPoint">
 
 ```ts
-type: CommandType.PrimaryEntryPoint
+type: CommandType.PrimaryEntryPoint;
 ```
 
 Representa o tipo `PrimaryEntryPoint` disponibilizado pela API. Seu uso depende dos recursos e requisitos específicos do Discord para esse tipo de comando.

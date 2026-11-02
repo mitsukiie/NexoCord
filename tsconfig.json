@@ -16,10 +16,8 @@
     "outDir": "./dist",
 
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-
+    "forceConsistentCasingInFileNames": true
   },
 
   "include": ["src"]
 }
-

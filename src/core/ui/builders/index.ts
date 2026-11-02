@@ -6,13 +6,7 @@ import { text } from './text';
 import { gallery, image, file, thumbnail } from './media';
 import { row } from './row';
 
-import {
-  channel,
-  mentionable,
-  role,
-  string,
-  user,
-} from './select';
+import { channel, mentionable, role, string, user } from './select';
 
 /**
  * API pública para criação de componentes Components V2.
@@ -58,10 +52,4 @@ export {
   thumbnail,
 };
 
-export {
-  channel,
-  mentionable,
-  role,
-  string,
-  user,
-};
+export { channel, mentionable, role, string, user };

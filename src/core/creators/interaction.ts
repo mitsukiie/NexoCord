@@ -7,30 +7,29 @@ import {
   TextDisplayBuilder,
   MessageFlags,
   MessageFlagsBitField,
-  type InteractionReplyOptions,
+  type InteractionCallbackResponse,
   type InteractionEditReplyOptions,
   type InteractionUpdateOptions,
   type MessageComponentInteraction,
   type MessageFlagsResolvable,
-} from "discord.js";
+} from 'discord.js';
 
 import type {
   CommandInteraction,
   CommandType,
   InteractionMessageOptions,
-} from "../types";
+} from '../types';
 
-import { prepare_components } from "../ui/normalizers";
+import { prepare_components } from '../ui/normalizers';
 
 type BaseInteraction<T extends CommandType> =
-  | CommandInteraction<T>
-  | MessageComponentInteraction;
+  CommandInteraction<T> | MessageComponentInteraction;
 
 /**
  * Verifica se os componentes recebidos pertencem ao sistema Components V2.
  */
 function is_v2_component(component: unknown): boolean {
-  if (!component || typeof component !== "object") {
+  if (!component || typeof component !== 'object') {
     return false;
   }
 
@@ -45,8 +44,8 @@ function is_v2_component(component: unknown): boolean {
     return true;
   }
 
-  if ("type" in component) {
-    return ["text", "separator", "section", "gallery", "file"].includes(
+  if ('type' in component) {
+    return ['text', 'separator', 'section', 'gallery', 'file'].includes(
       String(component.type),
     );
   }
@@ -60,28 +59,24 @@ function is_v2_component(component: unknown): boolean {
  * Componentes tradicionais são encaminhados diretamente.
  * Components V2 são normalizados e ativam automaticamente o modo V2.
  */
-function prepare_message(
-  options: InteractionMessageOptions,
-): InteractionReplyOptions {
+function prepare_message(options: InteractionMessageOptions) {
   const { components: input, files = [], ...rest } = options;
 
   if (!input || (Array.isArray(input) && input.length === 0)) {
     return {
       ...rest,
       files,
-    } as InteractionReplyOptions;
+    };
   }
 
   const components = Array.isArray(input) ? input : [input];
 
   const has_v2 = components.some(is_v2_component);
-  const has_traditional = components.some(
-    (component) => !is_v2_component(component),
-  );
+  const has_traditional = components.some((component) => !is_v2_component(component));
 
   if (has_v2 && has_traditional) {
     throw new Error(
-      "Não é permitido misturar componentes tradicionais com Components V2.",
+      'Não é permitido misturar componentes tradicionais com Components V2.',
     );
   }
 
@@ -90,23 +85,18 @@ function prepare_message(
       ...rest,
       components: input,
       files,
-    } as InteractionReplyOptions;
+    };
   }
 
   if (rest.content !== undefined) {
-    throw new Error(
-      "Não é permitido utilizar content junto com Components V2.",
-    );
+    throw new Error('Não é permitido utilizar content junto com Components V2.');
   }
 
   if (rest.embeds?.length) {
-    throw new Error(
-      "Não é permitido utilizar embeds junto com Components V2.",
-    );
+    throw new Error('Não é permitido utilizar embeds junto com Components V2.');
   }
 
   const prepared = prepare_components(input);
-
   const merged_files = [...files, ...prepared.files];
 
   const flags =
@@ -119,7 +109,7 @@ function prepare_message(
     components: prepared.components,
     files: merged_files,
     flags: flags | MessageFlags.IsComponentsV2,
-  } as InteractionReplyOptions;
+  };
 }
 
 /**
@@ -132,28 +122,32 @@ function prepare_message(
  */
 export type ExtendedInteraction<I extends BaseInteraction<CommandType>> = Omit<
   I,
-  "reply" | "followUp" | "editReply" | "update"
+  'reply' | 'followUp' | 'editReply' | 'update'
 > & {
   reply(
-    options: InteractionMessageOptions,
-  ): ReturnType<I["reply"]>;
+    options: InteractionMessageOptions & { withResponse: true },
+  ): Promise<InteractionCallbackResponse>;
 
-  followUp(
-    options: InteractionMessageOptions,
-  ): ReturnType<I["followUp"]>;
+  reply(
+    options: InteractionMessageOptions & { withResponse?: false },
+  ): Promise<undefined>;
 
-  editReply(
+  reply(
     options: InteractionMessageOptions,
-  ): ReturnType<I["editReply"]>;
+  ): Promise<InteractionCallbackResponse | undefined>;
+
+  followUp(options: InteractionMessageOptions): ReturnType<I['followUp']>;
+
+  editReply(options: InteractionMessageOptions): ReturnType<I['editReply']>;
 } & (I extends MessageComponentInteraction
-  ? {
-      update(
-        options: InteractionMessageOptions,
-      ): ReturnType<MessageComponentInteraction["update"]>;
-    }
-  : {
-      update?: never;
-    });
+    ? {
+        update(
+          options: InteractionMessageOptions,
+        ): ReturnType<MessageComponentInteraction['update']>;
+      }
+    : {
+        update?: never;
+      });
 
 /**
  * Estende uma interação do Discord.js com suporte aos Components V2.
@@ -174,34 +168,30 @@ export function extend_interaction<I extends BaseInteraction<CommandType>>(
   return new Proxy(interaction, {
     get(target, property) {
       switch (property) {
-        case "reply":
+        case 'reply':
           return (options: InteractionMessageOptions) =>
-            target.reply(prepare_message(options));
+            target.reply(prepare_message(options) as any);
 
-        case "followUp":
+        case 'followUp':
           return (options: InteractionMessageOptions) =>
-            target.followUp(prepare_message(options));
+            target.followUp(prepare_message(options) as any);
 
-        case "editReply":
+        case 'editReply':
           return (options: InteractionMessageOptions) =>
-            target.editReply(
-              prepare_message(options) as InteractionEditReplyOptions,
-            );
+            target.editReply(prepare_message(options) as InteractionEditReplyOptions);
 
-        case "update":
-          if (!("update" in target)) {
+        case 'update':
+          if (!('update' in target)) {
             return undefined;
           }
 
           return (options: InteractionMessageOptions) =>
-            target.update(
-              prepare_message(options) as InteractionUpdateOptions,
-            );
+            target.update(prepare_message(options) as InteractionUpdateOptions);
 
         default: {
           const value = Reflect.get(target, property, target);
 
-          return typeof value === "function" ? value.bind(target) : value;
+          return typeof value === 'function' ? value.bind(target) : value;
         }
       }
     },

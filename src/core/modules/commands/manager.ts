@@ -1,5 +1,5 @@
-import { Collection } from "discord.js";
-import type { Command } from "../../types";
+import { Collection } from 'discord.js';
+import type { Command } from '../../types';
 
 /**
  * [pt-BR] Armazena os comandos disponíveis para o cliente.

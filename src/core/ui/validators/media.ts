@@ -1,16 +1,11 @@
-import type {
-  FileComponent,
-  MediaGallery,
-  MediaItem,
-  Thumbnail,
-} from "../types";
+import type { FileComponent, MediaGallery, MediaItem, Thumbnail } from '../types';
 
-import { UI_LIMITS, UI_REGEX } from "../constants";
+import { UI_LIMITS, UI_REGEX } from '../constants';
 
 export function validate_media_url(url: string): void {
   if (!UI_REGEX.http_url.test(url) && !UI_REGEX.attachment_url.test(url)) {
     throw new Error(
-      "A mídia precisa utilizar uma URL HTTP, HTTPS ou attachment:// válida.",
+      'A mídia precisa utilizar uma URL HTTP, HTTPS ou attachment:// válida.',
     );
   }
 }
@@ -34,7 +29,7 @@ export function validate_thumbnail(thumbnail: Thumbnail): void {
 
 export function validate_gallery(gallery: MediaGallery): void {
   if (gallery.items.length === 0) {
-    throw new Error("A galeria precisa possuir pelo menos uma imagem.");
+    throw new Error('A galeria precisa possuir pelo menos uma imagem.');
   }
 
   if (gallery.items.length > UI_LIMITS.media_gallery_items) {
@@ -50,6 +45,6 @@ export function validate_gallery(gallery: MediaGallery): void {
 
 export function validate_file(file: FileComponent): void {
   if (!UI_REGEX.attachment_url.test(file.url)) {
-    throw new Error("O arquivo precisa utilizar uma URL attachment:// válida.");
+    throw new Error('O arquivo precisa utilizar uma URL attachment:// válida.');
   }
 }

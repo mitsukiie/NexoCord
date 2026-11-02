@@ -1,5 +1,5 @@
-import { type Interaction } from "discord.js";
-import { App } from "../../index";
+import { type Interaction } from 'discord.js';
+import { App } from '../../index';
 
 export async function Responder(i: Interaction) {
   const app = App.get();

@@ -1,7 +1,6 @@
+export type ProjectRuntime = 'node' | 'bun';
 
-export type ProjectRuntime = "node" | "bun";
-
-export type ProjectLanguage = "typescript" | "javascript";
+export type ProjectLanguage = 'typescript' | 'javascript';
 
 export interface ProjectChoices {
   name: string;

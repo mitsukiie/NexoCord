@@ -1,23 +1,20 @@
-import { glob } from "glob";
-import path from "path";
-import { pathToFileURL } from "url";
+import { glob } from 'glob';
+import path from 'path';
+import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
-import { ExtendedClient, App } from "../../index";
-import { Event } from "../../types";
-import { NexoConfig, format_message } from "../../config";
-import { logger } from "../../utils";
-import { GLOB } from "../../utils/extensions";
+import { ExtendedClient, App } from '../../index';
+import { Event } from '../../types';
+import { NexoConfig, format_message } from '../../config';
+import { logger } from '../../utils';
+import { GLOB } from '../../utils/extensions';
 
 export async function load_events(
   config: NexoConfig,
   client?: ExtendedClient,
 ): Promise<Event[]> {
   const app = App.get();
-  const base_events_path = path.resolve(
-    process.cwd(),
-    config.directories.events,
-  );
+  const base_events_path = path.resolve(process.cwd(), config.directories.events);
 
   const files = await glob(GLOB, {
     cwd: base_events_path,
@@ -27,7 +24,7 @@ export async function load_events(
   app.events.clear();
 
   if (config.terminal.events.showFiles) {
-    logger.info("🔄 Iniciando o carregamento de eventos...");
+    logger.info('🔄 Iniciando o carregamento de eventos...');
     logger.success(`📂 Total de eventos encontrados: ${files.length}`);
   }
 

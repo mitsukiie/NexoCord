@@ -1,29 +1,15 @@
-import {
-  ContainerBuilder,
-} from 'discord.js';
+import { ContainerBuilder } from 'discord.js';
 
-import type {
-  ContainerInput,
-  ContainerOptions,
-} from '../types';
+import type { ContainerInput, ContainerOptions } from '../types';
 
-import {
-  collect_attachments,
-  attach_attachments,
-} from '../normalizers/media';
+import { collect_attachments, attach_attachments } from '../normalizers/media';
 
-import {
-  to_container_child,
-} from '../normalizers/component';
+import { to_container_child } from '../normalizers/component';
 
-import {
-  validate,
-} from '../validators';
+import { validate } from '../validators';
 
 /** Verifica se o argumento representa opções de container. */
-function is_container_options(
-  value: unknown,
-): value is ContainerOptions {
+function is_container_options(value: unknown): value is ContainerOptions {
   return (
     typeof value === 'object' &&
     value !== null &&
@@ -33,9 +19,7 @@ function is_container_options(
 }
 
 /** Separa as opções dos componentes recebidos. */
-function split_container_args(
-  args: (ContainerOptions | ContainerInput)[],
-): {
+function split_container_args(args: (ContainerOptions | ContainerInput)[]): {
   options: ContainerOptions;
   components: ContainerInput[];
 } {
@@ -68,21 +52,14 @@ function split_container_args(
 export function container(
   ...args: [ContainerOptions, ...ContainerInput[]] | ContainerInput[]
 ): ContainerBuilder {
-  const {
-    options,
-    components,
-  } = split_container_args(args);
+  const { options, components } = split_container_args(args);
 
   const builder = new ContainerBuilder();
 
-  builder.components.push(
-    ...components.map(to_container_child),
-  );
+  builder.components.push(...components.map(to_container_child));
 
   if (options.color !== undefined) {
-    builder.setAccentColor(
-      validate.color(options.color),
-    );
+    builder.setAccentColor(validate.color(options.color));
   }
 
   const attachments = components.flatMap((component) => {
@@ -100,8 +77,5 @@ export function container(
     return [];
   });
 
-  return attach_attachments(
-  builder,
-  collect_attachments(builder.components),
-);
+  return attach_attachments(builder, collect_attachments(builder.components));
 }

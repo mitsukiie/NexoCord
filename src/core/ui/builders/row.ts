@@ -1,4 +1,4 @@
-import type { Row, RowComponent } from "../types";
+import type { Row, RowComponent } from '../types';
 
 /**
  * Cria uma linha com botões ou menus de seleção.
@@ -11,7 +11,7 @@ import type { Row, RowComponent } from "../types";
  */
 export function row(...components: RowComponent[]): Row {
   return {
-    type: "row",
+    type: 'row',
     components,
   };
 }

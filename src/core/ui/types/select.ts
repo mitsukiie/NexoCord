@@ -1,4 +1,4 @@
-import type { ChannelType } from "discord.js";
+import type { ChannelType } from 'discord.js';
 
 /**
  * [pt-BR] Identificador e opções compartilhadas entre menus de seleção.
@@ -71,7 +71,7 @@ export type StringSelectOption = {
  * [en] User select menu.
  */
 export type UserSelect = SelectBase & {
-  type: "select.user";
+  type: 'select.user';
 };
 
 /**
@@ -79,7 +79,7 @@ export type UserSelect = SelectBase & {
  * [en] Role select menu.
  */
 export type RoleSelect = SelectBase & {
-  type: "select.role";
+  type: 'select.role';
 };
 
 /**
@@ -87,7 +87,7 @@ export type RoleSelect = SelectBase & {
  * [en] Mentionable select menu.
  */
 export type MentionableSelect = SelectBase & {
-  type: "select.mentionable";
+  type: 'select.mentionable';
 };
 
 /**
@@ -95,7 +95,7 @@ export type MentionableSelect = SelectBase & {
  * [en] Channel select menu.
  */
 export type ChannelSelect = SelectBase & {
-  type: "select.channel";
+  type: 'select.channel';
 
   /**
    * [pt-BR] Tipos de canais que poderão ser selecionados.
@@ -109,7 +109,7 @@ export type ChannelSelect = SelectBase & {
  * [en] Custom-option select menu.
  */
 export type StringSelect = SelectBase & {
-  type: "select.string";
+  type: 'select.string';
 
   /**
    * [pt-BR] Opções disponíveis para seleção.
@@ -123,8 +123,4 @@ export type StringSelect = SelectBase & {
  * [en] Union of all supported select menus.
  */
 export type SelectMenu =
-  | UserSelect
-  | RoleSelect
-  | MentionableSelect
-  | ChannelSelect
-  | StringSelect;
+  UserSelect | RoleSelect | MentionableSelect | ChannelSelect | StringSelect;

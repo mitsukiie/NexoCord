@@ -1,9 +1,9 @@
-import { AutocompleteInteraction, ClientEvents } from "discord.js";
-import type { ExtendedClient } from "../client/ExtendedClient";
-import type { ui } from "../ui";
-import type { ExtendedInteraction } from "../creators";
-import type { CommandType, CommandInteraction } from "./Command";
-import type { ResponderParse } from "./Responder";
+import { AutocompleteInteraction, ClientEvents } from 'discord.js';
+import type { ExtendedClient } from '../client/ExtendedClient';
+import type { ui } from '../ui';
+import type { ExtendedInteraction } from '../creators';
+import type { CommandType, CommandInteraction } from './Command';
+import type { ResponderParse } from './Responder';
 
 /**
  * [pt-BR] Callback usado para tratar um evento do Discord.
@@ -23,7 +23,7 @@ export type CommandDependencies = {
    * [en] Declarative API for creating message components.
    */
   ui: typeof ui;
-}
+};
 /**
  * [pt-BR] Callback executado por um comando.
  * [en] Callback executed by a command.
@@ -47,7 +47,4 @@ export type RunResponder<I, Path extends string, P = undefined> = (
  * [pt-BR] Callback para autocomplete de opções.
  * [en] Callback for option autocomplete.
  */
-export type RunAutoComplete = (
-  i: AutocompleteInteraction,
-  focused: string,
-) => any;
+export type RunAutoComplete = (i: AutocompleteInteraction, focused: string) => any;

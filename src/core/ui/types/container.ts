@@ -8,11 +8,11 @@ import type {
   SeparatorBuilder,
   SeparatorSpacingSize,
   TextDisplayBuilder,
-} from "discord.js";
+} from 'discord.js';
 
-import type { Button } from "./button";
-import type { FileComponent, MediaGallery, Thumbnail } from "./media";
-import type { Row } from "./row";
+import type { Button } from './button';
+import type { FileComponent, MediaGallery, Thumbnail } from './media';
+import type { Row } from './row';
 
 /**
  * [pt-BR] Texto ou lista de textos aceitos pelo componente de texto.
@@ -55,7 +55,7 @@ export type TextStyleOptions = {
  * [en] Simplified text component.
  */
 export type TextComponent = {
-  type: "text";
+  type: 'text';
 
   /**
    * [pt-BR] Conteúdo textual do componente.
@@ -87,7 +87,7 @@ export type SeparatorOptions = {
  * [en] Simplified separator component.
  */
 export type SeparatorComponent = {
-  type: "separator";
+  type: 'separator';
 } & SeparatorOptions;
 
 /**
@@ -95,9 +95,7 @@ export type SeparatorComponent = {
  * [en] Texts accepted by a section.
  */
 export type SectionTexts =
-  | readonly [string]
-  | readonly [string, string]
-  | readonly [string, string, string];
+  readonly [string] | readonly [string, string] | readonly [string, string, string];
 
 /**
  * [pt-BR] Opções adicionais de uma seção.
@@ -122,7 +120,7 @@ export type SectionOptions = {
  * [en] Simplified section component.
  */
 export type SectionComponent = {
-  type: "section";
+  type: 'section';
 
   /**
    * [pt-BR] Textos exibidos na seção.

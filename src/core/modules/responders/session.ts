@@ -1,4 +1,4 @@
-type Cache = "once" | "temporary";
+type Cache = 'once' | 'temporary';
 type Data = {
   expireAt?: number;
 };
@@ -7,12 +7,12 @@ export class session {
   private sessions = new Map<string, Data>();
 
   add(id: string, cache: Cache, expire?: number) {
-    if (cache === "once") {
+    if (cache === 'once') {
       this.sessions.set(id, {});
       return;
     }
 
-    if (cache === "temporary" && expire) {
+    if (cache === 'temporary' && expire) {
       this.sessions.set(id, {
         expireAt: Date.now() + expire,
       });

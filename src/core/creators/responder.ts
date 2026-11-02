@@ -1,6 +1,6 @@
-import { Responder, ResponderParser, ResponderTypes } from "../types";
+import { Responder, ResponderParser, ResponderTypes } from '../types';
 
-import { App } from "../index";
+import { App } from '../index';
 
 /**
  * Registra um responder para interações identificadas por um caminho de `customId`.

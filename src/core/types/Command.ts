@@ -7,9 +7,9 @@ import {
   APIApplicationCommandOption,
   PermissionResolvable,
   PermissionFlagsBits,
-} from "discord.js";
+} from 'discord.js';
 
-import { RunCommand, RunAutoComplete } from "./Run";
+import { RunCommand, RunAutoComplete } from './Run';
 
 /**
  * Tipos de comandos que podem ser registrados no Discord.

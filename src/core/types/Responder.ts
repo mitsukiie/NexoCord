@@ -6,11 +6,11 @@ import {
   RoleSelectMenuInteraction,
   ChannelSelectMenuInteraction,
   MentionableSelectMenuInteraction,
-} from "discord.js";
+} from 'discord.js';
 
-import { ZodTypeAny, infer as zInfer } from "zod/v3";
+import { ZodTypeAny, infer as zInfer } from 'zod/v3';
 
-import type { RunResponder } from "./Run";
+import type { RunResponder } from './Run';
 
 /**
  * Tipos de interação que podem ser associados a um responder.
@@ -20,13 +20,13 @@ import type { RunResponder } from "./Run";
  * [en] Choose the type matching the component that should trigger the responder.
  */
 export enum ResponderType {
-  Button = "button",
-  Modal = "modal",
-  SelectString = "select.string",
-  SelectUser = "select.user",
-  SelectRole = "select.role",
-  SelectChannel = "select.channel",
-  SelectMentionable = "select.mentionable",
+  Button = 'button',
+  Modal = 'modal',
+  SelectString = 'select.string',
+  SelectUser = 'select.user',
+  SelectRole = 'select.role',
+  SelectChannel = 'select.channel',
+  SelectMentionable = 'select.mentionable',
 }
 
 type Map = {
@@ -56,7 +56,7 @@ export type ResponderTypes = ResponderType | readonly ResponderType[];
  * [pt-BR] Define o contexto de cache necessário para a interação.
  * [en] Defines the cache context required by the interaction.
  */
-export type CacheType = "cached" | "guild";
+export type CacheType = 'cached' | 'guild';
 
 type ResponderInteractionFromInput<T extends ResponderTypes> =
   T extends readonly ResponderType[]
@@ -65,13 +65,13 @@ type ResponderInteractionFromInput<T extends ResponderTypes> =
       ? ResponderInteraction<T>
       : never;
 
-type SegmentParamName<Segment extends string> =
-  Segment extends `:${infer Param}` ? Param : never;
+type SegmentParamName<Segment extends string> = Segment extends `:${infer Param}`
+  ? Param
+  : never;
 
-type PathParamNames<Path extends string> =
-  Path extends `${infer Segment}/${infer Rest}`
-    ? SegmentParamName<Segment> | PathParamNames<Rest>
-    : SegmentParamName<Path>;
+type PathParamNames<Path extends string> = Path extends `${infer Segment}/${infer Rest}`
+  ? SegmentParamName<Segment> | PathParamNames<Rest>
+  : SegmentParamName<Path>;
 
 /**
  * Parâmetros extraídos dos segmentos `:param` de um `customId`.
@@ -79,9 +79,7 @@ type PathParamNames<Path extends string> =
  * [pt-BR] Os valores são entregues ao parser e ao callback `run`.
  * [en] Values are passed to the parser and the `run` callback.
  */
-export type ResponderParams<Path extends string> = [
-  PathParamNames<Path>,
-] extends [never]
+export type ResponderParams<Path extends string> = [PathParamNames<Path>] extends [never]
   ? Record<never, never>
   : { [K in PathParamNames<Path>]: string };
 
@@ -92,8 +90,7 @@ export type ResponderParams<Path extends string> = [
  * [en] Accepts a Zod schema or a transformation function.
  */
 export type ResponderParser<Path extends string, Output = unknown> =
-  | ZodTypeAny
-  | ((params: ResponderParams<Path>) => Output);
+  ZodTypeAny | ((params: ResponderParams<Path>) => Output);
 
 /**
  * [pt-BR] Resultado produzido pelo parser de um responder.
@@ -143,7 +140,7 @@ export type Responder<
    * [pt-BR] Remove o responder após a primeira execução.
    * [en] Removes the responder after its first execution.
    */
-  lifetime?: "once" | "temporary";
+  lifetime?: 'once' | 'temporary';
   /**
    * [pt-BR] Tempo, em milissegundos, até expirar.
    * [en] Time, in milliseconds, until expiration.

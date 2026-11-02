@@ -1,7 +1,7 @@
-import type { ActionRowBuilder, AnyComponentBuilder } from "discord.js";
+import type { ActionRowBuilder, AnyComponentBuilder } from 'discord.js';
 
-import type { Button } from "./button";
-import type { SelectMenu } from "./select";
+import type { Button } from './button';
+import type { SelectMenu } from './select';
 
 /**
  * [pt-BR] Componente aceito dentro de uma linha de ações.
@@ -14,7 +14,7 @@ export type RowComponent = Button | SelectMenu;
  * [en] Action row created by the NexoCord API.
  */
 export type Row = {
-  type: "row";
+  type: 'row';
 
   /**
    * [pt-BR] Botões ou menus de seleção presentes na linha.

@@ -1,22 +1,22 @@
-import type { TextComponent, TextInput, TextStyleOptions } from "../types";
+import type { TextComponent, TextInput, TextStyleOptions } from '../types';
 
 /** Formata uma lista de textos em linhas separadas. */
 function format_list(items: readonly string[]): string {
-  return items.map((item) => `- ${item}`).join("\n");
+  return items.map((item) => `- ${item}`).join('\n');
 }
 
 /** Formata uma lista numerada. */
 function format_ordered(items: readonly string[]): string {
-  return items.map((item, index) => `${index + 1}. ${item}`).join("\n");
+  return items.map((item, index) => `${index + 1}. ${item}`).join('\n');
 }
 
 /** Formata conteúdo como código. */
 function format_code(content: string): string {
   const matches = content.match(/`+/g) ?? [];
   const longest = Math.max(0, ...matches.map((match) => match.length));
-  const fence = "`".repeat(Math.max(3, longest + 1));
+  const fence = '`'.repeat(Math.max(3, longest + 1));
 
-  return content.includes("\n")
+  return content.includes('\n')
     ? `${fence}\n${content}\n${fence}`
     : `${fence}${content}${fence}`;
 }
@@ -24,9 +24,9 @@ function format_code(content: string): string {
 /** Formata conteúdo como citação. */
 function format_quote(content: string): string {
   return content
-    .split("\n")
+    .split('\n')
     .map((line) => `> ${line}`)
-    .join("\n");
+    .join('\n');
 }
 
 /** Formata conteúdo como spoiler. */
@@ -35,13 +35,8 @@ function format_spoiler(content: string): string {
 }
 
 /** Aplica as opções de formatação ao texto. */
-function format_text(
-  content: TextInput,
-  options: TextStyleOptions = {},
-): string {
-  let result = Array.isArray(content)
-    ? content.join("\n")
-    : (content as string);
+function format_text(content: TextInput, options: TextStyleOptions = {}): string {
+  let result = Array.isArray(content) ? content.join('\n') : (content as string);
 
   if (options.underline) result = `__${result}__`;
   if (options.italic) result = `*${result}*`;
@@ -49,9 +44,7 @@ function format_text(
 
   if (options.size !== undefined) {
     result =
-      options.size === 4
-        ? `-# ${result}`
-        : `${"#".repeat(options.size)} ${result}`;
+      options.size === 4 ? `-# ${result}` : `${'#'.repeat(options.size)} ${result}`;
   }
 
   return result;
@@ -68,12 +61,9 @@ function format_text(
  * @param options - [pt-BR] Formatação opcional.
  * [en] Optional formatting.
  */
-function build_text(
-  content: TextInput,
-  options: TextStyleOptions = {},
-): TextComponent {
+function build_text(content: TextInput, options: TextStyleOptions = {}): TextComponent {
   return {
-    type: "text",
+    type: 'text',
     content: format_text(content, options),
   };
 }

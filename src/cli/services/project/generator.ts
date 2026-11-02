@@ -1,44 +1,35 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { create_package_json, create_ts_config, write_json_file } from './package-json';
 
-import {
-  create_package_json,
-  create_ts_config,
-  write_json_file,
-} from "./package-json";
-
-import type {
-  ProjectChoices,
-  GenerateProjectOptions,
-  GenerateResult,
-} from "./types";
+import type { ProjectChoices, GenerateProjectOptions, GenerateResult } from './types';
 
 function find_template_root(): string {
   const current_dir = path.dirname(fileURLToPath(import.meta.url));
 
   const candidates = [
-    path.resolve(current_dir, "templates"),
-    path.resolve(current_dir, "../cli/services/project/templates"),
-    path.resolve(process.cwd(), "src/cli/services/project/templates"),
-    path.resolve(process.cwd(), "dist/cli/services/project/templates"),
+    path.resolve(current_dir, 'templates'),
+    path.resolve(current_dir, '../cli/services/project/templates'),
+    path.resolve(process.cwd(), 'src/cli/services/project/templates'),
+    path.resolve(process.cwd(), 'dist/cli/services/project/templates'),
   ];
 
   for (const candidate of candidates) {
-    if (fs.existsSync(path.join(candidate, "js")) &&
-        fs.existsSync(path.join(candidate, "ts"))) {
+    if (
+      fs.existsSync(path.join(candidate, 'js')) &&
+      fs.existsSync(path.join(candidate, 'ts'))
+    ) {
       return candidate;
     }
   }
 
-  throw new Error("Diretório de templates do NexoCord não encontrado.");
+  throw new Error('Diretório de templates do NexoCord não encontrado.');
 }
 
-function get_template_name(
-  language: ProjectChoices["language"],
-): string {
-  return language === "typescript" ? "ts" : "js";
+function get_template_name(language: ProjectChoices['language']): string {
+  return language === 'typescript' ? 'ts' : 'js';
 }
 
 function replace_template_values(
@@ -47,24 +38,19 @@ function replace_template_values(
   extension: string,
 ): string {
   return content
-    .replaceAll("__EXT__", extension)
-    .replaceAll("__PROJECT_NAME__", options.name)
-    .replaceAll("__NEXO_PACKAGE__", "nexocord");
+    .replaceAll('__EXT__', extension)
+    .replaceAll('__PROJECT_NAME__', options.name)
+    .replaceAll('__NEXO_PACKAGE__', 'nexocord');
 }
 
-function get_output_file_name(
-  file_name: string,
-  extension: string,
-): string {
-  return file_name.endsWith(".tpl")
+function get_output_file_name(file_name: string, extension: string): string {
+  return file_name.endsWith('.tpl')
     ? `${file_name.slice(0, -4)}.${extension}`
-    : file_name.replaceAll("__EXT__", extension);
+    : file_name.replaceAll('__EXT__', extension);
 }
 
 function is_text_template(file: string): boolean {
-  return [".tpl", ".md", ".json", ".txt"].includes(
-    path.extname(file).toLowerCase(),
-  );
+  return ['.tpl', '.md', '.json', '.txt'].includes(path.extname(file).toLowerCase());
 }
 
 function copy_template_directory(
@@ -75,8 +61,7 @@ function copy_template_directory(
 ): void {
   fs.mkdirSync(target_dir, { recursive: true });
 
-  const extension =
-    options.language === "typescript" ? "ts" : "js";
+  const extension = options.language === 'typescript' ? 'ts' : 'js';
 
   for (const entry of fs.readdirSync(source_dir, {
     withFileTypes: true,
@@ -86,12 +71,7 @@ function copy_template_directory(
     const target_path = path.join(target_dir, output_name);
 
     if (entry.isDirectory()) {
-      copy_template_directory(
-        source_path,
-        target_path,
-        options,
-        overwrite_files,
-      );
+      copy_template_directory(source_path, target_path, options, overwrite_files);
       continue;
     }
 
@@ -100,12 +80,12 @@ function copy_template_directory(
     }
 
     if (is_text_template(source_path)) {
-      const content = fs.readFileSync(source_path, "utf8");
+      const content = fs.readFileSync(source_path, 'utf8');
 
       fs.writeFileSync(
         target_path,
         replace_template_values(content, options, extension),
-        "utf8",
+        'utf8',
       );
       continue;
     }
@@ -114,20 +94,14 @@ function copy_template_directory(
   }
 }
 
-export async function prepare_project_target(
-  project_name: string,
-): Promise<string> {
+export async function prepare_project_target(project_name: string): Promise<string> {
   const target_dir =
-    project_name === "."
-      ? process.cwd()
-      : path.resolve(process.cwd(), project_name);
+    project_name === '.' ? process.cwd() : path.resolve(process.cwd(), project_name);
 
-  if (project_name !== ".") {
+  if (project_name !== '.') {
     if (fs.existsSync(target_dir)) {
       if (fs.readdirSync(target_dir).length > 0) {
-        throw new Error(
-          `O diretório "${project_name}" já existe e não está vazio.`,
-        );
+        throw new Error(`O diretório "${project_name}" já existe e não está vazio.`);
       }
     } else {
       fs.mkdirSync(target_dir, { recursive: true });
@@ -143,15 +117,10 @@ export async function generate_project(
   generate_options: GenerateProjectOptions = {},
 ): Promise<GenerateResult> {
   const template_root = find_template_root();
-  const template_dir = path.join(
-    template_root,
-    get_template_name(options.language),
-  );
+  const template_dir = path.join(template_root, get_template_name(options.language));
 
   if (!fs.existsSync(template_dir)) {
-    throw new Error(
-      `Template "${get_template_name(options.language)}" não encontrado.`,
-    );
+    throw new Error(`Template "${get_template_name(options.language)}" não encontrado.`);
   }
 
   copy_template_directory(
@@ -161,7 +130,7 @@ export async function generate_project(
     generate_options.overwrite_files !== false,
   );
 
-  const package_json_path = path.join(target_dir, "package.json");
+  const package_json_path = path.join(target_dir, 'package.json');
 
   if (
     generate_options.create_package_json !== false &&
@@ -170,8 +139,8 @@ export async function generate_project(
     write_json_file(package_json_path, create_package_json(options));
   }
 
-  if (options.language === "typescript") {
-    const tsconfig_path = path.join(target_dir, "tsconfig.json");
+  if (options.language === 'typescript') {
+    const tsconfig_path = path.join(target_dir, 'tsconfig.json');
 
     if (!fs.existsSync(tsconfig_path)) {
       write_json_file(tsconfig_path, create_ts_config(options));

@@ -66,9 +66,7 @@ Como alternativa, você pode utilizar Bun, desde que a configuração do projeto
 Ao utilizar `interaction.reply()`, não combine `components` com `content` ou `embeds`.
 
 ```ts
-const components = [
-  ui.text("## Meu painel"),
-];
+const components = [ui.text('## Meu painel')];
 
 await interaction.reply({ components });
 ```

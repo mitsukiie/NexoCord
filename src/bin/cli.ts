@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
-import { version } from "../../package.json";
+import { version } from '../../package.json';
 
-import { create_program, register_fallback, run_program } from "../cli/runner";
+import { create_program, register_fallback, run_program } from '../cli/runner';
 
-import { register_command as register_create_command } from "../cli/commands/create.command";
-import { register_command as register_dev_command } from "../cli/commands/dev.command";
-import { register_command as register_build_command } from "../cli/commands/build.command";
-import { register_command as register_start_command } from "../cli/commands/start.command";
-import { register_command as register_doctor_command } from "../cli/commands/doctor.command";
-import { register_command as register_info_command } from "../cli/commands/info.command";
-import { register_command as register_init_command } from "../cli/commands/init.command";
-import { register_command as register_update_command } from "../cli/commands/update.command";
+import { register_command as register_create_command } from '../cli/commands/create.command';
+import { register_command as register_dev_command } from '../cli/commands/dev.command';
+import { register_command as register_build_command } from '../cli/commands/build.command';
+import { register_command as register_start_command } from '../cli/commands/start.command';
+import { register_command as register_doctor_command } from '../cli/commands/doctor.command';
+import { register_command as register_info_command } from '../cli/commands/info.command';
+import { register_command as register_init_command } from '../cli/commands/init.command';
+import { register_command as register_update_command } from '../cli/commands/update.command';
 
 const program = create_program(version);
 

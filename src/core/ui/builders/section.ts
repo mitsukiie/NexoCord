@@ -1,4 +1,4 @@
-import type { SectionComponent, SectionOptions, SectionTexts } from "../types";
+import type { SectionComponent, SectionOptions, SectionTexts } from '../types';
 
 /**
  * Cria uma seção com até três textos e um acessório opcional.
@@ -16,7 +16,7 @@ export function section(
   options: SectionOptions = {},
 ): SectionComponent {
   return {
-    type: "section",
+    type: 'section',
     texts,
     ...options,
   };

@@ -15,25 +15,25 @@ A API atual não usa um objeto `ctx`. O callback de um comando recebe a
 interação estendida, o cliente e as dependências:
 
 ```ts
-import { CommandType, createCommand } from "nexocord";
+import { CommandType, createCommand } from 'nexocord';
 
 export default createCommand({
-  name: "ping",
-  description: "Responde com pong.",
+  name: 'ping',
+  description: 'Responde com pong.',
   type: CommandType.ChatInput,
   async run(interaction) {
-    await interaction.reply({ content: "Pong!" });
+    await interaction.reply({ content: 'Pong!' });
   },
 });
 ```
 
 Substitua usos antigos:
 
-| API antiga | API atual |
-| --- | --- |
-| `ctx.interaction` | `interaction` |
-| `ctx.client` | `client` |
-| `ctx.reply(...)` | `interaction.reply(...)` |
+| API antiga          | API atual                   |
+| ------------------- | --------------------------- |
+| `ctx.interaction`   | `interaction`               |
+| `ctx.client`        | `client`                    |
+| `ctx.reply(...)`    | `interaction.reply(...)`    |
 | `ctx.followUp(...)` | `interaction.followUp(...)` |
 
 `interaction` continua oferecendo os métodos e propriedades do Discord.js e
@@ -83,7 +83,7 @@ async run(interaction, client, { ui }) {
 Fora do callback, ou quando preferir importar explicitamente, use:
 
 ```ts
-import { ui } from "nexocord/ui";
+import { ui } from 'nexocord/ui';
 ```
 
 A API importada e a API recebida em `{ ui }` são equivalentes.
@@ -97,10 +97,10 @@ Responders atuais são registrados por `createResponder()` quando o módulo é
 importado. Eles usam `customId`, `type` e um callback `run`:
 
 ```ts
-import { createResponder, ResponderType } from "nexocord";
+import { createResponder, ResponderType } from 'nexocord';
 
 export default createResponder({
-  customId: "ticket/:id",
+  customId: 'ticket/:id',
   type: ResponderType.Button,
   run(interaction, { id }) {
     return interaction.reply({ content: `Ticket: ${id}` });

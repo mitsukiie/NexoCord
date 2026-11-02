@@ -2,7 +2,7 @@ import {
   ApplicationCommandOptionType,
   type APIApplicationCommandOptionChoice,
   type ChannelType,
-} from "discord.js";
+} from 'discord.js';
 
 type BaseOption = {
   name: string;
@@ -21,28 +21,19 @@ type ChoicesOption<T> = {
 };
 
 type StringOption = BaseOption &
-  (
-    | AutocompleteOption
-    | ChoicesOption<APIApplicationCommandOptionChoice<string>>
-  ) & {
+  (AutocompleteOption | ChoicesOption<APIApplicationCommandOptionChoice<string>>) & {
     minLength?: number;
     maxLength?: number;
   };
 
 type IntegerOption = BaseOption &
-  (
-    | AutocompleteOption
-    | ChoicesOption<APIApplicationCommandOptionChoice<number>>
-  ) & {
+  (AutocompleteOption | ChoicesOption<APIApplicationCommandOptionChoice<number>>) & {
     minValue?: number;
     maxValue?: number;
   };
 
 type NumberOption = BaseOption &
-  (
-    | AutocompleteOption
-    | ChoicesOption<APIApplicationCommandOptionChoice<number>>
-  ) & {
+  (AutocompleteOption | ChoicesOption<APIApplicationCommandOptionChoice<number>>) & {
     minValue?: number;
     maxValue?: number;
   };

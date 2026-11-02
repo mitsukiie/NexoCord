@@ -1,7 +1,4 @@
-import type {
-  SeparatorComponent,
-  SeparatorOptions,
-} from '../types';
+import type { SeparatorComponent, SeparatorOptions } from '../types';
 
 /**
  * Cria um divisor visual.
@@ -12,9 +9,7 @@ import type {
  * @param options - [pt-BR] Opções do divisor.
  * [en] Separator options.
  */
-export function separator(
-  options: SeparatorOptions = {},
-): SeparatorComponent {
+export function separator(options: SeparatorOptions = {}): SeparatorComponent {
   return {
     type: 'separator',
     ...options,

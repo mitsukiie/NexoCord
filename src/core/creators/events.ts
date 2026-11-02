@@ -1,5 +1,5 @@
-import { ClientEvents } from "discord.js";
-import { Event } from "../types";
+import { ClientEvents } from 'discord.js';
+import { Event } from '../types';
 
 /**
  * Cria uma configuração de evento.

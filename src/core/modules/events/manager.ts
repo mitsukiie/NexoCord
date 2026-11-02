@@ -1,5 +1,5 @@
-import { Collection } from "discord.js";
-import type { Event } from "../../types";
+import { Collection } from 'discord.js';
+import type { Event } from '../../types';
 
 /**
  * [pt-BR] Armazena os eventos configurados para o cliente.

@@ -1,17 +1,14 @@
-import { Interaction } from "discord.js";
-import { ResponderType, type ResponderInteraction } from "../types";
+import { Interaction } from 'discord.js';
+import { ResponderType, type ResponderInteraction } from '../types';
 
-export function interaction_type(
-  interaction: Interaction,
-): ResponderType | null {
+export function interaction_type(interaction: Interaction): ResponderType | null {
   if (interaction.isButton()) return ResponderType.Button;
   if (interaction.isModalSubmit()) return ResponderType.Modal;
   if (interaction.isStringSelectMenu()) return ResponderType.SelectString;
   if (interaction.isUserSelectMenu()) return ResponderType.SelectUser;
   if (interaction.isRoleSelectMenu()) return ResponderType.SelectRole;
   if (interaction.isChannelSelectMenu()) return ResponderType.SelectChannel;
-  if (interaction.isMentionableSelectMenu())
-    return ResponderType.SelectMentionable;
+  if (interaction.isMentionableSelectMenu()) return ResponderType.SelectMentionable;
   return null;
 }
 

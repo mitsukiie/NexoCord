@@ -1,15 +1,8 @@
-import type {
-  ChannelType,
-} from 'discord.js';
+import type { ChannelType } from 'discord.js';
 
-import type {
-  ChannelSelect,
-} from '../../types';
+import type { ChannelSelect } from '../../types';
 
-import type {
-  SelectBuilderInput,
-  SelectBuilderOptions,
-} from './user';
+import type { SelectBuilderInput, SelectBuilderOptions } from './user';
 
 /**
  * [pt-BR] Entrada de um menu de canais com tipos definidos.
@@ -34,9 +27,7 @@ export function channel_select(
   options?: SelectBuilderOptions,
 ): ChannelSelect;
 
-export function channel_select(
-  options: ChannelSelectBuilderInput,
-): ChannelSelect;
+export function channel_select(options: ChannelSelectBuilderInput): ChannelSelect;
 
 export function channel_select(
   customIdOrOptions: string | ChannelSelectBuilderInput,
@@ -57,7 +48,7 @@ export function channel_select(
     customId: customIdOrOptions,
     ...(hasChannelTypes
       ? { channelTypes: channelTypesOrOptions as readonly ChannelType[] }
-      : channelTypesOrOptions as SelectBuilderOptions | undefined),
+      : (channelTypesOrOptions as SelectBuilderOptions | undefined)),
     ...(hasChannelTypes ? options : {}),
   };
 }

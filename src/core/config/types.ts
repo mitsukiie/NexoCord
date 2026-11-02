@@ -1,4 +1,4 @@
-import type { ClientOptions } from "discord.js";
+import type { ClientOptions } from 'discord.js';
 
 export interface NexoConfig {
   directories: {
@@ -7,7 +7,7 @@ export interface NexoConfig {
   };
 
   terminal: {
-    mode: "informativo" | "minimalista";
+    mode: 'informativo' | 'minimalista';
 
     commands: {
       showFiles: boolean;
@@ -33,7 +33,7 @@ export interface NexoConfig {
 
 export interface BootstrapOptions {
   token?: string;
-  intents?: ClientOptions["intents"];
-  partials?: ClientOptions["partials"];
+  intents?: ClientOptions['intents'];
+  partials?: ClientOptions['partials'];
   settings?: Record<string, any>;
 }

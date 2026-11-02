@@ -1,9 +1,8 @@
-
 import type {
   ProjectLanguage,
   ProjectRuntime,
   ProjectPackageJson,
-} from "../project/types";
+} from '../project/types';
 
 export interface InitOptions {
   runtime?: string;

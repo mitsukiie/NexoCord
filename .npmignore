@@ -2,10 +2,12 @@
 /bot
 /src
 /node_modules
+/release-notes
 
 /.gitignore
 /.gitattributes
 /.git
+/.prettierrc
 
 
 /README.md

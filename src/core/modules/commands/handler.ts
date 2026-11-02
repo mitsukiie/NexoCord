@@ -1,16 +1,16 @@
-import { REST, Routes } from "discord.js";
-import { existsSync, readdirSync } from "fs";
-import path from "path";
-import { pathToFileURL } from "url";
+import { REST, Routes } from 'discord.js';
+import { existsSync, readdirSync } from 'fs';
+import path from 'path';
+import { pathToFileURL } from 'url';
 
 // Importações internas do projeto
-import { ExtendedClient, App } from "../../index";
-import { Command } from "../../types";
-import { logger } from "../../utils";
-import { NexoConfig, format_message } from "../../config";
+import { ExtendedClient, App } from '../../index';
+import { Command } from '../../types';
+import { logger } from '../../utils';
+import { NexoConfig, format_message } from '../../config';
 
-import { is_script } from "../../utils/extensions";
-import { createSubcommand } from "../../creators";
+import { is_script } from '../../utils/extensions';
+import { createSubcommand } from '../../creators';
 
 type Serialized = ReturnType<typeof serialize>;
 
@@ -35,7 +35,7 @@ export async function load_commands(
   app.commands.clear();
 
   if (config.terminal.commands.showFiles) {
-    logger.info("🔄 Iniciando o carregamento de comandos...");
+    logger.info('🔄 Iniciando o carregamento de comandos...');
     logger.success(`📂 Total de categorias: ${categories.length}`);
   }
 
@@ -45,9 +45,7 @@ export async function load_commands(
       const entries = readdirSync(category_path, { withFileTypes: true });
 
       if (config.terminal.commands.showFiles) {
-        logger.success(
-          `📂 Categoria: ${categorie} - ${entries.length} comandos`,
-        );
+        logger.success(`📂 Categoria: ${categorie} - ${entries.length} comandos`);
       }
 
       await Promise.all(
@@ -70,9 +68,7 @@ export async function load_commands(
             const command = module.default;
 
             if (!command) {
-              logger.warn(
-                `⚠️ Arquivo ignorado (sem export default): ${entry.name}`,
-              );
+              logger.warn(`⚠️ Arquivo ignorado (sem export default): ${entry.name}`);
               return;
             }
 
@@ -108,11 +104,11 @@ async function register_commands(
   const Token = token ?? process.env.TOKEN;
 
   if (!Token) {
-    logger.error("Token não definido para registrar comandos.");
+    logger.error('Token não definido para registrar comandos.');
     process.exit(1);
   }
 
-  const rest = new REST({ version: "10" }).setToken(Token);
+  const rest = new REST({ version: '10' }).setToken(Token);
 
   try {
     if (config.bot.guildID && config.bot.guildID.length > 0) {
@@ -123,16 +119,13 @@ async function register_commands(
           try {
             const guild = await client.guilds.fetch(ID).catch(() => null);
 
-            await rest.put(
-              Routes.applicationGuildCommands(client.user!.id, ID),
-              {
-                body: commands,
-              },
-            );
+            await rest.put(Routes.applicationGuildCommands(client.user!.id, ID), {
+              body: commands,
+            });
 
             return {
               ID,
-              name: guild?.name ?? "Servidor não encontrado",
+              name: guild?.name ?? 'Servidor não encontrado',
               commands: commands.length,
               success: true,
             };
@@ -140,7 +133,7 @@ async function register_commands(
             const guild = await client.guilds.fetch(ID).catch(() => null);
             return {
               ID,
-              name: guild?.name ?? "Servidor não encontrado",
+              name: guild?.name ?? 'Servidor não encontrado',
               success: false,
             };
           }
@@ -157,28 +150,24 @@ async function register_commands(
 
       if (config.terminal.commands.showRegistered) {
         logger.success(
-          format_message(
-            config.terminal.commands.registeredMessage,
-            commands.length,
-          ),
+          format_message(config.terminal.commands.registeredMessage, commands.length),
         );
       }
     }
   } catch (err) {
-    console.error("Erro ao registrar comandos:", err);
+    console.error('Erro ao registrar comandos:', err);
   }
 }
 
 function serialize(command: Command) {
   return {
     name: command.name,
-    description: command.description || "Sem descrição",
+    description: command.description || 'Sem descrição',
     type: command.type ?? 1,
     options: command.options || [],
     defaultMemberPermission: command.defaultMemberPermission || null,
     botpermission: command.botpermission || null,
-    dmPermission:
-      command.dmPermission !== undefined ? command.dmPermission : true,
+    dmPermission: command.dmPermission !== undefined ? command.dmPermission : true,
     nsfw: command.nsfw || false,
     allowIds: command.allowIds || null,
   };

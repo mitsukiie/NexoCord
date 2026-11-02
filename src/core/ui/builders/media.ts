@@ -5,13 +5,12 @@ import type {
   MediaGallery,
   MediaItem,
   Thumbnail,
-} from "../types";
-
+} from '../types';
 
 /** Obtém o nome de um arquivo anexado. */
 function get_attachment_name(attachment: AttachmentInput): string {
-  if (!attachment || typeof attachment !== "object") {
-    throw new Error("O anexo deve ser um objeto válido.");
+  if (!attachment || typeof attachment !== 'object') {
+    throw new Error('O anexo deve ser um objeto válido.');
   }
 
   const candidate = attachment as {
@@ -20,15 +19,15 @@ function get_attachment_name(attachment: AttachmentInput): string {
   };
 
   const name =
-    typeof candidate.name === "string"
+    typeof candidate.name === 'string'
       ? candidate.name
-      : typeof candidate.data?.name === "string"
+      : typeof candidate.data?.name === 'string'
         ? candidate.data.name
         : undefined;
 
   if (!name) {
     throw new Error(
-      "Não foi possível identificar o nome do anexo. Defina um nome no AttachmentBuilder.",
+      'Não foi possível identificar o nome do anexo. Defina um nome no AttachmentBuilder.',
     );
   }
 
@@ -42,7 +41,7 @@ function create_file(
   attachment?: AttachmentInput,
 ): FileComponent {
   return {
-    type: "file",
+    type: 'file',
     url,
     spoiler,
     ...(attachment !== undefined && { attachment }),
@@ -65,8 +64,7 @@ function build_file(
   spoiler = false,
 ): FileComponent {
   const has_attachment =
-    attachment_or_spoiler !== undefined &&
-    typeof attachment_or_spoiler !== "boolean";
+    attachment_or_spoiler !== undefined && typeof attachment_or_spoiler !== 'boolean';
 
   return create_file(
     url,
@@ -76,10 +74,7 @@ function build_file(
 }
 
 /** Cria um arquivo a partir de um AttachmentBuilder ou outro anexo. */
-function from_attachment(
-  attachment: AttachmentInput,
-  spoiler = false,
-): FileComponent {
+function from_attachment(attachment: AttachmentInput, spoiler = false): FileComponent {
   const name = get_attachment_name(attachment);
 
   return create_file(`attachment://${name}`, spoiler, attachment);
@@ -124,7 +119,7 @@ export function thumbnail(options: Thumbnail): Thumbnail {
  */
 export function gallery(...items: MediaItem[]): MediaGallery {
   return {
-    type: "gallery",
+    type: 'gallery',
     items,
   };
 }

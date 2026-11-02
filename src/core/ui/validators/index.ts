@@ -1,4 +1,4 @@
-export { validate_button } from "./button";
+export { validate_button } from './button';
 
 export {
   validate_file,
@@ -6,7 +6,7 @@ export {
   validate_media_item,
   validate_media_url,
   validate_thumbnail,
-} from "./media";
+} from './media';
 
 export {
   validate_channel_select,
@@ -16,7 +16,7 @@ export {
   validate_select_base,
   validate_string_select,
   validate_user_select,
-} from "./select";
+} from './select';
 
 export {
   validate_color,
@@ -27,9 +27,9 @@ export {
   validate_section,
   validate_separator,
   validate_text,
-} from "./container";
+} from './container';
 
-import { validate_button } from "./button";
+import { validate_button } from './button';
 import {
   validate_color,
   validate_container,
@@ -37,15 +37,15 @@ import {
   validate_row,
   validate_section,
   validate_text,
-} from "./container";
+} from './container';
 import {
   validate_file,
   validate_gallery,
   validate_media_item,
   validate_media_url,
   validate_thumbnail,
-} from "./media";
-import { validate_select, validate_string_select } from "./select";
+} from './media';
+import { validate_select, validate_string_select } from './select';
 
 export const validate = {
   button: validate_button,

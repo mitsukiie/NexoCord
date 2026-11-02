@@ -1,4 +1,3 @@
-
 /** Limites definidos pela API de componentes do Discord. */
 export const UI_LIMITS = {
   button_label: 80,

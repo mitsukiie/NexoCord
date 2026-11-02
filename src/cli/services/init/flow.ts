@@ -1,5 +1,4 @@
-
-import path from "node:path";
+import path from 'node:path';
 
 import {
   cancel,
@@ -9,13 +8,13 @@ import {
   log as prompt_log,
   outro,
   spinner,
-} from "@clack/prompts";
+} from '@clack/prompts';
 
-import chalk from "chalk";
+import chalk from 'chalk';
 
-import { setup_project } from "../project/setup";
-import { configure_package_json } from "../project/package-json";
-import { ask_language, ask_runtime } from "../project/prompts";
+import { setup_project } from '../project/setup';
+import { configure_package_json } from '../project/package-json';
+import { ask_language, ask_runtime } from '../project/prompts';
 
 import {
   detect_project,
@@ -23,26 +22,24 @@ import {
   read_package_json,
   resolve_init_choices,
   write_package_json,
-} from "./project";
+} from './project';
 
-import type { InitOptions } from "./types";
+import type { InitOptions } from './types';
 
-export type { InitOptions } from "./types";
+export type { InitOptions } from './types';
 
 function stop_on_sigint(): () => void {
   const on_sigint = () => {
-    cancel(chalk.yellow("Operação cancelada."));
+    cancel(chalk.yellow('Operação cancelada.'));
     process.exitCode = 130;
   };
 
-  process.once("SIGINT", on_sigint);
+  process.once('SIGINT', on_sigint);
 
-  return () => process.off("SIGINT", on_sigint);
+  return () => process.off('SIGINT', on_sigint);
 }
 
-export async function run_init_flow(
-  options: InitOptions,
-): Promise<void> {
+export async function run_init_flow(options: InitOptions): Promise<void> {
   const unbind_sigint = stop_on_sigint();
 
   try {
@@ -51,46 +48,34 @@ export async function run_init_flow(
     const detected = detect_project(target_dir, package_json);
     const requested = resolve_init_choices(options);
 
-    intro(chalk.cyan("🚀 NexoCord"));
+    intro(chalk.cyan('🚀 NexoCord'));
 
     if (detected.has_nexo_configuration) {
       prompt_log.warn(
-        chalk.yellow(
-          "Este projeto já possui dependências ou scripts do NexoCord.",
-        ),
+        chalk.yellow('Este projeto já possui dependências ou scripts do NexoCord.'),
       );
 
       const should_continue = await confirm({
         message:
-          "Deseja continuar? Arquivos existentes serão preservados e scripts já definidos não serão sobrescritos.",
+          'Deseja continuar? Arquivos existentes serão preservados e scripts já definidos não serão sobrescritos.',
         initialValue: false,
       });
 
       if (isCancel(should_continue) || !should_continue) {
-        outro(
-          chalk.yellow(
-            "Operação cancelada. Nenhuma alteração foi feita.",
-          ),
-        );
+        outro(chalk.yellow('Operação cancelada. Nenhuma alteração foi feita.'));
         return;
       }
     }
 
-    const runtime =
-      requested.runtime ?? (await ask_runtime(detected.runtime));
+    const runtime = requested.runtime ?? (await ask_runtime(detected.runtime));
 
-    const language =
-      requested.language ?? (await ask_language(detected.language));
+    const language = requested.language ?? (await ask_language(detected.language));
 
-    const expected_type =
-      language === "typescript" ? "module" : "commonjs";
+    const expected_type = language === 'typescript' ? 'module' : 'commonjs';
 
     let update_type = package_json.type === undefined;
 
-    if (
-      package_json.type !== undefined &&
-      package_json.type !== expected_type
-    ) {
+    if (package_json.type !== undefined && package_json.type !== expected_type) {
       const confirmation = await confirm({
         message:
           `O projeto usa "type": "${package_json.type}", ` +
@@ -99,11 +84,7 @@ export async function run_init_flow(
       });
 
       if (isCancel(confirmation) || !confirmation) {
-        outro(
-          chalk.yellow(
-            "Operação cancelada. Nenhuma alteração foi feita.",
-          ),
-        );
+        outro(chalk.yellow('Operação cancelada. Nenhuma alteração foi feita.'));
         return;
       }
 
@@ -112,7 +93,7 @@ export async function run_init_flow(
 
     const choices = {
       name:
-        typeof package_json.name === "string" && package_json.name
+        typeof package_json.name === 'string' && package_json.name
           ? package_json.name
           : path.basename(target_dir),
       runtime,
@@ -120,21 +101,15 @@ export async function run_init_flow(
     };
 
     prompt_log.step(
-      chalk.cyan(
-        `📦 Adicionando NexoCord com ${language} e ${runtime}...`,
-      ),
+      chalk.cyan(`📦 Adicionando NexoCord com ${language} e ${runtime}...`),
     );
 
-    configure_package_json(
-      package_json,
-      choices,
-      update_type,
-    );
+    configure_package_json(package_json, choices, update_type);
 
     write_package_json(package_path, package_json);
 
     const setup_step = spinner();
-    setup_step.start(chalk.cyan("Gerando template inicial..."));
+    setup_step.start(chalk.cyan('Gerando template inicial...'));
 
     await setup_project({
       target_dir,
@@ -145,20 +120,18 @@ export async function run_init_flow(
       },
     });
 
-    setup_step.stop(
-      chalk.green("✔ Template gerado e dependências instaladas."),
-    );
+    setup_step.stop(chalk.green('✔ Template gerado e dependências instaladas.'));
 
     outro(
       [
-        chalk.green("🎉 NexoCord configurado no projeto existente!"),
-        "",
-        chalk.cyan("Próximos passos:"),
-        "",
-        chalk.gray("   nexo dev"),
-        "",
-        chalk.gray("Docs: https://nexocord.vercel.app/"),
-      ].join("\n"),
+        chalk.green('🎉 NexoCord configurado no projeto existente!'),
+        '',
+        chalk.cyan('Próximos passos:'),
+        '',
+        chalk.gray('   nexo dev'),
+        '',
+        chalk.gray('Docs: https://nexocord.vercel.app/'),
+      ].join('\n'),
     );
   } finally {
     unbind_sigint();

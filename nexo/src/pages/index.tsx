@@ -1,4 +1,3 @@
-
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
@@ -25,11 +24,9 @@ function CodePreview() {
         <code>
           <span className={styles.purple}>import</span>
           {' { createCommand } '}
-          <span className={styles.purple}>from</span>
-          {' '}
+          <span className={styles.purple}>from</span>{' '}
           <span className={styles.green}>'nexocord'</span>
           {';\n\n'}
-
           <span className={styles.purple}>export default</span>
           {' createCommand({\n'}
           {'  name: '}
@@ -57,7 +54,9 @@ function CodePreview() {
       </pre>
 
       <div className={styles.codeFooter}>
-        <span><span className={styles.statusDot} /> Exemplo de comando</span>
+        <span>
+          <span className={styles.statusDot} /> Exemplo de comando
+        </span>
         <span>Nexocord</span>
       </div>
     </div>
@@ -86,21 +85,22 @@ function HomepageHeader() {
           </Heading>
 
           <p className={styles.heroDescription}>
-            Um fluxo organizado para desenvolver comandos, eventos,
-            responders e interfaces interativas com JavaScript ou
-            TypeScript.
+            Um fluxo organizado para desenvolver comandos, eventos, responders e
+            interfaces interativas com JavaScript ou TypeScript.
           </p>
 
           <div className={styles.buttons}>
             <Link
               className={clsx('button button--lg', styles.primaryButton)}
-              to="/docs/introduction">
+              to="/docs/introduction"
+            >
               Começar agora <span aria-hidden="true">→</span>
             </Link>
 
             <Link
               className={clsx('button button--lg', styles.secondaryButton)}
-              to="/docs/installation">
+              to="/docs/installation"
+            >
               Ver instalação
             </Link>
           </div>
@@ -181,8 +181,8 @@ function FeaturesSection() {
             <span>Sem perder o controle.</span>
           </Heading>
           <p>
-            As ferramentas essenciais para construir e evoluir seu bot
-            em uma estrutura consistente.
+            As ferramentas essenciais para construir e evoluir seu bot em uma estrutura
+            consistente.
           </p>
         </div>
 
@@ -215,14 +215,15 @@ function QuickStart() {
             <span className={styles.sectionEyebrow}>SEU PRÓXIMO PROJETO</span>
             <Heading as="h2">Vamos tirar sua ideia do papel?</Heading>
             <p>
-              Configure o ambiente, crie seu primeiro comando e comece
-              a desenvolver com o Nexocord.
+              Configure o ambiente, crie seu primeiro comando e comece a desenvolver com o
+              Nexocord.
             </p>
           </div>
 
           <Link
             className={clsx('button button--lg', styles.primaryButton)}
-            to="/docs/introduction">
+            to="/docs/introduction"
+          >
             Explorar a documentação <span aria-hidden="true">→</span>
           </Link>
         </div>
@@ -237,7 +238,8 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={siteConfig.title}
-      description="Documentação do Nexocord: desenvolva bots para Discord com JavaScript ou TypeScript, Node.js ou Bun.">
+      description="Documentação do Nexocord: desenvolva bots para Discord com JavaScript ou TypeScript, Node.js ou Bun."
+    >
       <main>
         <HomepageHeader />
         <FeaturesSection />

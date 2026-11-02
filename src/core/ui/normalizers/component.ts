@@ -8,7 +8,7 @@ import {
   SeparatorBuilder,
   TextDisplayBuilder,
   type AnyComponentBuilder,
-} from "discord.js";
+} from 'discord.js';
 
 import type {
   AttachmentInput,
@@ -23,9 +23,9 @@ import type {
   SectionComponent,
   SeparatorComponent,
   TextComponent,
-} from "../types";
+} from '../types';
 
-import { normalize_button } from "./button";
+import { normalize_button } from './button';
 
 import {
   attach_attachments,
@@ -34,57 +34,54 @@ import {
   normalize_file,
   normalize_gallery,
   normalize_thumbnail,
-} from "./media";
+} from './media';
 
-import { normalize_select } from "./select";
+import { normalize_select } from './select';
 
 /** Verifica se um valor representa um botão do NexoCord. */
 export function is_button(value: unknown): value is Button {
   return (
-    typeof value === "object" &&
+    typeof value === 'object' &&
     value !== null &&
-    "label" in value &&
-    ("customId" in value || "url" in value)
+    'label' in value &&
+    ('customId' in value || 'url' in value)
   );
 }
 
 /** Verifica se um valor representa um componente de texto. */
 function is_text_component(value: unknown): value is TextComponent {
   return (
-    typeof value === "object" &&
+    typeof value === 'object' &&
     value !== null &&
-    "type" in value &&
-    value.type === "text"
+    'type' in value &&
+    value.type === 'text'
   );
 }
 
 /** Verifica se um valor representa um divisor. */
 function is_separator_component(value: unknown): value is SeparatorComponent {
   return (
-    typeof value === "object" &&
+    typeof value === 'object' &&
     value !== null &&
-    "type" in value &&
-    value.type === "separator"
+    'type' in value &&
+    value.type === 'separator'
   );
 }
 
 /** Verifica se um valor representa uma seção. */
 function is_section_component(value: unknown): value is SectionComponent {
   return (
-    typeof value === "object" &&
+    typeof value === 'object' &&
     value !== null &&
-    "type" in value &&
-    value.type === "section"
+    'type' in value &&
+    value.type === 'section'
   );
 }
 
 /** Verifica se um valor representa uma linha de ações. */
 function is_row_component(value: unknown): value is Row {
   return (
-    typeof value === "object" &&
-    value !== null &&
-    "type" in value &&
-    value.type === "row"
+    typeof value === 'object' && value !== null && 'type' in value && value.type === 'row'
   );
 }
 
@@ -113,9 +110,7 @@ function normalize_section(component: SectionComponent): SectionBuilder {
   const builder = new SectionBuilder();
 
   builder.addTextDisplayComponents(
-    ...component.texts.map((content) =>
-      new TextDisplayBuilder().setContent(content),
-    ),
+    ...component.texts.map((content) => new TextDisplayBuilder().setContent(content)),
   );
 
   if (component.button !== undefined) {
@@ -169,21 +164,19 @@ function normalize_node(component: ContainerNode): ContainerChild {
     return normalize_row(component);
   }
 
-  if (component.type === "gallery") {
+  if (component.type === 'gallery') {
     return normalize_gallery(component);
   }
 
-  if (component.type === "file") {
+  if (component.type === 'file') {
     return normalize_file(component);
   }
 
-  throw new Error("Tipo de componente não suportado.");
+  throw new Error('Tipo de componente não suportado.');
 }
 
 /** Verifica se um valor é um builder nativo aceito em containers. */
-function is_container_child_builder(
-  component: unknown,
-): component is ContainerChild {
+function is_container_child_builder(component: unknown): component is ContainerChild {
   return (
     component instanceof TextDisplayBuilder ||
     component instanceof SeparatorBuilder ||
@@ -198,15 +191,13 @@ function is_container_child_builder(
 export function to_container_child(component: ContainerInput): ContainerChild {
   if (is_button(component)) {
     return normalize_row({
-      type: "row",
+      type: 'row',
       components: [component],
     });
   }
 
   if (component instanceof ContainerBuilder) {
-    throw new Error(
-      "Não é permitido adicionar um container dentro de outro container.",
-    );
+    throw new Error('Não é permitido adicionar um container dentro de outro container.');
   }
 
   if (is_container_child_builder(component)) {
@@ -217,16 +208,14 @@ export function to_container_child(component: ContainerInput): ContainerChild {
 }
 
 /** Converte um componente aceito em uma mensagem com Components V2. */
-export function to_display_component(
-  component: DisplayInput,
-): DisplayComponent {
+export function to_display_component(component: DisplayInput): DisplayComponent {
   if (component instanceof ContainerBuilder) {
     return component;
   }
 
   if (is_button(component)) {
     return normalize_row({
-      type: "row",
+      type: 'row',
       components: [component],
     });
   }
@@ -249,7 +238,5 @@ export function to_display_components(
 export function collect_component_attachments(
   components: readonly DisplayComponent[],
 ): AttachmentInput[] {
-  return components.flatMap((component) =>
-    get_component_attachments(component),
-  );
+  return components.flatMap((component) => get_component_attachments(component));
 }

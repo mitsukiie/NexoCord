@@ -1,28 +1,20 @@
 const config_keys = {
-  DIRECTORIES_COMMANDS: ["directories", "commands"],
-  DIRECTORIES_EVENTS: ["directories", "events"],
+  DIRECTORIES_COMMANDS: ['directories', 'commands'],
+  DIRECTORIES_EVENTS: ['directories', 'events'],
 
-  TERMINAL_MODE: ["terminal", "mode"],
+  TERMINAL_MODE: ['terminal', 'mode'],
 
-  TERMINAL_COMMANDS_SHOW_FILES: ["terminal", "commands", "showFiles"],
-  TERMINAL_COMMANDS_SHOW_REGISTERED: ["terminal", "commands", "showRegistered"],
-  TERMINAL_COMMANDS_REGISTERED_MESSAGE: [
-    "terminal",
-    "commands",
-    "registeredMessage",
-  ],
+  TERMINAL_COMMANDS_SHOW_FILES: ['terminal', 'commands', 'showFiles'],
+  TERMINAL_COMMANDS_SHOW_REGISTERED: ['terminal', 'commands', 'showRegistered'],
+  TERMINAL_COMMANDS_REGISTERED_MESSAGE: ['terminal', 'commands', 'registeredMessage'],
 
-  TERMINAL_EVENTS_SHOW_FILES: ["terminal", "events", "showFiles"],
-  TERMINAL_EVENTS_SHOW_REGISTERED: ["terminal", "events", "showRegistered"],
-  TERMINAL_EVENTS_REGISTERED_MESSAGE: [
-    "terminal",
-    "events",
-    "registeredMessage",
-  ],
+  TERMINAL_EVENTS_SHOW_FILES: ['terminal', 'events', 'showFiles'],
+  TERMINAL_EVENTS_SHOW_REGISTERED: ['terminal', 'events', 'showRegistered'],
+  TERMINAL_EVENTS_REGISTERED_MESSAGE: ['terminal', 'events', 'registeredMessage'],
 
-  BOT_COOLDOWN: ["bot", "cooldown"],
-  BOT_GUILD_ID: ["bot", "guildID"],
-  BOT_ERRORS_INTERACTION: ["bot", "errors", "interaction"],
+  BOT_COOLDOWN: ['bot', 'cooldown'],
+  BOT_GUILD_ID: ['bot', 'guildID'],
+  BOT_ERRORS_INTERACTION: ['bot', 'errors', 'interaction'],
 } as const;
 
 type ConfigPath = readonly string[];
@@ -30,12 +22,12 @@ type ConfigPath = readonly string[];
 function parse_value(value: string): unknown {
   const trimmed = value.trim();
 
-  if (trimmed === "") return "";
+  if (trimmed === '') return '';
 
   if (
     (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
-    (trimmed.startsWith("[") && trimmed.endsWith("]")) ||
-    (trimmed.startsWith("{") && trimmed.endsWith("}"))
+    (trimmed.startsWith('[') && trimmed.endsWith(']')) ||
+    (trimmed.startsWith('{') && trimmed.endsWith('}'))
   ) {
     try {
       return JSON.parse(trimmed);
@@ -44,9 +36,9 @@ function parse_value(value: string): unknown {
     }
   }
 
-  if (trimmed === "true") return true;
-  if (trimmed === "false") return false;
-  if (trimmed === "null") return null;
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'null') return null;
 
   if (/^-?(?:0|[1-9]\d*)(?:\.\d+)?$/.test(trimmed)) {
     const number = Number(trimmed);
@@ -67,11 +59,7 @@ function set_nested_value(
   for (const key of keys.slice(0, -1)) {
     const existing = current[key];
 
-    if (
-      existing === null ||
-      typeof existing !== "object" ||
-      Array.isArray(existing)
-    ) {
+    if (existing === null || typeof existing !== 'object' || Array.isArray(existing)) {
       current[key] = {};
     }
 
@@ -90,9 +78,9 @@ export function parse_config_file(content: string): Record<string, unknown> {
     const line_number = index + 1;
     const trimmed = line.trim();
 
-    if (!trimmed || trimmed.startsWith("#")) continue;
+    if (!trimmed || trimmed.startsWith('#')) continue;
 
-    const separator = trimmed.indexOf("=");
+    const separator = trimmed.indexOf('=');
 
     if (separator === -1) {
       throw new Error(`Linha ${line_number}: esperado CHAVE=VALOR.`);
@@ -122,9 +110,7 @@ export function parse_config_file(content: string): Record<string, unknown> {
     try {
       value = parse_value(raw_value);
     } catch {
-      throw new Error(
-        `Linha ${line_number}: valor inválido para a opção "${key}".`,
-      );
+      throw new Error(`Linha ${line_number}: valor inválido para a opção "${key}".`);
     }
 
     const path = config_keys[key as keyof typeof config_keys];

@@ -4,7 +4,7 @@ import {
   ResponderTypes,
   ResponderParser,
   ResponderParams,
-} from "../../types";
+} from '../../types';
 
 export interface Route<
   Path extends string,
@@ -14,14 +14,10 @@ export interface Route<
   parts: string[];
 }
 
-type Router = Route<
-  string,
-  ResponderTypes,
-  ResponderParser<string> | undefined
->;
+type Router = Route<string, ResponderTypes, ResponderParser<string> | undefined>;
 
 function normalize(param: string) {
-  return param.replace(/[?+*]$/, "");
+  return param.replace(/[?+*]$/, '');
 }
 
 export class route {
@@ -32,15 +28,13 @@ export class route {
     T extends ResponderTypes,
     Parse extends ResponderParser<Path> | undefined = undefined,
   >(opts: Responder<Path, T, Parse>) {
-    if (opts.lifetime === "temporary" && !opts.expire) {
-      throw new Error(
-        "Responders temporários devem definir um tempo de expiração.",
-      );
+    if (opts.lifetime === 'temporary' && !opts.expire) {
+      throw new Error('Responders temporários devem definir um tempo de expiração.');
     }
 
     const created: Route<Path, T, Parse> = {
       ...opts,
-      parts: opts.customId.split("/"),
+      parts: opts.customId.split('/'),
     };
 
     const types = (
@@ -60,13 +54,13 @@ export class route {
     const routes = this.routes.get(type);
     if (!routes) return null;
 
-    const parts = id.split("/");
+    const parts = id.split('/');
 
     for (const route of routes) {
       if (parts.length !== route.parts.length) continue;
 
       const match = route.parts.every((part, i) => {
-        return part.startsWith(":") || part === parts[i];
+        return part.startsWith(':') || part === parts[i];
       });
 
       if (match) return route;
@@ -81,12 +75,12 @@ export class route {
     Parse extends ResponderParser<Path> | undefined,
   >(id: string, route: Route<Path, T, Parse>): ResponderParams<Path> {
     const params: Record<string, string> = {};
-    const values = id.split("/");
+    const values = id.split('/');
 
     values.forEach((value, i) => {
       const part = route.parts[i];
 
-      if (part?.startsWith(":")) {
+      if (part?.startsWith(':')) {
         const key = normalize(part.slice(1));
         params[key] = value;
       }

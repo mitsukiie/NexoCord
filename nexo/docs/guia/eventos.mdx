@@ -13,7 +13,7 @@ Use `createEvent()` para definir um evento. Os arquivos são carregados recursiv
 ## 🚀 Exemplo
 
 ```ts
-import { createEvent, Events } from "nexocord";
+import { createEvent, Events } from 'nexocord';
 
 export default createEvent({
   name: Events.ClientReady,
@@ -29,11 +29,11 @@ Neste exemplo, o evento é executado quando o cliente fica pronto. Como `once` e
 
 ## 📋 Campos do evento
 
-| Campo | Tipo | Obrigatório | Descrição |
-| --- | --- | --- | --- |
-| `name` | `keyof ClientEvents` | Sim | Nome do evento do Discord.js. |
-| `once` | `boolean` | Não | Define se o listener será executado apenas uma vez. O padrão depende da implementação do Nexocord. |
-| `run` | `function` | Sim | Função executada quando o evento acontece. |
+| Campo  | Tipo                 | Obrigatório | Descrição                                                                                          |
+| ------ | -------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| `name` | `keyof ClientEvents` | Sim         | Nome do evento do Discord.js.                                                                      |
+| `once` | `boolean`            | Não         | Define se o listener será executado apenas uma vez. O padrão depende da implementação do Nexocord. |
+| `run`  | `function`           | Sim         | Função executada quando o evento acontece.                                                         |
 
 ## ⚙️ Argumentos de `run`
 
@@ -46,7 +46,7 @@ Os argumentos variam conforme o evento. Por exemplo, `ClientReady` recebe o clie
 O Nexocord exporta `Events` como uma reexportação de `discord.js`. Você pode utilizá-lo para referenciar os eventos sem precisar escrever seus nomes manualmente.
 
 ```ts
-import { Events } from "nexocord";
+import { Events } from 'nexocord';
 
 Events.ClientReady;
 Events.MessageCreate;

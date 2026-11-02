@@ -21,22 +21,22 @@ no `run`:
 ## Exemplo completo
 
 ```ts
-import { ButtonStyle, CommandType, createCommand } from "nexocord";
+import { ButtonStyle, CommandType, createCommand } from 'nexocord';
 
 export default createCommand({
-  name: "painel",
-  description: "Exibe um painel interativo.",
+  name: 'painel',
+  description: 'Exibe um painel interativo.',
   type: CommandType.ChatInput,
   async run(interaction, client, { ui }) {
     await interaction.reply({
       components: [
         ui.container(
-          ui.text("## Meu painel"),
-          ui.text("Escolha uma opção:"),
+          ui.text('## Meu painel'),
+          ui.text('Escolha uma opção:'),
           ui.row(
             ui.button({
-              customId: "painel/abrir",
-              label: "Abrir",
+              customId: 'painel/abrir',
+              label: 'Abrir',
               style: ButtonStyle.Primary,
             }),
           ),
@@ -56,15 +56,15 @@ Components V2 com `content` ou `embeds` na mesma resposta.
 Quando estiver fora de um callback de comando, importe a API pelo subpath:
 
 ```ts
-import { SeparatorSize, TextSize, ui } from "nexocord/ui";
+import { SeparatorSize, TextSize, ui } from 'nexocord/ui';
 
-const title = ui.text("Olá!", { size: TextSize.Title });
+const title = ui.text('Olá!', { size: TextSize.Title });
 ```
 
 ```ts
-ui.text("Olá!")
-ui.text(["Linha 1", "Linha 2"])
-ui.text("Título", { size: TextSize.Section, bold: true })
+ui.text('Olá!');
+ui.text(['Linha 1', 'Linha 2']);
+ui.text('Título', { size: TextSize.Section, bold: true });
 ```
 
 Também estão disponíveis `ui.text.list(items)`, `ui.text.ordered(items)`,
@@ -77,9 +77,9 @@ Os tamanhos disponíveis em `TextSize` são `Title`, `Subtitle`, `Section` e
 ## Separadores
 
 ```ts
-ui.separator()
-ui.separator({ spacing: SeparatorSize.Large, divider: true })
-ui.divider() // alias de separator()
+ui.separator();
+ui.separator({ spacing: SeparatorSize.Large, divider: true });
+ui.divider(); // alias de separator()
 ```
 
 `SeparatorSize.Small` e `SeparatorSize.Large` representam os espaçamentos
@@ -92,17 +92,17 @@ Botões de interação usam `customId`. Botões de link usam `url` e não recebe
 `customId`.
 
 ```ts
-import { ButtonStyle } from "nexocord";
+import { ButtonStyle } from 'nexocord';
 
 ui.button({
-  customId: "painel/abrir",
-  label: "Abrir",
+  customId: 'painel/abrir',
+  label: 'Abrir',
   style: ButtonStyle.Primary,
 });
 
 ui.button({
-  label: "Documentação",
-  url: "https://nexocord.vercel.app",
+  label: 'Documentação',
+  url: 'https://nexocord.vercel.app',
 });
 ```
 
@@ -114,13 +114,13 @@ pode conter botões ou um único menu de seleção.
 ```ts
 ui.row(
   ui.button({
-    customId: "confirmar",
-    label: "Confirmar",
+    customId: 'confirmar',
+    label: 'Confirmar',
     style: ButtonStyle.Success,
   }),
   ui.button({
-    customId: "cancelar",
-    label: "Cancelar",
+    customId: 'cancelar',
+    label: 'Cancelar',
     style: ButtonStyle.Danger,
   }),
 );
@@ -129,25 +129,29 @@ ui.row(
 ## Menus de seleção
 
 ```ts
-ui.select.string("idioma", [
-  { label: "Português", value: "pt" },
-  { label: "English", value: "en" },
-], {
-  placeholder: "Escolha um idioma",
-});
+ui.select.string(
+  'idioma',
+  [
+    { label: 'Português', value: 'pt' },
+    { label: 'English', value: 'en' },
+  ],
+  {
+    placeholder: 'Escolha um idioma',
+  },
+);
 
-ui.select.user("membro", { placeholder: "Escolha um usuário" });
-ui.select.role("cargo");
-ui.select.mentionable("entidade");
-ui.select.channel("canal");
+ui.select.user('membro', { placeholder: 'Escolha um usuário' });
+ui.select.role('cargo');
+ui.select.mentionable('entidade');
+ui.select.channel('canal');
 ```
 
 Também é possível passar um objeto completo:
 
 ```ts
 ui.select.string({
-  customId: "idioma",
-  options: [{ label: "Português", value: "pt" }],
+  customId: 'idioma',
+  options: [{ label: 'Português', value: 'pt' }],
 });
 ```
 
@@ -159,33 +163,32 @@ Uma seção recebe de um a três textos e pode ter um botão ou uma miniatura co
 acessório, mas não os dois ao mesmo tempo.
 
 ```ts
-ui.section(
-  ["## Perfil", "Informações do usuário"],
-  { thumbnail: ui.thumbnail({ url: "https://example.com/avatar.png" }) },
-);
+ui.section(['## Perfil', 'Informações do usuário'], {
+  thumbnail: ui.thumbnail({ url: 'https://example.com/avatar.png' }),
+});
 ```
 
 Para galerias, crie cada item com `ui.image` e passe-os como argumentos:
 
 ```ts
 ui.gallery(
-  ui.image({ url: "https://example.com/imagem.png" }),
-  ui.image({ url: "https://example.com/outra.png" }),
+  ui.image({ url: 'https://example.com/imagem.png' }),
+  ui.image({ url: 'https://example.com/outra.png' }),
 );
 ```
 
 Arquivos podem referenciar um anexo:
 
 ```ts
-import { AttachmentBuilder } from "discord.js";
+import { AttachmentBuilder } from 'discord.js';
 
-const attachment = new AttachmentBuilder("./relatorio.pdf", {
-  name: "relatorio.pdf",
+const attachment = new AttachmentBuilder('./relatorio.pdf', {
+  name: 'relatorio.pdf',
 });
 
 ui.file.fromAttachment(attachment);
 // ou:
-ui.file("attachment://relatorio.pdf");
+ui.file('attachment://relatorio.pdf');
 ```
 
 Os anexos usados dentro dos componentes são incluídos automaticamente na
@@ -197,11 +200,7 @@ resposta. Arquivos adicionais ainda podem ser enviados na propriedade `files`.
 argumento:
 
 ```ts
-ui.container(
-  { color: "#5865F2" },
-  ui.text("## Configurações"),
-  ui.separator(),
-);
+ui.container({ color: '#5865F2' }, ui.text('## Configurações'), ui.separator());
 ```
 
 ## Respostas tradicionais
@@ -209,8 +208,8 @@ ui.container(
 A interação estendida continua aceitando respostas tradicionais do Discord.js:
 
 ```ts
-await interaction.reply({ content: "Resposta normal" });
-await interaction.followUp({ content: "Outra mensagem" });
+await interaction.reply({ content: 'Resposta normal' });
+await interaction.followUp({ content: 'Outra mensagem' });
 ```
 
 Para Components V2, use `components` e não informe `content` nem `embeds`.

@@ -1,12 +1,6 @@
-import type {
-  StringSelect,
-  StringSelectOption,
-} from '../../types';
+import type { StringSelect, StringSelectOption } from '../../types';
 
-import type {
-  SelectBuilderInput,
-  SelectBuilderOptions,
-} from './user';
+import type { SelectBuilderInput, SelectBuilderOptions } from './user';
 
 /**
  * [pt-BR] Entrada de um menu de strings com suas opções.
@@ -26,9 +20,7 @@ export function string_select(
   selectOptions?: SelectBuilderOptions,
 ): StringSelect;
 
-export function string_select(
-  options: StringSelectBuilderInput,
-): StringSelect;
+export function string_select(options: StringSelectBuilderInput): StringSelect;
 
 export function string_select(
   customIdOrOptions: string | StringSelectBuilderInput,

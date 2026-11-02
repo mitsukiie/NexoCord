@@ -2,7 +2,7 @@
 
 <div align="center">
 
-### **v3.1.2**
+### **v3.1.3**
 
 **Build better Discord bots.**
 
@@ -73,32 +73,32 @@ nexo init --language js --runtime bun
 
 ## 🧰 CLI
 
-| Comando | Descrição |
-| --- | --- |
-| `nexo create <nome>` | Cria um novo projeto. |
-| `nexo init` | Configura um projeto existente. |
-| `nexo dev` | Executa o projeto em desenvolvimento. |
-| `nexo build` | Compila o projeto. |
-| `nexo start` | Inicia o projeto em produção. |
-| `nexo doctor` | Verifica possíveis problemas. |
-| `nexo info` | Exibe informações do projeto. |
-| `nexo update` | Executa a atualização disponibilizada pela CLI. |
+| Comando              | Descrição                                       |
+| -------------------- | ----------------------------------------------- |
+| `nexo create <nome>` | Cria um novo projeto.                           |
+| `nexo init`          | Configura um projeto existente.                 |
+| `nexo dev`           | Executa o projeto em desenvolvimento.           |
+| `nexo build`         | Compila o projeto.                              |
+| `nexo start`         | Inicia o projeto em produção.                   |
+| `nexo doctor`        | Verifica possíveis problemas.                   |
+| `nexo info`          | Exibe informações do projeto.                   |
+| `nexo update`        | Executa a atualização disponibilizada pela CLI. |
 
 ## 💻 Exemplo
 
 Um comando simples utilizando o NexoCord:
 
 ```ts
-import { CommandType, createCommand } from "nexocord";
+import { CommandType, createCommand } from 'nexocord';
 
 export default createCommand({
-  name: "ping",
-  description: "Verifica se o bot está online.",
+  name: 'ping',
+  description: 'Verifica se o bot está online.',
   type: CommandType.ChatInput,
 
   async run(interaction) {
     await interaction.reply({
-      content: "Pong! 🏓",
+      content: 'Pong! 🏓',
     });
   },
 });
@@ -133,7 +133,7 @@ TOKEN=seu_token_aqui
 Inicialize o bot:
 
 ```ts
-import { Bootstrap, GatewayIntentBits } from "nexocord";
+import { Bootstrap, GatewayIntentBits } from 'nexocord';
 
 await Bootstrap.init({
   token: process.env.TOKEN,

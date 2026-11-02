@@ -1,24 +1,24 @@
-import type { NexoConfig } from "./types";
+import type { NexoConfig } from './types';
 
 export const default_config: NexoConfig = {
   directories: {
-    commands: "src/commands",
-    events: "src/events",
+    commands: 'src/commands',
+    events: 'src/events',
   },
 
   terminal: {
-    mode: "minimalista",
+    mode: 'minimalista',
 
     commands: {
       showFiles: false,
       showRegistered: true,
-      registeredMessage: "{count} comandos registrados",
+      registeredMessage: '{count} comandos registrados',
     },
 
     events: {
       showFiles: false,
       showRegistered: true,
-      registeredMessage: "{count} eventos carregados",
+      registeredMessage: '{count} eventos carregados',
     },
   },
 
@@ -27,7 +27,7 @@ export const default_config: NexoConfig = {
     guildID: [],
 
     errors: {
-      interaction: "Ocorreu um erro ao executar este comando.",
+      interaction: 'Ocorreu um erro ao executar este comando.',
     },
   },
 };

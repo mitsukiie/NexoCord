@@ -26,15 +26,15 @@ Com `createResponder()`, você define uma rota usando `customId` e escolhe os ti
 O exemplo abaixo cria um responder para um botão com o identificador `user/button`.
 
 ```ts
-import { createResponder, ResponderType } from "nexocord";
+import { createResponder, ResponderType } from 'nexocord';
 
 export default createResponder({
-  customId: "user/button",
+  customId: 'user/button',
   type: ResponderType.Button,
 
   async run(interaction) {
     await interaction.reply({
-      content: "Botão clicado!",
+      content: 'Botão clicado!',
     });
   },
 });
@@ -43,16 +43,12 @@ export default createResponder({
 O componente que dispara o responder deve usar o mesmo `customId`:
 
 ```ts
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} from "nexocord";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'nexocord';
 
 const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
   new ButtonBuilder()
-    .setCustomId("user/button")
-    .setLabel("Clicar")
+    .setCustomId('user/button')
+    .setLabel('Clicar')
     .setStyle(ButtonStyle.Success),
 );
 ```
@@ -72,10 +68,10 @@ Declare o responder em um módulo importado durante a inicialização, fora de `
 Você pode definir parâmetros dinâmicos no `customId` usando `:` seguido do nome do parâmetro.
 
 ```ts
-import { createResponder, ResponderType } from "nexocord";
+import { createResponder, ResponderType } from 'nexocord';
 
 export default createResponder({
-  customId: "user/:id",
+  customId: 'user/:id',
   type: ResponderType.Button,
 
   async run(interaction, { id }) {
@@ -91,7 +87,7 @@ Se o componente usar `customId: "user/123"`, o parâmetro `id` será `"123"`.
 Você também pode utilizar vários parâmetros:
 
 ```ts
-customId: "user/:id/action/:action"
+customId: 'user/:id/action/:action';
 ```
 
 Nesse caso, os valores serão disponibilizados em `params`, de acordo com os nomes definidos na rota.
@@ -100,15 +96,15 @@ Por padrão, os parâmetros extraídos são strings.
 
 ## 📋 Campos do responder
 
-| Campo | Tipo | Obrigatório | Descrição |
-| --- | --- | --- | --- |
-| `customId` | `string` | Sim | Padrão usado para identificar a rota da interação. |
-| `type` | `ResponderType \| ResponderType[]` | Sim | Tipo ou tipos de interação aceitos. |
-| `run` | `function` | Sim | Função executada quando a rota corresponde à interação. |
-| `parse` | `ZodTypeAny \| (params) => any` | Não | Schema ou função para validar ou transformar os parâmetros. |
-| `lifetime` | `'once' \| 'temporary'` | Não | Define uma restrição de uso para o responder. |
-| `expire` | `number` | Não* | Tempo de expiração em milissegundos, conforme o modo de vida configurado. |
-| `cache` | `'cached' \| 'guild'` | Não | Restringe o contexto em que a interação pode ser processada. |
+| Campo      | Tipo                               | Obrigatório | Descrição                                                                 |
+| ---------- | ---------------------------------- | ----------- | ------------------------------------------------------------------------- |
+| `customId` | `string`                           | Sim         | Padrão usado para identificar a rota da interação.                        |
+| `type`     | `ResponderType \| ResponderType[]` | Sim         | Tipo ou tipos de interação aceitos.                                       |
+| `run`      | `function`                         | Sim         | Função executada quando a rota corresponde à interação.                   |
+| `parse`    | `ZodTypeAny \| (params) => any`    | Não         | Schema ou função para validar ou transformar os parâmetros.               |
+| `lifetime` | `'once' \| 'temporary'`            | Não         | Define uma restrição de uso para o responder.                             |
+| `expire`   | `number`                           | Não\*       | Tempo de expiração em milissegundos, conforme o modo de vida configurado. |
+| `cache`    | `'cached' \| 'guild'`              | Não         | Restringe o contexto em que a interação pode ser processada.              |
 
 `expire` é obrigatório quando `lifetime` é `'temporary'`; o valor é expresso em milissegundos.
 
@@ -120,25 +116,25 @@ Use `ResponderType` para indicar o tipo de interação que o responder deve rece
   <TabItem value="button" label="Botão">
 
 ```ts
-type: ResponderType.Button
+type: ResponderType.Button;
 ```
 
   </TabItem>
   <TabItem value="modal" label="Modal">
 
 ```ts
-type: ResponderType.Modal
+type: ResponderType.Modal;
 ```
 
   </TabItem>
   <TabItem value="selects" label="Menus de seleção">
 
 ```ts
-type: ResponderType.SelectString
-type: ResponderType.SelectUser
-type: ResponderType.SelectRole
-type: ResponderType.SelectChannel
-type: ResponderType.SelectMentionable
+type: ResponderType.SelectString;
+type: ResponderType.SelectUser;
+type: ResponderType.SelectRole;
+type: ResponderType.SelectChannel;
+type: ResponderType.SelectMentionable;
 ```
 
   </TabItem>
@@ -147,27 +143,27 @@ type: ResponderType.SelectMentionable
 Você também pode aceitar mais de um tipo no mesmo responder:
 
 ```ts
-type: [ResponderType.Button, ResponderType.SelectString]
+type: [ResponderType.Button, ResponderType.SelectString];
 ```
 
 Como o tipo de `interaction` será uma união, verifique qual interação foi recebida antes de acessar propriedades específicas:
 
 ```ts
-import { createResponder, ResponderType } from "nexocord";
+import { createResponder, ResponderType } from 'nexocord';
 
 export default createResponder({
-  customId: "user/action",
+  customId: 'user/action',
   type: [ResponderType.Button, ResponderType.SelectString],
 
   async run(interaction) {
     if (interaction.isButton()) {
-      await interaction.reply({ content: "Botão clicado!" });
+      await interaction.reply({ content: 'Botão clicado!' });
       return;
     }
 
     if (interaction.isStringSelectMenu()) {
       await interaction.reply({
-        content: `Opção selecionada: ${interaction.values.join(", ")}`,
+        content: `Opção selecionada: ${interaction.values.join(', ')}`,
       });
     }
   },
@@ -183,7 +179,7 @@ Você pode fornecer um schema do Zod ou uma função própria, conforme os tipos
 ```ts
 parse: (params) => ({
   id: Number(params.id),
-})
+});
 ```
 
 Nesse exemplo, `id` é convertido de string para número. Em rotas que recebem dados externos, valide também se a conversão produziu um valor válido.
@@ -195,7 +191,7 @@ O campo `lifetime` configura a duração ou a quantidade de usos permitidos para
 ### `lifetime: 'once'`
 
 ```ts
-lifetime: "once"
+lifetime: 'once';
 ```
 
 Use quando o responder deve ser utilizado uma única vez, conforme a semântica implementada pelo Nexocord.

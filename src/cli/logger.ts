@@ -1,12 +1,12 @@
-import chalk from "chalk";
+import chalk from 'chalk';
 
 export const log = {
   start: () => {
-    console.log("\n" + chalk.cyan.bold("🚀 NexoCord"));
+    console.log('\n' + chalk.cyan.bold('🚀 NexoCord'));
   },
 
   title: (message: string) => {
-    console.log("\n" + chalk.cyan.bold(message));
+    console.log('\n' + chalk.cyan.bold(message));
   },
 
   success: (message: string) => {
@@ -30,16 +30,16 @@ export const log = {
   },
 
   runtime: (runtime: string) => {
-    console.log(chalk.blue("⚙ Runtime: ") + chalk.magenta(runtime));
+    console.log(chalk.blue('⚙ Runtime: ') + chalk.magenta(runtime));
   },
 
-  env: (file = ".env") => {
+  env: (file = '.env') => {
     console.log(chalk.green(`${file} encontrado`));
   },
 
   watch: () => {
-    console.log(chalk.yellow("👀 Watch mode ativo"));
-    console.log(chalk.gray("📡 Aguardando alterações..."));
-    console.log(chalk.gray("💡 Ctrl+C para parar\n"));
+    console.log(chalk.yellow('👀 Watch mode ativo'));
+    console.log(chalk.gray('📡 Aguardando alterações...'));
+    console.log(chalk.gray('💡 Ctrl+C para parar\n'));
   },
 };

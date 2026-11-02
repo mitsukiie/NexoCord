@@ -1,9 +1,9 @@
-import chalk from "chalk";
-import type { NexoConfig } from "../config";
+import chalk from 'chalk';
+import type { NexoConfig } from '../config';
 
-type LogMode = NexoConfig["terminal"]["mode"];
+type LogMode = NexoConfig['terminal']['mode'];
 
-let mode: LogMode = "minimalista";
+let mode: LogMode = 'minimalista';
 
 function configure_logger(config: NexoConfig): void {
   mode = config.terminal.mode;
@@ -12,34 +12,34 @@ function configure_logger(config: NexoConfig): void {
 function timestamp(): string {
   const date = new Date();
 
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
 
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
 
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
-function log(level: "INFO" | "WARN" | "ERROR" | "SUCCESS", msg: unknown): void {
+function log(level: 'INFO' | 'WARN' | 'ERROR' | 'SUCCESS', msg: unknown): void {
   const message = String(msg);
 
-  if (mode === "informativo") {
+  if (mode === 'informativo') {
     const prefix = `[${level}] [${timestamp()}] ${message}`;
 
     switch (level) {
-      case "INFO":
+      case 'INFO':
         console.log(chalk.blueBright(prefix));
         break;
-      case "WARN":
+      case 'WARN':
         console.warn(chalk.yellowBright(prefix));
         break;
-      case "ERROR":
+      case 'ERROR':
         console.error(chalk.redBright(prefix));
         break;
-      case "SUCCESS":
+      case 'SUCCESS':
         console.log(chalk.greenBright(prefix));
         break;
     }
@@ -48,19 +48,39 @@ function log(level: "INFO" | "WARN" | "ERROR" | "SUCCESS", msg: unknown): void {
   }
 
   switch (level) {
-    case "INFO":
+    case 'INFO':
       console.log(chalk.blueBright(message));
       break;
-    case "WARN":
+    case 'WARN':
       console.warn(chalk.yellowBright(message));
       break;
-    case "ERROR":
+    case 'ERROR':
       console.error(chalk.redBright(`${message}`));
       break;
-    case "SUCCESS":
+    case 'SUCCESS':
       console.log(chalk.greenBright(message));
       break;
   }
+}
+
+function error(error: unknown, fallback = 'Ocorreu um erro inesperado.'): void {
+  let message: string;
+
+  if (error instanceof Error) {
+    message = error.message;
+  } else if (typeof error === 'string') {
+    message = error;
+  } else if (error && typeof error === 'object') {
+    message =
+      'message' in error && typeof error.message === 'string'
+        ? error.message
+        : (JSON.stringify(error) ?? fallback);
+  } else {
+    message = fallback;
+  }
+
+  log('ERROR', `✗ ${message}`);
+  process.exitCode = 1;
 }
 
 /**
@@ -81,20 +101,20 @@ export const logger = {
    * [pt-BR] Exibe uma mensagem informativa.
    * [en] Displays an informational message.
    */
-  info: (msg: unknown) => log("INFO", msg),
+  info: (msg: unknown) => log('INFO', msg),
   /**
    * [pt-BR] Exibe um aviso.
    * [en] Displays a warning.
    */
-  warn: (msg: unknown) => log("WARN", msg),
+  warn: (msg: unknown) => log('WARN', msg),
   /**
    * [pt-BR] Exibe um erro.
    * [en] Displays an error.
    */
-  error: (msg: unknown) => log("ERROR", msg),
+  error,
   /**
    * [pt-BR] Exibe uma mensagem de sucesso.
    * [en] Displays a success message.
    */
-  success: (msg: unknown) => log("SUCCESS", msg),
+  success: (msg: unknown) => log('SUCCESS', msg),
 };

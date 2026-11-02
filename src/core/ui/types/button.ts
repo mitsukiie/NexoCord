@@ -1,4 +1,4 @@
-import { ButtonBuilder, ButtonStyle } from "discord.js";
+import { ButtonBuilder, ButtonStyle } from 'discord.js';
 
 /**
  * [pt-BR] Identificador personalizado de um botão.
@@ -10,7 +10,7 @@ export type ButtonID = string & {};
  * [pt-BR] Emoji aceito pelo construtor de botões do Discord.js.
  * [en] Emoji accepted by the Discord.js button builder.
  */
-export type ButtonEmoji = Parameters<ButtonBuilder["setEmoji"]>[0];
+export type ButtonEmoji = Parameters<ButtonBuilder['setEmoji']>[0];
 
 /**
  * [pt-BR] Propriedades compartilhadas entre os tipos de botão.

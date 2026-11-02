@@ -4,7 +4,7 @@ import {
   RoleSelectMenuBuilder,
   StringSelectMenuBuilder,
   UserSelectMenuBuilder,
-} from "discord.js";
+} from 'discord.js';
 
 import type {
   ChannelSelect,
@@ -14,7 +14,7 @@ import type {
   SelectMenu,
   StringSelect,
   UserSelect,
-} from "../types";
+} from '../types';
 
 /** Aplica as propriedades compartilhadas de um menu de seleção. */
 function apply_select_base<
@@ -47,16 +47,12 @@ function apply_select_base<
 }
 
 /** Converte um menu de seleção de usuários. */
-export function normalize_user_select(
-  select: UserSelect,
-): UserSelectMenuBuilder {
+export function normalize_user_select(select: UserSelect): UserSelectMenuBuilder {
   return apply_select_base(new UserSelectMenuBuilder(), select);
 }
 
 /** Converte um menu de seleção de cargos. */
-export function normalize_role_select(
-  select: RoleSelect,
-): RoleSelectMenuBuilder {
+export function normalize_role_select(select: RoleSelect): RoleSelectMenuBuilder {
   return apply_select_base(new RoleSelectMenuBuilder(), select);
 }
 
@@ -81,9 +77,7 @@ export function normalize_channel_select(
 }
 
 /** Converte um menu de seleção de strings. */
-export function normalize_string_select(
-  select: StringSelect,
-): StringSelectMenuBuilder {
+export function normalize_string_select(select: StringSelect): StringSelectMenuBuilder {
   const builder = apply_select_base(new StringSelectMenuBuilder(), select);
 
   builder.addOptions(
@@ -112,19 +106,19 @@ export function normalize_select(
   | ChannelSelectMenuBuilder
   | StringSelectMenuBuilder {
   switch (select.type) {
-    case "select.user":
+    case 'select.user':
       return normalize_user_select(select);
 
-    case "select.role":
+    case 'select.role':
       return normalize_role_select(select);
 
-    case "select.mentionable":
+    case 'select.mentionable':
       return normalize_mentionable_select(select);
 
-    case "select.channel":
+    case 'select.channel':
       return normalize_channel_select(select);
 
-    case "select.string":
+    case 'select.string':
       return normalize_string_select(select);
   }
 }

@@ -1,37 +1,31 @@
-import { Command } from "commander";
-import chalk from "chalk";
+import { Command } from 'commander';
+import chalk from 'chalk';
 
-import { get_error_message, NexoError } from "./errors";
-import { log } from "./logger";
+import { get_error_message, NexoError } from './errors';
+import { log } from './logger';
 
 export function create_program(version: string): Command {
   const program = new Command();
 
   program
-    .name("nexo")
-    .description(
-      "Framework moderno para bots Discord com foco em DX e performance",
-    )
+    .name('nexo')
+    .description('Framework moderno para bots Discord com foco em DX e performance')
     .version(version)
     .addHelpText(
-      "after",
-      `\n${chalk.cyan("Docs:")} ${chalk.gray(
-        "https://nexocord.vercel.app/",
-      )}\n`,
+      'after',
+      `\n${chalk.cyan('Docs:')} ${chalk.gray('https://nexocord.vercel.app/')}\n`,
     );
 
   return program;
 }
 
 export function register_fallback(program: Command): void {
-  program.on("command:*", (commands: string[]) => {
-    const command = commands.join(" ");
+  program.on('command:*', (commands: string[]) => {
+    const command = commands.join(' ');
 
     log.error(`Comando desconhecido: ${command}`);
     console.log(
-      chalk.gray(
-        "\nUse " + chalk.white("nexo --help") + " para ver os comandos.",
-      ),
+      chalk.gray('\nUse ' + chalk.white('nexo --help') + ' para ver os comandos.'),
     );
   });
 }
