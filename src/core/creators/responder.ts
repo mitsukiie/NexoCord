@@ -5,7 +5,13 @@ import { App } from "../index";
 /**
  * Registra um responder para interações identificadas por um caminho de `customId`.
  *
- * Os segmentos iniciados por `:` são extraídos e entregues ao callback como parâmetros.
+ * [pt-BR] Segmentos iniciados por `:` são extraídos e entregues ao callback
+ * como parâmetros.
+ * [en] Segments starting with `:` are extracted and passed to the callback as
+ * parameters.
+ *
+ * @param opts - [pt-BR] Configuração do responder.
+ * [en] Responder configuration.
  */
 export function createResponder<
   const Path extends string,

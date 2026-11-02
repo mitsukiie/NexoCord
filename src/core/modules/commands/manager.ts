@@ -1,31 +1,49 @@
 import { Collection } from "discord.js";
 import type { Command } from "../../types";
 
-/** Armazena os comandos disponíveis para o cliente. */
+/**
+ * [pt-BR] Armazena os comandos disponíveis para o cliente.
+ * [en] Stores commands available to the client.
+ */
 export class CommandManager {
   private readonly commands = new Collection<string, Command>();
 
-  /** Adiciona ou substitui um comando pelo nome. */
+  /**
+   * [pt-BR] Adiciona ou substitui um comando pelo nome.
+   * [en] Adds or replaces a command by name.
+   */
   public add(command: Command) {
     this.commands.set(command.name, command);
   }
 
-  /** Busca um comando pelo nome. */
+  /**
+   * [pt-BR] Busca um comando pelo nome.
+   * [en] Finds a command by name.
+   */
   public get(name: string) {
     return this.commands.get(name);
   }
 
-  /** Retorna todos os comandos registrados. */
+  /**
+   * [pt-BR] Retorna todos os comandos registrados.
+   * [en] Returns all registered commands.
+   */
   public all() {
     return Array.from(this.commands.values());
   }
 
-  /** Remove todos os comandos registrados. */
+  /**
+   * [pt-BR] Remove todos os comandos registrados.
+   * [en] Removes all registered commands.
+   */
   public clear() {
     this.commands.clear();
   }
 
-  /** Retorna a quantidade de comandos registrados. */
+  /**
+   * [pt-BR] Retorna a quantidade de comandos registrados.
+   * [en] Returns the number of registered commands.
+   */
   public size() {
     return this.commands.size;
   }

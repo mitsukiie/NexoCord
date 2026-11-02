@@ -52,11 +52,11 @@ export async function load_commands(
 
       await Promise.all(
         entries.map(async (entry) => {
-          const fullPath = path.join(category_path, entry.name);
+          const full_path = path.join(category_path, entry.name);
 
           // Caso seja uma pasta, tratamos como grupo de subcomandos
           if (entry.isDirectory()) {
-            const command = await createSubcommand(entry.name, fullPath);
+            const command = await createSubcommand(entry.name, full_path, config);
             const cmd = serialize(command);
 
             commands.push(cmd);
@@ -65,7 +65,7 @@ export async function load_commands(
 
           // Caso seja um arquivo, tratamos como comando único
           else if (entry.isFile() && is_script(entry.name)) {
-            const url = pathToFileURL(path.resolve(fullPath)).href;
+            const url = pathToFileURL(path.resolve(full_path)).href;
             const module = await import(url);
             const command = module.default;
 

@@ -63,16 +63,38 @@ function log(level: "INFO" | "WARN" | "ERROR" | "SUCCESS", msg: unknown): void {
   }
 }
 
-/** Exibe mensagens de log respeitando o modo configurado do NexoCord. */
+/**
+ * Exibe mensagens de log respeitando o modo configurado do NexoCord.
+ *
+ * [pt-BR] Use o logger para mostrar informações, avisos, erros e confirmações
+ * no terminal.
+ * [en] Use the logger to display information, warnings, errors, and success
+ * messages in the terminal.
+ */
 export const logger = {
-  /** Aplica o modo de saída definido na configuração do bot. */
+  /**
+   * [pt-BR] Aplica o modo de saída definido na configuração do bot.
+   * [en] Applies the output mode defined by the bot configuration.
+   */
   configure: configure_logger,
-  /** Exibe uma mensagem informativa. */
+  /**
+   * [pt-BR] Exibe uma mensagem informativa.
+   * [en] Displays an informational message.
+   */
   info: (msg: unknown) => log("INFO", msg),
-  /** Exibe um aviso. */
+  /**
+   * [pt-BR] Exibe um aviso.
+   * [en] Displays a warning.
+   */
   warn: (msg: unknown) => log("WARN", msg),
-  /** Exibe um erro. */
+  /**
+   * [pt-BR] Exibe um erro.
+   * [en] Displays an error.
+   */
   error: (msg: unknown) => log("ERROR", msg),
-  /** Exibe uma mensagem de sucesso. */
+  /**
+   * [pt-BR] Exibe uma mensagem de sucesso.
+   * [en] Displays a success message.
+   */
   success: (msg: unknown) => log("SUCCESS", msg),
 };

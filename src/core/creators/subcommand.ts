@@ -15,18 +15,30 @@ import { pathToFileURL } from "url";
 import { App, ExtendedClient } from "../index";
 
 import { Command } from "../types";
-import { create_context } from "./context";
+import { extend_interaction } from "./interaction";
 import { logger } from "../utils";
 import { is_script } from "../utils/extensions";
+import { NexoConfig } from "../config";
+import { ui } from "../ui";
 
 /**
  * Carrega os subcomandos de um diretório e cria um comando de grupo.
  *
- * Os arquivos do diretório devem exportar uma configuração de comando válida.
+ * [pt-BR] Os arquivos do diretório devem exportar uma configuração de comando
+ * válida.
+ * [en] Files in the directory must export a valid command configuration.
+ *
+ * @param name - [pt-BR] Nome do comando de grupo.
+ * [en] Group command name.
+ * @param directory - [pt-BR] Diretório com os subcomandos.
+ * [en] Directory containing subcommands.
+ * @returns [pt-BR] Configuração do comando de grupo.
+ * [en] Group command configuration.
  */
 export async function createSubcommand(
   name: string,
   directory: string,
+  config: NexoConfig
 ): Promise<any> {
   const app = App.get();
 
@@ -34,7 +46,7 @@ export async function createSubcommand(
   const options: APIApplicationCommandOption[] = [];
 
   const files = readdirSync(directory).filter((f) => is_script(f));
-  if (settings.terminal.showSlashCommandsFiles) {
+  if (config.terminal.commands.showFiles) {
     logger.info(`Carregando ${files.length} subcomandos do grupo "${name}"...`);
   }
 
@@ -57,7 +69,7 @@ export async function createSubcommand(
         options: sub.options as APIApplicationCommandBasicOption[],
       });
 
-      if (settings.terminal.showSlashCommandsFiles) {
+      if (config.terminal.commands.showFiles) {
         logger.success(`Subcomando carregado: ${sub.name}`);
       }
     }),
@@ -85,8 +97,10 @@ export async function createSubcommand(
       const canRun = await CheckPermission(i, sub);
       if (!canRun) return;
 
-      const ctx = create_context(i, app.client);
-      return sub.run(ctx);
+      const interaction = extend_interaction(i);
+      return sub.run(interaction, app.client, {
+        ui,
+      });
     },
   };
 }

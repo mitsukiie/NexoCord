@@ -16,7 +16,7 @@ Os comandos permitem que os usuários interajam com seu bot por meio de comandos
 - ⚡ O Nexocord carrega os comandos durante a inicialização do bot.
 - 📁 O diretório dos comandos é configurado em `directories.commands`, no arquivo `nexocord.json` ou `nexocord.config`.
 - 📦 Cada arquivo de comando deve exportar seu comando com `default`.
-- 🗂️ A organização em pastas depende das convenções de carregamento de comandos e subcomandos do Nexocord.
+- 🗂️ A organização em pastas é livre; o carregador encontra os arquivos recursivamente.
 
 ## 🧪 Criando um comando
 
@@ -32,8 +32,8 @@ export default createCommand({
   name: "ping",
   description: "Verifica se o bot está online.",
   type: CommandType.ChatInput,
-  async run(ctx) {
-    await ctx.reply({ content: "Pong!" });
+  async run(interaction) {
+    await interaction.reply({ content: "Pong!" });
   },
 });
 ```
@@ -48,8 +48,8 @@ module.exports = createCommand({
   name: "ping",
   description: "Verifica se o bot está online.",
   type: CommandType.ChatInput,
-  async run(ctx) {
-    await ctx.reply({ content: "Pong!" });
+  async run(interaction) {
+    await interaction.reply({ content: "Pong!" });
   },
 });
 ```
@@ -76,7 +76,25 @@ O comando precisa estar dentro do diretório configurado em `directories.command
 | `dmPermission` | `boolean` | Não | Define se o comando pode ser usado em mensagens diretas. |
 | `nsfw` | `boolean` | Não | Restringe o comando a canais NSFW. |
 
-Os nomes e tipos das propriedades correspondem à API do Nexocord. Consulte os exemplos específicos para entender como utilizar cada uma.
+O callback `run` recebe a interação como primeiro argumento. Quando necessário,
+você também pode receber o cliente como segundo argumento. Para utilizar
+Components V2, receba `{ ui }` como terceiro argumento:
+
+```ts
+async run(interaction, client, { ui }) {
+  await interaction.reply({
+    components: [ui.text("Olá!")],
+  });
+}
+```
+
+Também é possível importar a mesma API diretamente de `nexocord/ui`:
+
+```ts
+import { ui } from "nexocord/ui";
+```
+
+Nesse caso, não é necessário receber `{ ui }` no callback.
 
 ## 🎯 Tipos de comandos
 
@@ -140,11 +158,9 @@ As opções permitem receber informações do usuário, como textos, números, u
 
 Para aprender a declarar parâmetros, configurar limites e implementar sugestões, consulte [Opções de comandos](/docs/options).
 
-## 🗂️ Subcomandos
+## 🗂️ Organização dos arquivos
 
-Os subcomandos permitem agrupar ações relacionadas em um único comando, como `/user ban` e `/user kick`.
-
-No Nexocord, eles são criados automaticamente a partir da estrutura de pastas. **O nome da pasta define o comando principal, e cada arquivo dentro dela representa um subcomando.**
+O carregador percorre recursivamente o diretório configurado em `directories.commands` e considera arquivos `.ts`, `.js`, `.mjs` e `.cjs`. As pastas servem para organização e não alteram o nome do comando.
 
 ### 📁 Estrutura de arquivos
 
@@ -154,25 +170,14 @@ Organize os arquivos dentro do diretório configurado em `directories.commands`:
 src/
 └── commands/
     └── utils/
-        └── user/
-            ├── ban.ts
-            ├── kick.ts
-            └── info.ts
+        └── ban.ts
 ```
 
-Nesse exemplo, a pasta `user/` cria o comando principal `/user`, enquanto os arquivos `ban.ts`, `kick.ts` e `info.ts` definem seus respectivos subcomandos.
+Nesse exemplo, `ban.ts` é um comando independente chamado `/ban`.
 
 ### ⚙️ Como funciona
 
-- Cada subcomando deve ser um arquivo separado dentro da pasta do comando principal.
-- Cada arquivo deve exportar sua definição usando `default`, assim como um comando convencional.
-- As propriedades `name` e `description` definem o nome e a descrição do subcomando.
-- As propriedades `options`, quando utilizadas, definem os parâmetros aceitos pelo subcomando.
-- O Nexocord carrega os arquivos e registra automaticamente o comando principal com seus subcomandos.
-
-Não é necessário criar manualmente um arquivo para o comando principal. Ele é gerado pelo carregador a partir do nome da pasta.
-
-**Importante:** para criar `/user ban`, o arquivo `ban.ts` precisa estar dentro da pasta `user/`. Se estiver diretamente em `commands/` ou em uma pasta de categoria, será tratado como um comando independente, conforme a estrutura de carregamento.
+Não há geração automática de subcomandos a partir de pastas na API atual. Declare cada comando exportado diretamente ou use uma configuração compatível com o Discord.js.
 
 ## ⚠️ Tratamento de erros
 

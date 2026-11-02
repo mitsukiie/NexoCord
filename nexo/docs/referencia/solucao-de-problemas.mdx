@@ -63,14 +63,14 @@ Como alternativa, você pode utilizar Bun, desde que a configuração do projeto
 
 ## 🧩 Erro ao enviar Components V2
 
-Ao utilizar `ctx.reply()`, não combine `components` com `content` ou `embeds`.
+Ao utilizar `interaction.reply()`, não combine `components` com `content` ou `embeds`.
 
 ```ts
 const components = [
   ui.text("## Meu painel"),
 ];
 
-await ctx.reply({ components });
+await interaction.reply({ components });
 ```
 
 O contexto adiciona automaticamente a flag necessária para Components V2.

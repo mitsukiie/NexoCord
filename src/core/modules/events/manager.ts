@@ -1,31 +1,49 @@
 import { Collection } from "discord.js";
 import type { Event } from "../../types";
 
-/** Armazena os eventos configurados para o cliente. */
+/**
+ * [pt-BR] Armazena os eventos configurados para o cliente.
+ * [en] Stores events configured for the client.
+ */
 export class EventManager {
   private readonly events = new Collection<string, Event>();
 
-  /** Adiciona ou substitui um evento pelo nome. */
+  /**
+   * [pt-BR] Adiciona ou substitui um evento pelo nome.
+   * [en] Adds or replaces an event by name.
+   */
   public add(event: Event) {
     this.events.set(event.name, event);
   }
 
-  /** Busca um evento pelo nome. */
+  /**
+   * [pt-BR] Busca um evento pelo nome.
+   * [en] Finds an event by name.
+   */
   public get(name: string) {
     return this.events.get(name);
   }
 
-  /** Retorna todos os eventos registrados. */
+  /**
+   * [pt-BR] Retorna todos os eventos registrados.
+   * [en] Returns all registered events.
+   */
   public all() {
     return Array.from(this.events.values());
   }
 
-  /** Remove todos os eventos registrados. */
+  /**
+   * [pt-BR] Remove todos os eventos registrados.
+   * [en] Removes all registered events.
+   */
   public clear() {
     this.events.clear();
   }
 
-  /** Retorna a quantidade de eventos registrados. */
+  /**
+   * [pt-BR] Retorna a quantidade de eventos registrados.
+   * [en] Returns the number of registered events.
+   */
   public size() {
     return this.events.size;
   }

@@ -1,7 +1,16 @@
 import { Command, CommandType } from "../types";
 
 /**
- * Cria uma configuração de comando preservando a inferência do tipo de interação.
+ * Cria uma configuração de comando pronta para ser exportada pelo projeto.
+ *
+ * @description
+ * [pt-BR] Valida a configuração em TypeScript e preserva o tipo da interação
+ * recebida no callback.
+ * [en] Provides TypeScript validation and preserves the interaction type
+ * received by the callback.
+ *
+ * @param command - [pt-BR] Configuração do comando.
+ * [en] Command configuration.
  *
  * @example
  * export default createCommand({

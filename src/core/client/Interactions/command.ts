@@ -1,8 +1,9 @@
 import { MessageFlags, ChatInputCommandInteraction } from "discord.js";
 import { App } from "../../index";
 import type { NexoConfig } from "../../config";
-import { create_context } from "../../creators";
+import { extend_interaction } from "../../creators";
 import { handle_error } from "../../utils";
+import { ui } from "../../ui";
 
 export async function Command(
   i: ChatInputCommandInteraction,
@@ -25,9 +26,11 @@ export async function Command(
   }
 
   try {
-    const ctx = create_context(i, app.client);
+    const interaction = extend_interaction(i);
 
-    await command.run(ctx);
+    await command.run(interaction, app.client, {
+      ui,
+    });
 
     app.cooldowns.set(id, name, command.cooldown ?? config.bot.cooldown);
   } catch (err) {

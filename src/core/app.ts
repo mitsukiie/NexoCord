@@ -2,6 +2,14 @@ import { ExtendedClient } from "./index";
 import { CommandManager, EventManager, ResponderManager } from "./modules";
 import { CooldownManager } from "./utils/cooldown";
 
+/**
+ * Acesso aos serviços registrados na instância do NexoCord.
+ *
+ * [pt-BR] Normalmente é inicializado pelo bootstrap; use `App.get()` apenas
+ * quando sua integração precisar acessar esses serviços.
+ * [en] It is normally initialized by the bootstrap; use `App.get()` only when
+ * your integration needs access to these services.
+ */
 export class App {
   private static instance: App;
 

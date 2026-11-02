@@ -36,11 +36,11 @@ export default createCommand({
       maxValue: 20,
     }),
   ],
-  async run(ctx) {
-    const termo = ctx.interaction.options.getString("termo", true);
-    const limite = ctx.interaction.options.getInteger("limite");
+  async run(interaction) {
+    const termo = interaction.options.getString("termo", true);
+    const limite = interaction.options.getInteger("limite");
 
-    await ctx.reply({
+    await interaction.reply({
       content: `Buscando por: ${termo}. Limite: ${limite ?? 10}.`,
     });
   },
@@ -147,10 +147,10 @@ export default createCommand({
       })),
     );
   },
-  async run(ctx) {
-    const termo = ctx.interaction.options.getString("termo", true);
+  async run(interaction) {
+    const termo = interaction.options.getString("termo", true);
 
-    await ctx.reply({ content: `Você pesquisou: ${termo}` });
+    await interaction.reply({ content: `Você pesquisou: ${termo}` });
   },
 });
 ```
@@ -159,12 +159,12 @@ A função de autocomplete deve responder à interação com as sugestões dispo
 
 ## 📥 Lendo os valores
 
-Dentro de `run`, acesse os valores por meio de `ctx.interaction.options`:
+Dentro de `run`, acesse os valores por meio de `interaction.options`:
 
 ```ts
-const texto = ctx.interaction.options.getString("termo", true);
-const quantidade = ctx.interaction.options.getInteger("limite");
-const usuario = ctx.interaction.options.getUser("usuario");
+const texto = interaction.options.getString("termo", true);
+const quantidade = interaction.options.getInteger("limite");
+const usuario = interaction.options.getUser("usuario");
 ```
 
 O segundo argumento `true` dos getters indica que o valor é obrigatório. Para opções opcionais, considere que o resultado pode ser `null`.

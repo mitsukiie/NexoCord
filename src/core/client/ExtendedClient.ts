@@ -21,6 +21,12 @@ const partials: NonNullable<ClientOptions["partials"]> = [
   Partials.Message,
 ];
 
+/**
+ * Cliente Discord.js com as opções padrão usadas pelo NexoCord.
+ *
+ * [pt-BR] Instancie-o quando precisar configurar o cliente manualmente.
+ * [en] Instantiate it when you need to configure the client manually.
+ */
 export class ExtendedClient extends Client {
   constructor(options: ExtendedClientOptions = {}) {
     super({

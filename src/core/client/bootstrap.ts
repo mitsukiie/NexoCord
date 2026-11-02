@@ -6,12 +6,21 @@ import { set_global_settings } from "../settings";
 import { NexoConfig, load_config, BootstrapOptions } from "../config";
 import { Router } from "./Interactions";
 
-/** Ponto de entrada para configurar e iniciar um bot NexoCord. */
+/**
+ * Ponto de entrada para configurar e iniciar um bot NexoCord.
+ *
+ * [pt-BR] Inicializa o cliente, carrega comandos e eventos e conecta o bot ao Discord.
+ * [en] Initializes the client, loads commands and events, and connects the bot to Discord.
+ */
 const Bootstrap = {
   /**
    * Inicia o cliente, carrega comandos e eventos e conecta o bot ao Discord.
    *
-   * O token pode ser informado nas opções ou pela variável de ambiente `TOKEN`.
+   * [pt-BR] O token pode ser informado nas opções ou pela variável de ambiente `TOKEN`.
+   * [en] The token can be provided in the options or through the `TOKEN` environment variable.
+   *
+   * @param options - [pt-BR] Token e opções do cliente.
+   * [en] Token and client options.
    */
   async init(options: BootstrapOptions) {
     const token = options.token ?? process.env.TOKEN ?? "";

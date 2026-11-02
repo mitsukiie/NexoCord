@@ -65,7 +65,7 @@ O exemplo do componente mostra apenas a criação do botão. Você ainda precisa
 Os responders não são carregados automaticamente apenas por estarem em um arquivo. O arquivo precisa ser importado por algum ponto da aplicação para que `createResponder()` seja executado e registre a rota.
 :::
 
-Declare o responder fora de `run` ou de outros handlers que possam ser executados repetidamente. Assim, você evita registrar a mesma rota várias vezes.
+Declare o responder em um módulo importado durante a inicialização, fora de `run` ou de handlers executados repetidamente. Assim, você evita registrar a mesma rota várias vezes.
 
 ## 🧩 Parâmetros na rota
 
@@ -110,7 +110,7 @@ Por padrão, os parâmetros extraídos são strings.
 | `expire` | `number` | Não* | Tempo de expiração em milissegundos, conforme o modo de vida configurado. |
 | `cache` | `'cached' \| 'guild'` | Não | Restringe o contexto em que a interação pode ser processada. |
 
-\* `expire` é obrigatório quando `lifetime` é `'temporary'`, conforme as regras do Nexocord.
+`expire` é obrigatório quando `lifetime` é `'temporary'`; o valor é expresso em milissegundos.
 
 ## 🎯 Tipos de interação
 
@@ -161,14 +161,14 @@ export default createResponder({
 
   async run(interaction) {
     if (interaction.isButton()) {
-      await interaction.reply("Botão clicado!");
+      await interaction.reply({ content: "Botão clicado!" });
       return;
     }
 
     if (interaction.isStringSelectMenu()) {
-      await interaction.reply(
-        `Opção selecionada: ${interaction.values.join(", ")}`,
-      );
+      await interaction.reply({
+        content: `Opção selecionada: ${interaction.values.join(", ")}`,
+      });
     }
   },
 });
